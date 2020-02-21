@@ -371,6 +371,10 @@ PrimeFaces.widget.ColumnToggler = PrimeFaces.widget.DeferredWidget.extend({
     },
 
     hide: function() {
+
+		if (this.visible) {     	// only fire event if columnToggler was really shown
+			this.fireCloseEvent();
+		}
         this.panel.fadeOut('fast');
         this.visible = false;
         this.trigger.attr('aria-expanded', false);
@@ -388,6 +392,40 @@ PrimeFaces.widget.ColumnToggler = PrimeFaces.widget.DeferredWidget.extend({
             this.callBehavior('toggle', ext);
         }
     },
+
+    fireCloseEvent: function() {
+	    if(this.cfg.behaviors) {
+	        var toggleBehavior = this.cfg.behaviors['close'];
+	        if(toggleBehavior) {
+
+	        	var columnIds ='';
+
+	        	for(var i = 0; i < this.columns.length; i++) {
+	                var column = this.columns.eq(i);
+
+	                var parts = column.attr('id').split(':');
+	                var columnId = parts[parts.length - 1];
+
+	                hidden = column.hasClass('ui-helper-hidden')
+
+	                if (!hidden) {
+	                	if (columnIds !='') {
+	                		columnIds = columnIds+',';
+	                	}
+	                	columnIds =columnIds + columnId;
+	                }
+
+	        	}
+	        	ext = {
+	                    params: [
+	                        {name: this.id + '_visibleColumnIds', value: columnIds}
+	                    ]
+	                };
+
+	            toggleBehavior.call(this,ext);
+	        }
+	    }
+	},
 
     updateColspan: function() {
         var emptyRow = this.tbody.children('tr:first');
