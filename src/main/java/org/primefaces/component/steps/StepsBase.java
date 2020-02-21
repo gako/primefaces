@@ -41,7 +41,8 @@ abstract class StepsBase extends AbstractMenu implements Widget {
         style,
         styleClass,
         activeIndex,
-        readonly
+        readonly,
+        showIcon
     }
 
     public StepsBase() {
@@ -100,6 +101,14 @@ abstract class StepsBase extends AbstractMenu implements Widget {
 
     public void setReadonly(boolean readonly) {
         getStateHelper().put(PropertyKeys.readonly, readonly);
+    }
+
+    public boolean isShowIcon() {
+        return (Boolean) getStateHelper().eval(PropertyKeys.showIcon, false);
+    }
+
+    public void setShowIcon(boolean showIcon) {
+        getStateHelper().put(PropertyKeys.showIcon, showIcon);
     }
 
     @Override

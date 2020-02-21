@@ -197,7 +197,13 @@ public class StepsRenderer extends BaseMenuRenderer {
 
         writer.startElement("span", steps);
         writer.writeAttribute("class", Steps.STEP_NUMBER_CLASS, null);
-        writer.writeText((index + 1), null);
+        if (steps.isShowIcon() && menuitem.getIcon() != null) {
+            writer.startElement("i", null);
+            writer.writeAttribute("class", menuitem.getIcon(), null);
+            writer.endElement("i");
+        } else {
+		    writer.writeText((index + 1), null);
+        }
         writer.endElement("span");
 
         Object value = menuitem.getValue();
