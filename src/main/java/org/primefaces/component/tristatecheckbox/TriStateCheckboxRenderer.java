@@ -190,7 +190,12 @@ public class TriStateCheckboxRenderer extends InputRenderer {
 
             writer.startElement("span", null);
             writer.writeAttribute("class", HTML.CHECKBOX_LABEL_CLASS, null);
-            writer.writeText(label, "itemLabel");
+            if (checkbox.isEscape()) {
+                writer.writeText(label, "itemLabel");
+            }
+            else {
+                writer.write(label);
+            }
             writer.endElement("span");
         }
     }

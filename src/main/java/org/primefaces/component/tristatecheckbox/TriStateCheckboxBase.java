@@ -28,100 +28,108 @@ import javax.faces.component.html.HtmlInputText;
 import org.primefaces.component.api.Widget;
 import org.primefaces.util.ComponentUtils;
 
-
 abstract class TriStateCheckboxBase extends HtmlInputText implements Widget {
 
-    public static final String COMPONENT_FAMILY = "org.primefaces.component";
+	public static final String COMPONENT_FAMILY = "org.primefaces.component";
 
-    public static final String DEFAULT_RENDERER = "org.primefaces.component.TriStateCheckboxRenderer";
+	public static final String DEFAULT_RENDERER = "org.primefaces.component.TriStateCheckboxRenderer";
 
-    public enum PropertyKeys {
+	public enum PropertyKeys {
 
-        widgetVar,
-        stateOneIcon,
-        stateTwoIcon,
-        stateThreeIcon,
-        itemLabel,
-        stateOneTitle,
-        stateTwoTitle,
-        stateThreeTitle;
-    }
+		widgetVar,
+		stateOneIcon,
+		stateTwoIcon,
+		stateThreeIcon,
+		itemLabel,
+		escape,
+		stateOneTitle,
+		stateTwoTitle,
+		stateThreeTitle;
+	}
 
-    public TriStateCheckboxBase() {
-        setRendererType(DEFAULT_RENDERER);
-    }
+	public TriStateCheckboxBase() {
+		setRendererType(DEFAULT_RENDERER);
+	}
 
-    @Override
-    public String getFamily() {
-        return COMPONENT_FAMILY;
-    }
+	@Override
+	public String getFamily() {
+		return COMPONENT_FAMILY;
+	}
 
-    public String getWidgetVar() {
-        return (String) getStateHelper().eval(PropertyKeys.widgetVar, null);
-    }
+	public String getWidgetVar() {
+		return (String) getStateHelper().eval(PropertyKeys.widgetVar, null);
+	}
 
-    public void setWidgetVar(String widgetVar) {
-        getStateHelper().put(PropertyKeys.widgetVar, widgetVar);
-    }
+	public void setWidgetVar(String widgetVar) {
+		getStateHelper().put(PropertyKeys.widgetVar, widgetVar);
+	}
 
-    public String getStateOneIcon() {
-        return (String) getStateHelper().eval(PropertyKeys.stateOneIcon, null);
-    }
+	public String getStateOneIcon() {
+		return (String) getStateHelper().eval(PropertyKeys.stateOneIcon, null);
+	}
 
-    public void setStateOneIcon(String stateOneIcon) {
-        getStateHelper().put(PropertyKeys.stateOneIcon, stateOneIcon);
-    }
+	public void setStateOneIcon(String stateOneIcon) {
+		getStateHelper().put(PropertyKeys.stateOneIcon, stateOneIcon);
+	}
 
-    public String getStateTwoIcon() {
-        return (String) getStateHelper().eval(PropertyKeys.stateTwoIcon, null);
-    }
+	public String getStateTwoIcon() {
+		return (String) getStateHelper().eval(PropertyKeys.stateTwoIcon, null);
+	}
 
-    public void setStateTwoIcon(String stateTwoIcon) {
-        getStateHelper().put(PropertyKeys.stateTwoIcon, stateTwoIcon);
-    }
+	public void setStateTwoIcon(String stateTwoIcon) {
+		getStateHelper().put(PropertyKeys.stateTwoIcon, stateTwoIcon);
+	}
 
-    public String getStateThreeIcon() {
-        return (String) getStateHelper().eval(PropertyKeys.stateThreeIcon, null);
-    }
+	public String getStateThreeIcon() {
+		return (String) getStateHelper().eval(PropertyKeys.stateThreeIcon, null);
+	}
 
-    public void setStateThreeIcon(String stateThreeIcon) {
-        getStateHelper().put(PropertyKeys.stateThreeIcon, stateThreeIcon);
-    }
+	public void setStateThreeIcon(String stateThreeIcon) {
+		getStateHelper().put(PropertyKeys.stateThreeIcon, stateThreeIcon);
+	}
 
-    public String getItemLabel() {
-        return (String) getStateHelper().eval(PropertyKeys.itemLabel, null);
-    }
+	public String getItemLabel() {
+		return (String) getStateHelper().eval(PropertyKeys.itemLabel, null);
+	}
 
-    public void setItemLabel(String itemLabel) {
-        getStateHelper().put(PropertyKeys.itemLabel, itemLabel);
-    }
+	public void setItemLabel(String itemLabel) {
+		getStateHelper().put(PropertyKeys.itemLabel, itemLabel);
+	}
 
-    public String getStateOneTitle() {
-        return (String) getStateHelper().eval(PropertyKeys.stateOneTitle, null);
-    }
+	public String getStateOneTitle() {
+		return (String) getStateHelper().eval(PropertyKeys.stateOneTitle, null);
+	}
 
-    public void setStateOneTitle(String stateOneTitle) {
-        getStateHelper().put(PropertyKeys.stateOneTitle, stateOneTitle);
-    }
+	public void setStateOneTitle(String stateOneTitle) {
+		getStateHelper().put(PropertyKeys.stateOneTitle, stateOneTitle);
+	}
 
-    public String getStateTwoTitle() {
-        return (String) getStateHelper().eval(PropertyKeys.stateTwoTitle, null);
-    }
+	public String getStateTwoTitle() {
+		return (String) getStateHelper().eval(PropertyKeys.stateTwoTitle, null);
+	}
 
-    public void setStateTwoTitle(String stateTwoTitle) {
-        getStateHelper().put(PropertyKeys.stateTwoTitle, stateTwoTitle);
-    }
+	public void setStateTwoTitle(String stateTwoTitle) {
+		getStateHelper().put(PropertyKeys.stateTwoTitle, stateTwoTitle);
+	}
 
-    public String getStateThreeTitle() {
-        return (String) getStateHelper().eval(PropertyKeys.stateThreeTitle, null);
-    }
+	public String getStateThreeTitle() {
+		return (String) getStateHelper().eval(PropertyKeys.stateThreeTitle, null);
+	}
 
-    public void setStateThreeTitle(String stateThreeTitle) {
-        getStateHelper().put(PropertyKeys.stateThreeTitle, stateThreeTitle);
-    }
+	public void setStateThreeTitle(String stateThreeTitle) {
+		getStateHelper().put(PropertyKeys.stateThreeTitle, stateThreeTitle);
+	}
 
-    @Override
-    public String resolveWidgetVar() {
-        return ComponentUtils.resolveWidgetVar(getFacesContext(), this);
-    }
+	public boolean isEscape() {
+		return (Boolean) getStateHelper().eval(PropertyKeys.escape, true);
+	}
+
+	public void setEscape(boolean escape) {
+		getStateHelper().put(PropertyKeys.escape, escape);
+	}
+
+	@Override
+	public String resolveWidgetVar() {
+		return ComponentUtils.resolveWidgetVar(getFacesContext(), this);
+	}
 }
