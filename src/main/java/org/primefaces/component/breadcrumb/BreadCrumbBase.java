@@ -40,7 +40,9 @@ abstract class BreadCrumbBase extends AbstractMenu implements Widget {
         style,
         styleClass,
         homeDisplay,
-        tabindex;
+        tabindex,
+        homeIcon,
+        chevronIcon;
     }
 
     public BreadCrumbBase() {
@@ -93,6 +95,22 @@ abstract class BreadCrumbBase extends AbstractMenu implements Widget {
     @Override
     public void setTabindex(String tabindex) {
         getStateHelper().put(PropertyKeys.tabindex, tabindex);
+    }
+
+    public String getHomeIcon() {
+        return (String) getStateHelper().eval(PropertyKeys.homeIcon, BreadCrumb.HOME_CLASS);
+    }
+
+    public void setHomeIcon(String homeIcon) {
+        getStateHelper().put(PropertyKeys.homeIcon, homeIcon);
+    }
+
+    public String getChevronIcon() {
+        return (String) getStateHelper().eval(PropertyKeys.chevronIcon, BreadCrumb.CHEVRON_CLASS);
+    }
+
+    public void setChevronIcon(String chevronIcon) {
+        getStateHelper().put(PropertyKeys.chevronIcon, chevronIcon);
     }
 
     @Override

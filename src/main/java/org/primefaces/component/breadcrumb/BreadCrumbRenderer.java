@@ -49,8 +49,8 @@ public class BreadCrumbRenderer extends BaseMenuRenderer {
         boolean isIconHome = breadCrumb.getHomeDisplay().equals("icon");
 
         //home icon for first item
-        if (isIconHome && elementCount > 0) {
-            ((MenuItem) menuElements.get(0)).setStyleClass("ui-icon ui-icon-home");
+        if (isIconHome && elementCount > 0 && menuElements.get(0) instanceof MenuItem) {
+            ((MenuItem) menuElements.get(0)).setStyleClass(breadCrumb.getHomeIcon());
         }
 
         writer.startElement("div", null);
@@ -63,7 +63,7 @@ public class BreadCrumbRenderer extends BaseMenuRenderer {
 
         if (elementCount > 0) {
             writer.startElement("ul", null);
-
+			int index = 0;
             for (int i = 0; i < elementCount; i++) {
                 MenuElement element = menuElements.get(i);
 
@@ -71,9 +71,9 @@ public class BreadCrumbRenderer extends BaseMenuRenderer {
                     MenuItem item = (MenuItem) element;
 
                     //dont render chevron before home icon
-                    if (i != 0) {
+                    if (index != 0 && breadCrumb.getChevronIcon()!=null) {
                         writer.startElement("li", null);
-                        writer.writeAttribute("class", BreadCrumb.CHEVRON_CLASS, null);
+                        writer.writeAttribute("class", breadCrumb.getChevronIcon(), null);
                         writer.endElement("li");
                     }
 
@@ -88,6 +88,7 @@ public class BreadCrumbRenderer extends BaseMenuRenderer {
                     }
 
                     writer.endElement("li");
+                    index++;
                 }
             }
 
