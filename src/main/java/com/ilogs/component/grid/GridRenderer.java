@@ -91,8 +91,8 @@ public class GridRenderer extends CoreRenderer {
 	}
     }
 
-    public String getColumnClass(Grid grid, int columns) {
-	if (grid.isFlex()) {
+    public static String getColumnClass(boolean flex, int columns) {
+	if (flex) {
 	    if (FLEX_COLUMN_MAP.containsKey(columns)) {
 		return FLEX_COLUMN_MAP.get(columns);
 	    } else {
@@ -105,6 +105,10 @@ public class GridRenderer extends CoreRenderer {
 		return "ui-g-" + (12 / columns);
 	    }
 	}
+
+    }
+    public String getColumnClass(Grid grid, int columns) {
+	return getColumnClass(grid.isFlex(), columns);
     }
 
     public String getResponsiveClass(Grid grid, String styleClass) {
