@@ -37,150 +37,154 @@ import org.primefaces.util.WidgetBuilder;
 
 public class RibbonRenderer extends CoreRenderer {
 
-    @Override
-    public void decode(FacesContext context, UIComponent component) {
-        super.decode(context, component);
+	@Override
+	public void decode(FacesContext context, UIComponent component) {
+		super.decode(context, component);
 
-        decodeBehaviors(context, component);
-    }
+		decodeBehaviors(context, component);
+	}
 
-    @Override
-    public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
-        Ribbon ribbon = (Ribbon) component;
+	@Override
+	public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
+		if (!shouldRenderComponent(context, component)) {
+			return;
+		}
 
-        encodeMarkup(context, ribbon);
-        encodeScript(context, ribbon);
-    }
+		Ribbon ribbon = (Ribbon) component;
 
-    private void encodeScript(FacesContext context, Ribbon ribbon) throws IOException {
-        String clientId = ribbon.getClientId(context);
-        WidgetBuilder wb = getWidgetBuilder(context);
-        wb.init("Ribbon", ribbon.resolveWidgetVar(), clientId);
+		encodeMarkup(context, ribbon);
+		encodeScript(context, ribbon);
+	}
 
-        encodeClientBehaviors(context, ribbon);
+	private void encodeScript(FacesContext context, Ribbon ribbon) throws IOException {
+		String clientId = ribbon.getClientId(context);
+		WidgetBuilder wb = getWidgetBuilder(context);
+		wb.init("Ribbon", ribbon.resolveWidgetVar(), clientId);
 
-        wb.finish();
-    }
+		encodeClientBehaviors(context, ribbon);
 
-    protected void encodeMarkup(FacesContext context, Ribbon ribbon) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        String clientId = ribbon.getClientId(context);
-        String style = ribbon.getStyle();
-        String styleClass = ribbon.getStyleClass();
-        styleClass = (styleClass == null) ? Ribbon.CONTAINER_CLASS : Ribbon.CONTAINER_CLASS + " " + styleClass;
+		wb.finish();
+	}
 
-        writer.startElement("div", ribbon);
-        writer.writeAttribute("id", clientId, "id");
-        writer.writeAttribute("class", styleClass, "styleClass");
-        if (style != null) {
-            writer.writeAttribute("class", style, "style");
-        }
+	protected void encodeMarkup(FacesContext context, Ribbon ribbon) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		String clientId = ribbon.getClientId(context);
+		String style = ribbon.getStyle();
+		String styleClass = ribbon.getStyleClass();
+		styleClass = (styleClass == null) ? Ribbon.CONTAINER_CLASS : Ribbon.CONTAINER_CLASS + " " + styleClass;
 
-        encodeTabHeaders(context, ribbon);
-        encodeTabContents(context, ribbon);
+		writer.startElement("div", ribbon);
+		writer.writeAttribute("id", clientId, "id");
+		writer.writeAttribute("class", styleClass, "styleClass");
+		if (style != null) {
+			writer.writeAttribute("class", style, "style");
+		}
 
-        writer.endElement("div");
-    }
+		encodeTabHeaders(context, ribbon);
+		encodeTabContents(context, ribbon);
 
-    protected void encodeTabHeaders(FacesContext context, Ribbon ribbon) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        int activeIndex = ribbon.getActiveIndex();
-        int childCount = ribbon.getChildCount();
+		writer.endElement("div");
+	}
 
-        writer.startElement("ul", ribbon);
-        writer.writeAttribute("class", Ribbon.NAVIGATOR_CLASS, null);
-        writer.writeAttribute("role", "tablist", null);
+	protected void encodeTabHeaders(FacesContext context, Ribbon ribbon) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		int activeIndex = ribbon.getActiveIndex();
+		int childCount = ribbon.getChildCount();
 
-        if (childCount > 0) {
-            List<UIComponent> children = ribbon.getChildren();
-            for (int i = 0; i < childCount; i++) {
-                UIComponent child = children.get(i);
+		writer.startElement("ul", ribbon);
+		writer.writeAttribute("class", Ribbon.NAVIGATOR_CLASS, null);
+		writer.writeAttribute("role", "tablist", null);
 
-                if (child instanceof Tab && child.isRendered()) {
-                    Tab tab = (Tab) child;
-                    String title = tab.getTitle();
-                    boolean active = (i == activeIndex);
-                    String headerClass = (active) ? Ribbon.ACTIVE_TAB_HEADER_CLASS : Ribbon.INACTIVE_TAB_HEADER_CLASS;
+		if (childCount > 0) {
+			List<UIComponent> children = ribbon.getChildren();
+			for (int i = 0; i < childCount; i++) {
+				UIComponent child = children.get(i);
 
-                    // header container
-                    writer.startElement("li", null);
-                    writer.writeAttribute("class", headerClass, null);
-                    writer.writeAttribute("role", "tab", null);
-                    writer.writeAttribute(HTML.ARIA_EXPANDED, String.valueOf(active), null);
+				if (child instanceof Tab && child.isRendered()) {
+					Tab tab = (Tab) child;
+					String title = tab.getTitle();
+					boolean active = (i == activeIndex);
+					String headerClass = (active) ? Ribbon.ACTIVE_TAB_HEADER_CLASS : Ribbon.INACTIVE_TAB_HEADER_CLASS;
 
-                    writer.startElement("a", null);
-                    writer.writeAttribute("href", tab.getClientId(context), null);
-                    if (title != null) {
-                        writer.writeText(title, null);
-                    }
-                    writer.endElement("a");
+					// header container
+					writer.startElement("li", null);
+					writer.writeAttribute("class", headerClass, null);
+					writer.writeAttribute("role", "tab", null);
+					writer.writeAttribute(HTML.ARIA_EXPANDED, String.valueOf(active), null);
 
-                    writer.endElement("li");
-                }
-            }
-        }
-        writer.endElement("ul");
-    }
+					writer.startElement("a", null);
+					writer.writeAttribute("href", tab.getClientId(context), null);
+					if (title != null) {
+						writer.writeText(title, null);
+					}
+					writer.endElement("a");
 
-    protected void encodeTabContents(FacesContext context, Ribbon ribbon) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        int activeIndex = ribbon.getActiveIndex();
-        int childCount = ribbon.getChildCount();
+					writer.endElement("li");
+				}
+			}
+		}
+		writer.endElement("ul");
+	}
 
-        writer.startElement("div", ribbon);
-        writer.writeAttribute("class", Ribbon.PANELS_CLASS, null);
+	protected void encodeTabContents(FacesContext context, Ribbon ribbon) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		int activeIndex = ribbon.getActiveIndex();
+		int childCount = ribbon.getChildCount();
 
-        if (childCount > 0) {
-            List<UIComponent> children = ribbon.getChildren();
-            for (int i = 0; i < childCount; i++) {
-                UIComponent child = children.get(i);
+		writer.startElement("div", ribbon);
+		writer.writeAttribute("class", Ribbon.PANELS_CLASS, null);
 
-                if (child instanceof Tab && child.isRendered()) {
-                    Tab tab = (Tab) child;
-                    encodeTabContent(context, ribbon, tab, (i == activeIndex));
-                }
-            }
-        }
+		if (childCount > 0) {
+			List<UIComponent> children = ribbon.getChildren();
+			for (int i = 0; i < childCount; i++) {
+				UIComponent child = children.get(i);
 
-        writer.endElement("div");
-    }
+				if (child instanceof Tab && child.isRendered()) {
+					Tab tab = (Tab) child;
+					encodeTabContent(context, ribbon, tab, (i == activeIndex));
+				}
+			}
+		}
 
-    protected void encodeTabContent(FacesContext context, Ribbon ribbon, Tab tab, boolean active) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        String contentClass = active ? Ribbon.ACTIVE_TAB_CONTENT_CLASS : Ribbon.INACTIVE_TAB_CONTENT_CLASS;
-        int childCount = tab.getChildCount();
+		writer.endElement("div");
+	}
 
-        writer.startElement("div", ribbon);
-        writer.writeAttribute("id", tab.getClientId(context), null);
-        writer.writeAttribute("class", contentClass, null);
+	protected void encodeTabContent(FacesContext context, Ribbon ribbon, Tab tab, boolean active) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		String contentClass = active ? Ribbon.ACTIVE_TAB_CONTENT_CLASS : Ribbon.INACTIVE_TAB_CONTENT_CLASS;
+		int childCount = tab.getChildCount();
 
-        if (childCount > 0) {
-            writer.startElement("ul", ribbon);
-            writer.writeAttribute("class", Ribbon.GROUPS_CLASS, null);
+		writer.startElement("div", ribbon);
+		writer.writeAttribute("id", tab.getClientId(context), null);
+		writer.writeAttribute("class", contentClass, null);
 
-            List<UIComponent> children = tab.getChildren();
-            for (int i = 0; i < childCount; i++) {
-                UIComponent child = children.get(i);
+		if (childCount > 0) {
+			writer.startElement("ul", ribbon);
+			writer.writeAttribute("class", Ribbon.GROUPS_CLASS, null);
 
-                if (child instanceof RibbonGroup && child.isRendered()) {
-                    RibbonGroup group = (RibbonGroup) child;
-                    group.encodeAll(context);
-                }
-            }
+			List<UIComponent> children = tab.getChildren();
+			for (int i = 0; i < childCount; i++) {
+				UIComponent child = children.get(i);
 
-            writer.endElement("ul");
-        }
+				if (child instanceof RibbonGroup && child.isRendered()) {
+					RibbonGroup group = (RibbonGroup) child;
+					group.encodeAll(context);
+				}
+			}
 
-        writer.endElement("div");
-    }
+			writer.endElement("ul");
+		}
 
-    @Override
-    public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
-        // Do nothing
-    }
+		writer.endElement("div");
+	}
 
-    @Override
-    public boolean getRendersChildren() {
-        return true;
-    }
+	@Override
+	public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
+		// Do nothing
+	}
+
+	@Override
+	public boolean getRendersChildren() {
+		return true;
+	}
 }

@@ -27,6 +27,7 @@ import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.visit.VisitContext;
 import javax.faces.context.FacesContext;
+
 import org.primefaces.component.api.Widget;
 import org.primefaces.util.ComponentUtils;
 
@@ -72,6 +73,20 @@ public class SearchExpressionUtils {
 
         if (resolvedComponent instanceof Widget) {
             return "PF('" + ((Widget) resolvedComponent).resolveWidgetVar() + "')";
+        }
+        else {
+            throw new FacesException("Component with clientId " + resolvedComponent.getClientId() + " is not a Widget");
+        }
+    }
+
+    public static String resolveWidgetVarName(String expression, UIComponent component) {
+        UIComponent resolvedComponent = SearchExpressionFacade.resolveComponent(
+                FacesContext.getCurrentInstance(),
+                component,
+                expression);
+
+        if (resolvedComponent instanceof Widget) {
+            return ((Widget) resolvedComponent).resolveWidgetVar();
         }
         else {
             throw new FacesException("Component with clientId " + resolvedComponent.getClientId() + " is not a Widget");

@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:composite="http://java.sun.com/jsf/composite">
+
+<!-- INTERFACE -->
+<composite:interface componentType="com.ilogs.component.logviewer.LogViewerComponent">
+	<composite:attribute name="loggerType" type="java.lang.String" shortDescription="Type of logger to open" />
+	<composite:attribute name="file" type="java.io.File" shortDescription="Log file to download" />
+	<composite:attribute name="model" type="com.ilogs.component.logviewer.LogViewerDataModel" shortDescription="DataModel to display" />
+	<composite:attribute name="reversed" type="java.lang.Boolean" shortDescription="Reversed lines" />
+	<composite:attribute name="maxLines" type="java.lang.Integer" shortDescription="Number of lines to read from file" />
+</composite:interface>
+
+<!-- IMPLEMENTATION -->
+<composite:implementation>
+
+	<div id="#{cc.clientId}">
+
+		<p:panel>
+			<p:grid columns="6">
+				<p:field for="filterLogLevel" label="#{mls.logLevel}">
+					<p:selectOneMenu id="filterLogLevel" value="#{cc.model.logLevel}" converter="omnifaces.SelectItemsIndexConverter" label="#{mls.logLevel}">
+						<f:selectItems value="#{enums.logLevels}"/>
+					</p:selectOneMenu>
+				</p:field>
+
+				<p:field for="filterStartDate" label="#{mls.startDate}">
+					<p:calendar id="filterStartDate"  value="#{cc.model.startDate}" label="#{mls.startDate}" />
+				</p:field>
+
+				<p:field for="filterEndDate" label="#{mls.endDate}">
+					<p:calendar id="filterEndDate"  value="#{cc.model.endDate}" label="#{mls.endDate}" />
+				</p:field>
+
+				<p:field for="filterText" label="#{mls.filter}">
+					<p:inputText id="filterText" value="#{cc.model.text}" label="#{mls.filter}" placeholder="#{mls.filter}" />
+				</p:field>
+
+				<p:field for="maxLines" label="#{mls.lines}">
+					<p:inputNumber id="maxLines" decimalPlaces="0" style="width:80px" minValue="0" label="#{mls.lines}" placeholder="#{mls.lines}" value="#{cc.maxLines}" />
+				</p:field>
+
+				<p:field for="sortOrder">
+					<p:selectBooleanButton id="sortOrder" value="#{cc.reversed}" title="#{mls.showNewEntryFirst}" offLabel="#{mls.ascending}"  styleClass="floatlabel-spacer"
+						onLabel="#{mls.descending}" offIcon="#{uiUtils.icon('fa-sort-alpha-up','fa-fw')}" onIcon="#{uiUtils.icon('fa-sort-alpha-down','fa-fw')}">
+					</p:selectBooleanButton>
+
+					<p:commandButton id="refresh" value="#{mls.refresh}" icon="#{uiUtils.icon('fa-sync','fa-fw')}" update="@form" onclick="block()" oncomplete="unblock()" styleClass="GreenButton floatlabel-spacer" />
+				</p:field>
+			</p:grid>
+		</p:panel>
+
+	 	<p:dataScroller id="transferLogs" value="#{cc.model}" var="_logItem" chunkSize="100" lazy="true" styleClass="ipcp-log-viewer">
+	 		<f:facet name="header">
+	 			<h:outputText value="#{cc.file.name}"/>
+	 		</f:facet>
+
+	 		<p:panel styleClass="date-column">
+	 			<h:outputText value="#{_logItem.timeMillis ne 0 ? _logItem.timeMillis : null}" converter="DateConverter" seconds="true" styleClass="ui-widget-minor spacer-right" />
+	 			<ils:status value="#{_logItem.level}" label="true" styleClass="Fright spacer-right" />
+	 		</p:panel>
+	 		<p:panel styleClass="message-column">
+	 			<h:outputText value="#{_logItem.message}" style="white-space:pre-line" />
+	 		</p:panel>
+
+	 	</p:dataScroller>
+
+	</div>
+
+</composite:implementation>
+</html>

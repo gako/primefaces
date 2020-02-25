@@ -26,6 +26,7 @@ package org.primefaces.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.faces.component.ContextCallback;
 import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
@@ -38,6 +39,21 @@ public class ComponentTraversalUtils {
     private ComponentTraversalUtils() {
     }
 
+    public static UIComponent closest(List<Class<? extends UIComponent>> types, UIComponent base) {
+	UIComponent parent = base.getParent();
+
+        while (parent != null) {
+            for (Class<? extends UIComponent> type : types) {
+        	if (type.isAssignableFrom(parent.getClass())) {
+                    return parent;
+                }
+            }
+            parent = parent.getParent();
+        }
+
+        return null;
+
+    }
     public static <T> T closest(Class<T> type, UIComponent base) {
         UIComponent parent = base.getParent();
 

@@ -31,7 +31,12 @@ import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.component.ActionSource;
 import javax.faces.component.UIComponent;
-import javax.faces.view.facelets.*;
+import javax.faces.view.facelets.ComponentHandler;
+import javax.faces.view.facelets.FaceletContext;
+import javax.faces.view.facelets.FaceletException;
+import javax.faces.view.facelets.TagAttribute;
+import javax.faces.view.facelets.TagConfig;
+import javax.faces.view.facelets.TagHandler;
 
 public class DataExporterTagHandler extends TagHandler {
 
@@ -47,6 +52,7 @@ public class DataExporterTagHandler extends TagHandler {
     private final TagAttribute options;
     private final TagAttribute onTableRender;
     private final TagAttribute customExporter;
+    private final TagAttribute onConvertValue;
 
     public DataExporterTagHandler(TagConfig tagConfig) {
         super(tagConfig);
@@ -62,6 +68,7 @@ public class DataExporterTagHandler extends TagHandler {
         options = getAttribute("options");
         onTableRender = getAttribute("onTableRender");
         customExporter = getAttribute("customExporter");
+        onConvertValue = getAttribute("onConvertValue");
     }
 
     @Override
@@ -79,6 +86,7 @@ public class DataExporterTagHandler extends TagHandler {
             ValueExpression optionsVE = null;
             MethodExpression onTableRenderME = null;
             ValueExpression customExporterVE = null;
+            MethodExpression onConvertValueME = null;
 
             if (encoding != null) {
                 encodingVE = encoding.getValueExpression(faceletContext, Object.class);
@@ -107,9 +115,12 @@ public class DataExporterTagHandler extends TagHandler {
             if (customExporter != null) {
                 customExporterVE = customExporter.getValueExpression(faceletContext, Object.class);
             }
+            if (onConvertValue != null) {
+                onConvertValueME = onConvertValue.getMethodExpression(faceletContext, String.class,new Class[]{String.class});
+            }
             ActionSource actionSource = (ActionSource) parent;
             DataExporter dataExporter = new DataExporter(targetVE, typeVE, fileNameVE, pageOnlyVE, selectionOnlyVE,
-                    encodingVE, preProcessorME, postProcessorME, optionsVE, onTableRenderME);
+                    encodingVE, preProcessorME, postProcessorME, optionsVE, onTableRenderME,onConvertValueME);
             dataExporter.setRepeat(repeatVE);
             dataExporter.setCustomExporter(customExporterVE);
             actionSource.addActionListener(dataExporter);

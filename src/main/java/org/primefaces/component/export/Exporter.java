@@ -32,7 +32,13 @@ import java.util.Map;
 
 import javax.el.MethodExpression;
 import javax.faces.FacesException;
-import javax.faces.component.*;
+import javax.faces.component.EditableValueHolder;
+import javax.faces.component.UIColumn;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIData;
+import javax.faces.component.UIPanel;
+import javax.faces.component.UISelectMany;
+import javax.faces.component.ValueHolder;
 import javax.faces.component.html.HtmlCommandLink;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.context.FacesContext;
@@ -41,7 +47,9 @@ import javax.faces.convert.Converter;
 import org.primefaces.component.celleditor.CellEditor;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.overlaypanel.OverlayPanel;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.util.ComponentUtils;
+import org.primefaces.util.Constants;
 
 public abstract class Exporter {
 
@@ -64,6 +72,8 @@ public abstract class Exporter {
             return facet;
         }
     }
+
+    protected MethodExpression onConvertValue;
 
     public abstract void export(FacesContext facesContext, DataTable table,
                                 String outputFileName, boolean pageOnly, boolean selectionOnly,
@@ -115,6 +125,19 @@ public abstract class Exporter {
     }
 
     protected String exportValue(FacesContext context, UIComponent component) {
+	String value = exportRawValue(context, component);
+	value = convertValue(context, value);
+	return value;
+    }
+
+    protected String convertValue(FacesContext context, String value) {
+	if (onConvertValue!=null) {
+	    value =(String) onConvertValue.invoke(context.getELContext(), new String[] { value});
+	}
+	return value;
+    }
+
+    protected String exportRawValue(FacesContext context, UIComponent component) {
 
         if (component instanceof HtmlCommandLink) {  //support for PrimeFaces and standard HtmlCommandLink
             HtmlCommandLink link = (HtmlCommandLink) component;
@@ -127,11 +150,11 @@ public abstract class Exporter {
                 //export first value holder
                 for (UIComponent child : link.getChildren()) {
                     if (child instanceof ValueHolder) {
-                        return exportValue(context, child);
+                        return exportRawValue(context, child);
                     }
                 }
 
-                return "";
+                return Constants.EMPTY_STRING;
             }
         }
         else if (component instanceof ValueHolder) {
@@ -146,7 +169,7 @@ public abstract class Exporter {
             ValueHolder valueHolder = (ValueHolder) component;
             Object value = valueHolder.getValue();
             if (value == null) {
-                return "";
+                return Constants.EMPTY_STRING;
             }
 
             Converter converter = valueHolder.getConverter();
@@ -194,13 +217,13 @@ public abstract class Exporter {
             }
         }
         else if (component instanceof CellEditor) {
-            return exportValue(context, ((CellEditor) component).getFacet("output"));
+            return exportRawValue(context, ((CellEditor) component).getFacet("output"));
         }
         else if (component instanceof HtmlGraphicImage) {
             return (String) component.getAttributes().get("alt");
         }
         else if (component instanceof OverlayPanel) {
-            return "";
+            return Constants.EMPTY_STRING;
         }
         else {
             //This would get the plain texts on UIInstructions when using Facelets
@@ -210,7 +233,7 @@ public abstract class Exporter {
                 return value.trim();
             }
             else {
-                return "";
+                return Constants.EMPTY_STRING;
             }
         }
     }
@@ -331,6 +354,27 @@ public abstract class Exporter {
         }
 
         return null;
+    }
+
+    public String getSheetName(FacesContext context, TreeTable table) {
+	UIComponent header = table.getFacet("header");
+	if (header != null) {
+	    if (header instanceof UIPanel) {
+		for (UIComponent child : header.getChildren()) {
+		    if (child.isRendered()) {
+			String value = ComponentUtils.getValueToRender(context, child);
+
+			if (value != null) {
+			    return value;
+			}
+		    }
+		}
+	    } else {
+		return ComponentUtils.getValueToRender(context, header);
+	    }
+	}
+
+	return null;
     }
 
     protected void preRowExport(DataTable table, Object document) {

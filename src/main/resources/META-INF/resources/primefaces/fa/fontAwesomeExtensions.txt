@@ -1,3 +1,12 @@
+/*
+* Howto install a new fontawesome version:
+* - Download the web package,
+* - Copy the webfonts into this folder.
+* - Copy the two files css/all.min.css and css/v4-shims.min.css to this dir merge them into font-awesome.css and adjust the path for the font-face definitions
+* -
+**/
+
+
 Extensions
 
 - Override ui-icon class

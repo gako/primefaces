@@ -23,8 +23,6 @@
  */
 package org.primefaces.model;
 
-import org.primefaces.component.fileupload.FileUpload;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,9 +31,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.faces.FacesException;
 import javax.servlet.http.Part;
+
 import org.apache.commons.io.input.BoundedInputStream;
+import org.primefaces.component.fileupload.FileUpload;
 import org.primefaces.util.FileUploadUtils;
 
 public class NativeUploadedFile implements UploadedFile, Serializable {
@@ -230,5 +231,10 @@ public class NativeUploadedFile implements UploadedFile, Serializable {
         catch (UnsupportedEncodingException ex) {
             throw new FacesException(ex);
         }
+    }
+
+    @Override
+    public String toString() {
+        return getFileName();
     }
 }

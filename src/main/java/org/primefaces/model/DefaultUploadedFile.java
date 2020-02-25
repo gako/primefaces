@@ -89,4 +89,9 @@ public class DefaultUploadedFile implements UploadedFile, Serializable {
         fileItem.write(new File(validFilePath));
     }
 
+    @Override
+    public String toString() {
+        return getFileName();
+    }
+
 }

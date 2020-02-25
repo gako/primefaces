@@ -38,6 +38,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.expression.SearchExpressionFacade;
 
 public class DataExporter implements ActionListener, StateHolder {
@@ -66,12 +67,14 @@ public class DataExporter implements ActionListener, StateHolder {
 
     private ValueExpression customExporter;
 
+    private MethodExpression onConvertValue;
+
     public DataExporter() {
     }
 
     public DataExporter(ValueExpression target, ValueExpression type, ValueExpression fileName, ValueExpression pageOnly,
                         ValueExpression selectionOnly, ValueExpression encoding, MethodExpression preProcessor,
-                        MethodExpression postProcessor, ValueExpression options, MethodExpression onTableRender) {
+                        MethodExpression postProcessor, ValueExpression options, MethodExpression onTableRender, MethodExpression onConvertVaule) {
         this.target = target;
         this.type = type;
         this.fileName = fileName;
@@ -82,6 +85,7 @@ public class DataExporter implements ActionListener, StateHolder {
         this.encoding = encoding;
         this.options = options;
         this.onTableRender = onTableRender;
+        this.onConvertValue = onConvertVaule;
     }
 
     @Override
@@ -126,11 +130,12 @@ public class DataExporter implements ActionListener, StateHolder {
 
         Object customExporterInstance = null;
         if (customExporter != null) {
-            customExporterInstance = (Object) customExporter.getValue(elContext);
+            customExporterInstance = customExporter.getValue(elContext);
         }
 
         try {
             Exporter exporter = getExporter(exportAs, exporterOptions , customExporterInstance);
+            exporter.onConvertValue = onConvertValue;
 
             if (!repeating) {
                 List components = SearchExpressionFacade.resolveComponents(context, event.getComponent(), tables);
@@ -139,17 +144,27 @@ public class DataExporter implements ActionListener, StateHolder {
                     exporter.export(context, outputFileName, components, isPageOnly, isSelectionOnly,
                             encodingType, preProcessor, postProcessor, exporterOptions, onTableRender);
                 }
-                else {
-                    UIComponent component = (UIComponent) components.get(0);
-                    if (!(component instanceof DataTable)) {
-                        throw new FacesException("Unsupported datasource target:\"" + component.getClass().getName()
-                                + "\", exporter must target a PrimeFaces DataTable.");
-                    }
+		else {
+		    UIComponent component = (UIComponent) components.get(0);
 
-                    DataTable table = (DataTable) component;
-                    exporter.export(context, table, outputFileName, isPageOnly, isSelectionOnly, encodingType,
-                            preProcessor, postProcessor, exporterOptions, onTableRender);
-                }
+		    if (component instanceof DataTable) {
+			DataTable table = (DataTable) component;
+			exporter.export(context, table, outputFileName, isPageOnly, isSelectionOnly, encodingType,
+				preProcessor, postProcessor, exporterOptions, onTableRender);
+		    } else if (component instanceof TreeTable && exporter instanceof ExtendedExporter) {
+			TreeTable table = (TreeTable) component;
+			((ExtendedExporter) exporter).export(context, table, outputFileName, isPageOnly,
+				isSelectionOnly, encodingType, preProcessor, postProcessor, exporterOptions,
+				onTableRender);
+		    } else {
+			throw new FacesException("Unsupported datasource target:\"" + component.getClass().getName()
+				+ "\", exporter must target a PrimeFaces DataTable or TreeTable.");
+		    }
+
+		    DataTable table = (DataTable) component;
+		    exporter.export(context, table, outputFileName, isPageOnly, isSelectionOnly, encodingType,
+			    preProcessor, postProcessor, exporterOptions, onTableRender);
+		}
             }
             else {
                 String[] clientIds = tables.split("\\s+|,");

@@ -37,6 +37,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionListener;
 import javax.faces.flow.FlowHandler;
 import javax.faces.lifecycle.ClientWindow;
+
 import org.primefaces.component.api.UIOutcomeTarget;
 import org.primefaces.context.PrimeApplicationContext;
 
@@ -149,6 +150,10 @@ public class OutcomeTargetRenderer extends CoreRenderer {
 
     protected boolean isIncludeViewParams(UIOutcomeTarget outcomeTarget, NavigationCase navCase) {
         return outcomeTarget.isIncludeViewParams() || navCase.isIncludeViewParams();
+    }
+
+    public String resolveTargetURL(FacesContext context, UIOutcomeTarget outcomeTarget) {
+	return getTargetURL(context	, outcomeTarget);
     }
 
     protected String getTargetURL(FacesContext context, UIOutcomeTarget outcomeTarget) {

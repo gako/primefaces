@@ -36,21 +36,35 @@ import javax.faces.component.visit.VisitContext;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.primefaces.component.api.DynamicColumn;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.util.ComponentUtils;
 import org.primefaces.util.Constants;
 
-public class ExcelExporter extends Exporter {
+public class ExcelExporter extends ExtendedExporter {
 
-    private CellStyle cellStyle;
-    private CellStyle facetStyle;
+    protected CellStyle cellStyle;
+    protected CellStyle facetStyle;
 
     @Override
     public void export(FacesContext context, DataTable table, String filename, boolean pageOnly, boolean selectionOnly, String encodingType,
@@ -87,6 +101,43 @@ public class ExcelExporter extends Exporter {
 
         writeExcelToResponse(context.getExternalContext(), wb, filename);
     }
+
+    @Override
+    public void export(FacesContext context, TreeTable table, String filename, boolean pageOnly, boolean selectionOnly,
+	    String encodingType, MethodExpression preProcessor, MethodExpression postProcessor, ExporterOptions options,
+	    MethodExpression onTableRendered) throws IOException {
+	Workbook wb = createWorkBook();
+	String sheetName = getSheetName(context, table);
+	if (sheetName == null) {
+	    sheetName = table.getId();
+	}
+
+	sheetName = WorkbookUtil.createSafeSheetName(sheetName);
+	if (sheetName.equals("empty") || sheetName.equals("null")) {
+	    sheetName = "Sheet";
+	}
+
+	Sheet sheet = wb.createSheet(sheetName);
+
+	if (preProcessor != null) {
+	    preProcessor.invoke(context.getELContext(), new Object[] { wb });
+	}
+
+	applyOptions(wb, null, sheet, options);
+	exportTable(context, table, sheet, pageOnly, selectionOnly);
+
+	for (int i = 0; i < table.getColumnsCount(); i++) {
+	    sheet.autoSizeColumn((short) i);
+	}
+
+	if (postProcessor != null) {
+	    postProcessor.invoke(context.getELContext(), new Object[] { wb });
+	}
+
+	writeExcelToResponse(context.getExternalContext(), wb, filename);
+
+    }
+
 
     @Override
     public void export(FacesContext context, String filename, List<DataTable> tables, boolean pageOnly, boolean selectionOnly,
@@ -166,11 +217,36 @@ public class ExcelExporter extends Exporter {
         }
     }
 
+    @Override
+    protected void exportCells(TreeTable table, Object document) {
+	Sheet sheet = (Sheet) document;
+	int sheetRowIndex = sheet.getLastRowNum() + 1;
+	Row row = sheet.createRow(sheetRowIndex);
+
+	for (UIColumn col : table.getColumns()) {
+	    if (col instanceof DynamicColumn) {
+		((DynamicColumn) col).applyStatelessModel();
+	    }
+
+	    if (col.isRendered() && col.isExportable()) {
+		addColumnValue(row, col.getChildren(), col);
+	    }
+	}
+    }
+
     protected void addColumnFacets(DataTable table, Sheet sheet, Exporter.ColumnType columnType) {
+	addColumnFacets(table.getColumns(), sheet, columnType);
+    }
+
+    protected void addColumnFacets(TreeTable table, Sheet sheet, Exporter.ColumnType columnType) {
+	addColumnFacets(table.getColumns(), sheet, columnType);
+    }
+
+    protected void addColumnFacets(List<UIColumn> columns, Sheet sheet, Exporter.ColumnType columnType) {
         int sheetRowIndex = columnType.equals(Exporter.ColumnType.HEADER) ? 0 : (sheet.getLastRowNum() + 1);
         Row rowHeader = sheet.createRow(sheetRowIndex);
 
-        for (UIColumn col : table.getColumns()) {
+        for (UIColumn col : columns) {
             if (col instanceof DynamicColumn) {
                 ((DynamicColumn) col).applyStatelessModel();
             }
@@ -301,6 +377,25 @@ public class ExcelExporter extends Exporter {
         table.setRowIndex(-1);
     }
 
+    public void exportTable(FacesContext context, TreeTable table, Sheet sheet, boolean pageOnly, boolean selectionOnly) {
+        addColumnFacets(table, sheet, Exporter.ColumnType.HEADER);
+
+        if (pageOnly) {
+            exportPageOnly(context, table, sheet);
+        }
+        else if (selectionOnly) {
+            throw new IllegalArgumentException("Selection Export not supported for TreeTable");
+        }
+        else {
+            exportAll(context, table, sheet);
+        }
+
+        if (table.hasFooterColumn()) {
+            addColumnFacets(table, sheet, Exporter.ColumnType.FOOTER);
+        }
+
+    }
+
     protected void applyOptions(Workbook wb, DataTable table, Sheet sheet, ExporterOptions options) {
         facetStyle = wb.createCellStyle();
         facetStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -387,6 +482,9 @@ public class ExcelExporter extends Exporter {
             }
         }
 
+        cellStyle.setFillPattern(FillPatternType.NO_FILL);
         cellStyle.setFont(cellFont);
     }
+
+
 }

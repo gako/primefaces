@@ -27,6 +27,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.primefaces.util.LangUtils;
+
 /**
  * Base implementation for model of a programmatic menu
  */
@@ -45,7 +47,9 @@ public class BaseMenuModel implements MenuModel, Serializable {
 
     @Override
     public void addElement(MenuElement element) {
-        elements.add(element);
+        if (element!=null) {
+    		elements.add(element);
+        }
     }
 
     @Override
@@ -58,7 +62,7 @@ public class BaseMenuModel implements MenuModel, Serializable {
         this.generateUniqueIds(getElements(), null);
     }
 
-    private void generateUniqueIds(List<MenuElement> elements, String seed) {
+    protected void generateUniqueIds(List<MenuElement> elements, String seed) {
         if (elements == null || elements.isEmpty()) {
             return;
         }
@@ -66,11 +70,13 @@ public class BaseMenuModel implements MenuModel, Serializable {
         int counter = 0;
 
         for (MenuElement element : elements) {
-            String id = (seed == null) ? String.valueOf(counter++) : seed + ID_SEPARATOR + counter++;
-            element.setId(id);
+        	if (element != null && LangUtils.isValueBlank(element.getId())) {
+        	    String id = (seed == null) ? String.valueOf(counter++) : seed + ID_SEPARATOR + counter++;
+        	    element.setId(id);
+        	}
 
             if (element instanceof MenuGroup) {
-                generateUniqueIds(((MenuGroup) element).getElements(), id);
+                generateUniqueIds(((MenuGroup) element).getElements(), element.getId());
             }
         }
     }

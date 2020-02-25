@@ -24,7 +24,8 @@
 package org.primefaces.model.menu;
 
 /**
- * Default implementation of a MenuModel optimized for static menus that do not change once built.
+ * Default implementation of a MenuModel optimized for static menus that do not
+ * change once built.
  */
 public class DefaultMenuModel extends BaseMenuModel {
 
@@ -32,11 +33,64 @@ public class DefaultMenuModel extends BaseMenuModel {
 
     private boolean generated = false;
 
+    protected String seed;
+
+    public DefaultMenuModel() {
+	this.seed = null;
+    }
+
+    public DefaultMenuModel(String seed) {
+	this.seed = seed;
+    }
+
     @Override
     public void generateUniqueIds() {
-        if (!generated) {
-            super.generateUniqueIds();
-            generated = true;
-        }
+	if (!generated) {
+	    super.generateUniqueIds(getElements(), seed);
+	    generated = true;
+	}
+    }
+
+    public void expandAll() {
+	for (MenuElement element : getElements()) {
+	    if (element instanceof DefaultSubMenu) {
+		((DefaultSubMenu) element).setExpanded(true);
+		expandAll((DefaultSubMenu) element);
+	    }
+	}
+    }
+
+    protected void expandAll(Submenu menu) {
+	for (Object element : menu.getElements()) {
+	    if (element instanceof DefaultSubMenu) {
+		((DefaultSubMenu) element).setExpanded(true);
+		expandAll((DefaultSubMenu) element);
+	    }
+	}
+    }
+
+    public int getTotalMenuItemSize() {
+	int totalSize = 0;
+	for (MenuElement element : getElements()) {
+	    if (element instanceof Submenu) {
+		totalSize += getTotalMenuItemSize((Submenu) element);
+	    } else {
+		totalSize++;
+	    }
+	}
+	return totalSize;
+    }
+
+    protected int getTotalMenuItemSize(Submenu menu) {
+	int totalSize = 0;
+	for (Object element : menu.getElements()) {
+	    if (element instanceof Submenu) {
+		totalSize += getTotalMenuItemSize((Submenu) element);
+	    } else {
+		totalSize++;
+	    }
+	}
+
+	return totalSize;
     }
 }

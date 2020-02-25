@@ -123,7 +123,8 @@ public class SelectOneMenuRenderer extends SelectOneRenderer {
         String styleClass = menu.getStyleClass();
         styleClass = styleClass == null ? SelectOneMenu.STYLE_CLASS : SelectOneMenu.STYLE_CLASS + " " + styleClass;
         styleClass = !valid ? styleClass + " ui-state-error" : styleClass;
-        styleClass = menu.isDisabled() ? styleClass + " ui-state-disabled" : styleClass;
+        styleClass = menu.isDisabled() || menu.isReadonly() ? styleClass + " ui-state-disabled" : styleClass;
+        styleClass = menu.isReadonly() ? styleClass + " ui-state-readonly" : styleClass;
 
         writer.startElement("div", menu);
         writer.writeAttribute("id", clientId, "id");
@@ -225,6 +226,10 @@ public class SelectOneMenuRenderer extends SelectOneRenderer {
 
             if (menu.isDisabled()) {
                 writer.writeAttribute("disabled", "disabled", null);
+            }
+
+            if (menu.isReadonly()) {
+                writer.writeAttribute("readonly", "readonly", null);
             }
 
             String valueToRender = ComponentUtils.getValueToRender(context, menu);

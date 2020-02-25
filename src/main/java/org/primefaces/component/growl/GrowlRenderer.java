@@ -24,7 +24,9 @@
 package org.primefaces.component.growl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -39,90 +41,110 @@ import org.primefaces.util.WidgetBuilder;
 
 public class GrowlRenderer extends UINotificationRenderer {
 
-    @Override
-    public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        Growl growl = (Growl) component;
-        String clientId = growl.getClientId(context);
-        String widgetVar = growl.resolveWidgetVar();
+	@Override
+	public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		Growl growl = (Growl) component;
+		String clientId = growl.getClientId(context);
+		String widgetVar = growl.resolveWidgetVar();
 
-        writer.startElement("span", growl);
-        writer.writeAttribute("id", clientId, "id");
+		writer.startElement("span", growl);
+		writer.writeAttribute("id", clientId, "id");
 
-        if (PrimeApplicationContext.getCurrentInstance(context).getConfig().isClientSideValidationEnabled()) {
-            writer.writeAttribute("class", "ui-growl-pl", null);
-            writer.writeAttribute(HTML.WIDGET_VAR, widgetVar, null);
-            writer.writeAttribute("data-global", growl.isGlobalOnly(), null);
-            writer.writeAttribute("data-summary", growl.isShowSummary(), null);
-            writer.writeAttribute("data-detail", growl.isShowDetail(), null);
-            writer.writeAttribute("data-severity", getClientSideSeverity(growl.getSeverity()), null);
-            writer.writeAttribute("data-redisplay", String.valueOf(growl.isRedisplay()), null);
-        }
+		if (PrimeApplicationContext.getCurrentInstance(context).getConfig().isClientSideValidationEnabled()) {
+			writer.writeAttribute("class", "ui-growl-pl", null);
+			writer.writeAttribute(HTML.WIDGET_VAR, widgetVar, null);
+			writer.writeAttribute("data-global", growl.isGlobalOnly(), null);
+			writer.writeAttribute("data-summary", growl.isShowSummary(), null);
+			writer.writeAttribute("data-detail", growl.isShowDetail(), null);
+			writer.writeAttribute("data-severity", getClientSideSeverity(growl.getSeverity()), null);
+			writer.writeAttribute("data-redisplay", String.valueOf(growl.isRedisplay()), null);
+		}
 
-        writer.endElement("span");
+		writer.endElement("span");
 
-        WidgetBuilder wb = getWidgetBuilder(context);
-        wb.init("Growl", growl.resolveWidgetVar(), clientId)
-                .attr("sticky", growl.isSticky())
-                .attr("life", growl.getLife())
-                .attr("escape", growl.isEscape())
-                .attr("keepAlive", growl.isKeepAlive());
+		WidgetBuilder wb = getWidgetBuilder(context);
+		wb.init("Growl", growl.resolveWidgetVar(), clientId).attr("sticky", growl.isSticky()).attr("life", growl.getLife()).attr("escape", growl.isEscape()).attr("keepAlive", growl.isKeepAlive());
 
-        writer.write(",msgs:");
-        encodeMessages(context, growl);
+		writer.write(",msgs:");
+		encodeMessages(context, growl);
 
-        wb.finish();
-    }
+		wb.finish();
+	}
 
-    protected void encodeMessages(FacesContext context, Growl growl) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        String _for = growl.getFor();
-        boolean first = true;
-        Iterator<FacesMessage> messages;
-        if (_for != null) {
-            messages = context.getMessages(_for);
-        }
-        else {
-            messages = growl.isGlobalOnly() ? context.getMessages(null) : context.getMessages();
-        }
+	protected void encodeMessages(FacesContext context, Growl growl) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		String _for = growl.getFor();
+		boolean first = true;
+		Iterator<FacesMessage> messages;
+		if (_for != null) {
+			messages = context.getMessages(_for);
+		} else {
+			messages = growl.isGlobalOnly() ? context.getMessages(null) : context.getMessages();
+		}
 
-        writer.write("[");
+		writer.write("[");
 
-        while (messages.hasNext()) {
-            FacesMessage message = messages.next();
-            String severityName = getSeverityName(message);
+		// ILOGS FEATURE ++
+		mergeSimiliarMessages(growl, messages);
+		// ILOGS FEATURE --
 
-            if (shouldRender(growl, message, severityName)) {
-                if (!first) {
-                    writer.write(",");
-                }
-                else {
-                    first = false;
-                }
+		while (messages.hasNext()) {
+			FacesMessage message = messages.next();
+			String severityName = getSeverityName(message);
 
-                String summary = EscapeUtils.forJavaScript(message.getSummary());
-                String detail = EscapeUtils.forJavaScript(message.getDetail());
+			if (shouldRender(growl, message, severityName)) {
+				if (!first) {
+					writer.write(",");
+				} else {
+					first = false;
+				}
 
-                writer.write("{");
+				String summary = EscapeUtils.forJavaScript(message.getSummary());
+				String detail = EscapeUtils.forJavaScript(message.getDetail());
 
-                if (growl.isShowSummary() && growl.isShowDetail()) {
-                    writer.writeText("summary:\"" + summary + "\",detail:\"" + detail + "\"", null);
-                }
-                else if (growl.isShowSummary() && !growl.isShowDetail()) {
-                    writer.writeText("summary:\"" + summary + "\",detail:\"\"", null);
-                }
-                else if (!growl.isShowSummary() && growl.isShowDetail()) {
-                    writer.writeText("summary:\"\",detail:\"" + detail + "\"", null);
-                }
+				writer.write("{");
 
-                writer.write(",severity:'" + severityName + "'");
+				if (growl.isShowSummary() && growl.isShowDetail()) {
+					writer.writeText("summary:\"" + summary + "\",detail:\"" + detail + "\"", null);
+				} else if (growl.isShowSummary() && !growl.isShowDetail()) {
+					writer.writeText("summary:\"" + summary + "\",detail:\"\"", null);
+				} else if (!growl.isShowSummary() && growl.isShowDetail()) {
+					writer.writeText("summary:\"\",detail:\"" + detail + "\"", null);
+				}
 
-                writer.write("}");
+				writer.write(",severity:'" + severityName + "'");
 
-                message.rendered();
-            }
-        }
+				writer.write("}");
 
-        writer.write("]");
-    }
+				message.rendered();
+			}
+		}
+
+		writer.write("]");
+	}
+
+	// ILOGS FEATURE ++
+	protected void mergeSimiliarMessages(Growl growl, Iterator<FacesMessage> messages) {
+		// summary - content
+		Map<String, FacesMessage> map = new HashMap<String, FacesMessage>();
+		while (messages.hasNext()) {
+			FacesMessage message = messages.next();
+			String severityName = getSeverityName(message);
+
+			if (shouldRender(growl, message, severityName)) {
+				String summary = EscapeUtils.forJavaScript(message.getSummary());
+				String detail = EscapeUtils.forJavaScript(message.getDetail());
+
+				if (!map.containsKey(summary)) {
+					map.put(summary, message);
+				} else {
+					map.get(summary).setDetail(map.get(summary).getDetail() + "<br />" + detail);
+					messages.remove();
+				}
+			}
+		}
+	}
+	// ILOGS FEATURE --
+
 }

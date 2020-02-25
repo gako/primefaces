@@ -74,6 +74,12 @@ PrimeFaces.widget.Sticky = PrimeFaces.widget.BaseWidget.extend({
             this.ghost.remove();
             this.fixed = false;
         }
+    },
+
+    unsticky: function() {
+        Primefaces.utils.unbindScrollHandler(this,'scroll.' + this.id + '_align');
+        $(window).off(this, 'resize.' + this.id + '_align');
+        this.restore();
     }
 
 });

@@ -44,130 +44,130 @@ import org.primefaces.util.WidgetBuilder;
 
 public class MenuButtonRenderer extends BaseMenuRenderer {
 
-    @Override
-    protected void encodeMarkup(FacesContext context, AbstractMenu abstractMenu) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        MenuButton button = (MenuButton) abstractMenu;
-        String clientId = button.getClientId(context);
-        String styleClass = button.getStyleClass();
-        styleClass = styleClass == null ? MenuButton.CONTAINER_CLASS : MenuButton.CONTAINER_CLASS + " " + styleClass;
-        boolean disabled = button.isDisabled();
+	@Override
+	protected void encodeMarkup(FacesContext context, AbstractMenu abstractMenu) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		MenuButton button = (MenuButton) abstractMenu;
+		String clientId = button.getClientId(context);
+		String styleClass = button.getStyleClass();
+		styleClass = styleClass == null ? MenuButton.CONTAINER_CLASS : MenuButton.CONTAINER_CLASS + " " + styleClass;
+		boolean disabled = button.isDisabled();
 
-        writer.startElement("span", button);
-        writer.writeAttribute("id", clientId, "id");
-        writer.writeAttribute("class", styleClass, "class");
+		writer.startElement("span", button);
+		writer.writeAttribute("id", clientId, "id");
+		writer.writeAttribute("class", styleClass, "class");
 
-        if (button.getStyle() != null) {
-            writer.writeAttribute("style", button.getStyle(), "style");
-        }
-        if (button.getTitle() != null) {
-            writer.writeAttribute("title", button.getTitle(), "title");
-        }
-        encodeButton(context, button, clientId + "_button", disabled);
-        if (!disabled) {
-            encodeMenu(context, button, clientId + "_menu");
-        }
+		if (button.getStyle() != null) {
+			writer.writeAttribute("style", button.getStyle(), "style");
+		}
+		if (button.getTitle() != null) {
+			writer.writeAttribute("title", button.getTitle(), "title");
+		}
+		encodeButton(context, button, clientId + "_button", disabled);
+		if (!disabled) {
+			encodeMenu(context, button, clientId + "_menu");
+		}
 
-        writer.endElement("span");
-    }
+		writer.endElement("span");
+	}
 
-    protected void encodeButton(FacesContext context, MenuButton button, String buttonId, boolean disabled) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        boolean isIconLeft = button.getIconPos().equals("left");
-        String value = button.getValue();
-        String buttonTextClass = isIconLeft ? HTML.BUTTON_TEXT_ICON_LEFT_BUTTON_CLASS : HTML.BUTTON_TEXT_ICON_RIGHT_BUTTON_CLASS;
-        if (isValueBlank(value)) {
-            buttonTextClass = HTML.BUTTON_ICON_ONLY_BUTTON_CLASS;
-        }
-        String buttonClass = disabled ? buttonTextClass + " ui-state-disabled" : buttonTextClass;
+	protected void encodeButton(FacesContext context, MenuButton button, String buttonId, boolean disabled) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		boolean isIconLeft = button.getIconPos().equals("left");
+		String value = button.getValue();
+		String buttonTextClass = isIconLeft ? HTML.BUTTON_TEXT_ICON_LEFT_BUTTON_CLASS : HTML.BUTTON_TEXT_ICON_RIGHT_BUTTON_CLASS;
+		if (isValueBlank(value)) {
+			buttonTextClass = HTML.BUTTON_ICON_ONLY_BUTTON_CLASS;
+		}
+		String buttonClass = disabled ? buttonTextClass + " ui-state-disabled" : buttonTextClass;
 
-        writer.startElement("button", null);
-        writer.writeAttribute("id", buttonId, null);
-        writer.writeAttribute("name", buttonId, null);
-        writer.writeAttribute("type", "button", null);
-        writer.writeAttribute("class", buttonClass, null);
-        writer.writeAttribute(HTML.ARIA_LABEL, button.getAriaLabel(), "ariaLabel");
-        if (button.isDisabled()) {
-            writer.writeAttribute("disabled", "disabled", null);
-        }
+		writer.startElement("button", null);
+		writer.writeAttribute("id", buttonId, null);
+		writer.writeAttribute("name", buttonId, null);
+		writer.writeAttribute("type", "button", null);
+		writer.writeAttribute("class", buttonClass, null);
+		writer.writeAttribute(HTML.ARIA_LABEL, button.getAriaLabel(), "ariaLabel");
+		if (button.isDisabled()) {
+			writer.writeAttribute("disabled", "disabled", null);
+		}
 
-        // button icon
-        String iconClass = isValueBlank(button.getIcon()) ? MenuButton.ICON_CLASS : button.getIcon();
+		// button icon
+		String iconClass = isValueBlank(button.getIcon()) ? MenuButton.ICON_CLASS : button.getIcon();
 
-        //button icon pos
-        String iconPosClass = isIconLeft ? HTML.BUTTON_LEFT_ICON_CLASS : HTML.BUTTON_RIGHT_ICON_CLASS;
-        iconClass = iconPosClass + " " + iconClass;
+		// button icon pos
+		String iconPosClass = isIconLeft ? HTML.BUTTON_LEFT_ICON_CLASS : HTML.BUTTON_RIGHT_ICON_CLASS;
+		iconClass = iconPosClass + " " + iconClass;
 
-        writer.startElement("span", null);
-        writer.writeAttribute("class", iconClass, null);
-        writer.endElement("span");
+		writer.startElement("span", null);
+		writer.writeAttribute("class", iconClass, null);
+		writer.endElement("span");
 
-        //text
-        writer.startElement("span", null);
-        writer.writeAttribute("class", HTML.BUTTON_TEXT_CLASS, null);
+		// text
+		writer.startElement("span", null);
+		writer.writeAttribute("class", HTML.BUTTON_TEXT_CLASS, null);
 
-        if (isValueBlank(value)) {
-            writer.write("ui-button");
+		if (isValueBlank(value)) {
+			writer.write("ui-button");
         }
         else {
-            writer.writeText(value, "value");
-        }
+			writer.writeText(value, "value");
+		}
 
-        writer.endElement("span");
+		writer.endElement("span");
 
-        writer.endElement("button");
-    }
+		writer.endElement("button");
+	}
 
-    protected void encodeMenu(FacesContext context, MenuButton button, String menuId) throws IOException {
-        ResponseWriter writer = context.getResponseWriter();
-        String menuStyleClass = button.getMenuStyleClass();
-        menuStyleClass = (menuStyleClass == null) ? Menu.DYNAMIC_CONTAINER_CLASS : Menu.DYNAMIC_CONTAINER_CLASS + " " + menuStyleClass;
+	protected void encodeMenu(FacesContext context, MenuButton button, String menuId) throws IOException {
+		ResponseWriter writer = context.getResponseWriter();
+		String menuStyleClass = button.getMenuStyleClass();
+		menuStyleClass = (menuStyleClass == null) ? Menu.DYNAMIC_CONTAINER_CLASS : Menu.DYNAMIC_CONTAINER_CLASS + " " + menuStyleClass;
 
-        writer.startElement("div", null);
-        writer.writeAttribute("id", menuId, null);
-        writer.writeAttribute("class", menuStyleClass, "styleClass");
-        writer.writeAttribute("role", "menu", null);
+		writer.startElement("div", null);
+		writer.writeAttribute("id", menuId, null);
+		writer.writeAttribute("class", menuStyleClass, "styleClass");
+		writer.writeAttribute("role", "menu", null);
 
-        writer.startElement("ul", null);
-        writer.writeAttribute("class", MenuButton.LIST_CLASS, "styleClass");
+		writer.startElement("ul", null);
+		writer.writeAttribute("class", MenuButton.LIST_CLASS, "styleClass");
 
-        if (button.getElementsCount() > 0) {
-            List<MenuElement> elements = button.getElements();
+		if (button.getElementsCount() > 0) {
+			List<MenuElement> elements = button.getElements();
 
-            for (MenuElement element : elements) {
-                if (element.isRendered()) {
-                    if (element instanceof MenuItem) {
-                        writer.startElement("li", null);
-                        writer.writeAttribute("class", Menu.MENUITEM_CLASS, null);
-                        writer.writeAttribute("role", "menuitem", null);
-                        encodeMenuItem(context, button, (MenuItem) element, "-1");
-                        writer.endElement("li");
+			for (MenuElement element : elements) {
+				if (element.isRendered()) {
+					if (element instanceof MenuItem) {
+						writer.startElement("li", null);
+						writer.writeAttribute("class", Menu.MENUITEM_CLASS, null);
+						writer.writeAttribute("role", "menuitem", null);
+						encodeMenuItem(context, button, (MenuItem) element, "-1");
+						writer.endElement("li");
                     }
                     else if (element instanceof Separator) {
-                        encodeSeparator(context, (Separator) element);
-                    }
-                }
-            }
-        }
+						encodeSeparator(context, (Separator) element);
+					}
+				}
+			}
+		}
 
-        writer.endElement("ul");
-        writer.endElement("div");
+		writer.endElement("ul");
+		writer.endElement("div");
 
-    }
+	}
 
-    @Override
-    protected void encodeScript(FacesContext context, AbstractMenu abstractMenu) throws IOException {
-        MenuButton button = (MenuButton) abstractMenu;
-        String clientId = button.getClientId(context);
+	@Override
+	protected void encodeScript(FacesContext context, AbstractMenu abstractMenu) throws IOException {
+		MenuButton button = (MenuButton) abstractMenu;
+		String clientId = button.getClientId(context);
 
-        UIForm form = ComponentTraversalUtils.closestForm(context, button);
-        if (form == null) {
-            throw new FacesException("MenuButton : \"" + clientId + "\" must be inside a form element");
-        }
+		UIForm form = ComponentTraversalUtils.closestForm(context, button);
+		if (form == null) {
+			throw new FacesException("MenuButton : \"" + clientId + "\" must be inside a form element");
+		}
 
-        WidgetBuilder wb = getWidgetBuilder(context);
-        wb.init("MenuButton", button.resolveWidgetVar(), clientId);
-        wb.attr("appendTo", SearchExpressionFacade.resolveClientId(context, button, button.getAppendTo()), null);
-        wb.finish();
-    }
+		WidgetBuilder wb = getWidgetBuilder(context);
+		wb.init("MenuButton", button.resolveWidgetVar(), clientId);
+		wb.attr("appendTo", SearchExpressionFacade.resolveClientId(context, button, button.getAppendTo()), null);
+		wb.finish();
+	}
 }

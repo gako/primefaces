@@ -73,7 +73,8 @@ public class SelectCheckboxMenuRenderer extends SelectManyRenderer {
         String style = menu.getStyle();
         String styleclass = menu.getStyleClass();
         styleclass = styleclass == null ? SelectCheckboxMenu.STYLE_CLASS : SelectCheckboxMenu.STYLE_CLASS + " " + styleclass;
-        styleclass = menu.isDisabled() ? styleclass + " ui-state-disabled" : styleclass;
+        styleclass = menu.isDisabled()|| menu.isReadonly() ? styleclass + " ui-state-disabled" : styleclass;
+        styleclass = menu.isReadonly() ? styleclass + " ui-state-readonly" : styleclass;
         styleclass = !valid ? styleclass + " ui-state-error" : styleclass;
         styleclass = menu.isMultiple() ? SelectCheckboxMenu.MULTIPLE_CLASS + " " + styleclass : styleclass;
 
@@ -142,7 +143,7 @@ public class SelectCheckboxMenuRenderer extends SelectManyRenderer {
         String itemValueAsString = getOptionAsString(context, menu, converter, option.getValue());
         String name = menu.getClientId(context);
         String id = name + UINamingContainer.getSeparatorChar(context) + idx;
-        boolean disabled = option.isDisabled() || menu.isDisabled();
+        boolean disabled = option.isDisabled() || menu.isDisabled()|| menu.isReadonly();
         boolean escaped = option.isEscape();
         String itemLabel = option.getLabel();
         itemLabel = isValueBlank(itemLabel) ? "&nbsp;" : itemLabel;

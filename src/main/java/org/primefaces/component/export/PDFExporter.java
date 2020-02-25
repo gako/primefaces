@@ -23,7 +23,7 @@
  */
 package org.primefaces.component.export;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,18 +38,24 @@ import javax.faces.component.visit.VisitContext;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import com.lowagie.text.*;
-import com.lowagie.text.Font;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 import org.primefaces.component.api.DynamicColumn;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.util.ComponentUtils;
 import org.primefaces.util.Constants;
 
-public class PDFExporter extends Exporter {
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+
+public class PDFExporter extends ExtendedExporter {
 
     private Font cellFont;
     private Font facetFont;
@@ -94,6 +100,43 @@ public class PDFExporter extends Exporter {
         catch (DocumentException e) {
             throw new IOException(e.getMessage());
         }
+    }
+
+    @Override
+    public void export(FacesContext context, TreeTable table, String filename, boolean pageOnly, boolean selectionOnly,
+	    String encodingType, MethodExpression preProcessor, MethodExpression postProcessor, ExporterOptions options,
+	    MethodExpression onTableRender) throws IOException {
+	try {
+	    Document document = new Document();
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    PdfWriter.getInstance(document, baos);
+	    this.onTableRender = onTableRender;
+
+	    if (preProcessor != null) {
+		preProcessor.invoke(context.getELContext(), new Object[] { document });
+	    }
+
+	    if (!document.isOpen()) {
+		document.open();
+	    }
+
+	    if (options != null) {
+		expOptions = options;
+	    }
+
+	    document.add(exportPDFTable(context, table, pageOnly, selectionOnly, encodingType));
+
+	    if (postProcessor != null) {
+		postProcessor.invoke(context.getELContext(), new Object[] { document });
+	    }
+
+	    document.close();
+
+	    writePDFToResponse(context.getExternalContext(), baos, filename);
+
+	} catch (DocumentException e) {
+	    throw new IOException(e.getMessage());
+	}
     }
 
     @Override
@@ -222,9 +265,52 @@ public class PDFExporter extends Exporter {
         return pdfTable;
     }
 
+    protected PdfPTable exportPDFTable(FacesContext context, TreeTable table, boolean pageOnly, boolean selectionOnly, String encoding) {
+	int columnsCount = getColumnsCount(table);
+	PdfPTable pdfTable = new PdfPTable(columnsCount);
+	this.cellFont = FontFactory.getFont(FontFactory.TIMES, encoding);
+	this.facetFont = FontFactory.getFont(FontFactory.TIMES, encoding, Font.DEFAULTSIZE, Font.BOLD);
+
+	if (onTableRender != null) {
+            onTableRender.invoke(context.getELContext(), new Object[]{pdfTable, table});
+        }
+
+	if (this.expOptions != null) {
+		applyFacetOptions(this.expOptions);
+		applyCellOptions(this.expOptions);
+	}
+
+	addTableFacets(context, table, pdfTable, "header");
+
+	addColumnFacets(table, pdfTable, ColumnType.HEADER);
+
+	if (pageOnly) {
+		exportPageOnly(context, table, pdfTable);
+	} else if (selectionOnly) {
+		throw new IllegalArgumentException("Selection Export not supported for TreeTable");
+	} else {
+		exportAll(context, table, pdfTable);
+	}
+
+	if (table.hasFooterColumn()) {
+		addColumnFacets(table, pdfTable, ColumnType.FOOTER);
+	}
+
+	addTableFacets(context, table, pdfTable, "footer");
+
+	return pdfTable;
+    }
+
     protected void addTableFacets(FacesContext context, DataTable table, PdfPTable pdfTable, String facetType) {
+	addTableFacets(context, table.getColumns(), pdfTable, table.getFacet(facetType));
+    }
+
+    protected void addTableFacets(FacesContext context, TreeTable table, PdfPTable pdfTable, String facetType) {
+	addTableFacets(context, table.getColumns(), pdfTable, table.getFacet(facetType));
+    }
+
+    protected void addTableFacets(FacesContext context, List<UIColumn> columns, PdfPTable pdfTable, UIComponent facet) {
         String facetText = null;
-        UIComponent facet = table.getFacet(facetType);
         if (facet != null) {
             if (facet instanceof UIPanel) {
                 for (UIComponent child : facet.getChildren()) {
@@ -246,7 +332,7 @@ public class PDFExporter extends Exporter {
         if (facetText != null) {
             int colspan = 0;
 
-            for (UIColumn col : table.getColumns()) {
+            for (UIColumn col : columns) {
                 if (col.isRendered() && col.isExportable()) {
                     colspan++;
                 }
@@ -277,8 +363,32 @@ public class PDFExporter extends Exporter {
         }
     }
 
+    @Override
+    protected void exportCells(TreeTable table, Object document) {
+	PdfPTable pdfTable = (PdfPTable) document;
+	for (UIColumn col : table.getColumns()) {
+	    if (col instanceof DynamicColumn) {
+		((DynamicColumn) col).applyStatelessModel();
+	    }
+
+	    if (col.isRendered() && col.isExportable()) {
+		addColumnValue(pdfTable, col.getChildren(), this.cellFont, col);
+	    }
+	}
+    }
+
+
+
     protected void addColumnFacets(DataTable table, PdfPTable pdfTable, ColumnType columnType) {
-        for (UIColumn col : table.getColumns()) {
+	addColumnFacets(table.getColumns(), pdfTable, columnType);
+    }
+
+    protected void addColumnFacets(TreeTable table, PdfPTable pdfTable, ColumnType columnType) {
+	addColumnFacets(table.getColumns(), pdfTable, columnType);
+    }
+
+    protected void addColumnFacets(List<UIColumn>columns, PdfPTable pdfTable, ColumnType columnType) {
+        for (UIColumn col : columns) {
             if (col instanceof DynamicColumn) {
                 ((DynamicColumn) col).applyStatelessModel();
             }
@@ -381,6 +491,25 @@ public class PDFExporter extends Exporter {
 
         return count;
     }
+
+    protected int getColumnsCount(TreeTable table) {
+	int count = 0;
+
+	for (UIColumn col : table.getColumns()) {
+	    if (col instanceof DynamicColumn) {
+		((DynamicColumn) col).applyStatelessModel();
+	    }
+
+	    if (!col.isRendered() || !col.isExportable()) {
+		continue;
+	    }
+
+	    count++;
+	}
+
+	return count;
+    }
+
 
     protected void addEmptyLine(Paragraph paragraph, int number) {
         for (int i = 0; i < number; i++) {

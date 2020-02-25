@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<facelet-taglib xmlns="http://java.sun.com/xml/ns/javaee"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd"
-                version="2.0">
+<facelet-taglib
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facelettaglibrary_2_2.xsd"
+	version="2.2">
 
     <namespace>http://primefaces.org/ui</namespace>
 
@@ -587,8 +588,8 @@
         <tag-name>accordionPanel</tag-name>
         <component>
             <component-type>org.primefaces.component.AccordionPanel</component-type>
-            <renderer-type>org.primefaces.component.AccordionPanelRenderer</renderer-type>
             <handler-class>org.primefaces.component.accordionpanel.AccordionPanelComponentHandler</handler-class>
+            <renderer-type>org.primefaces.component.AccordionPanelRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -897,8 +898,8 @@
         <tag-name>autoComplete</tag-name>
         <component>
             <component-type>org.primefaces.component.AutoComplete</component-type>
-            <renderer-type>org.primefaces.component.AutoCompleteRenderer</renderer-type>
             <handler-class>org.primefaces.component.autocomplete.AutoCompleteHandler</handler-class>
+            <renderer-type>org.primefaces.component.AutoCompleteRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -4314,8 +4315,8 @@
         <tag-name>column</tag-name>
         <component>
             <component-type>org.primefaces.component.Column</component-type>
-            <renderer-type>org.primefaces.component.ColumnRenderer</renderer-type>
             <handler-class>org.primefaces.component.column.ColumnHandler</handler-class>
+            <renderer-type>org.primefaces.component.ColumnRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -6923,8 +6924,8 @@
         <tag-name>dataTable</tag-name>
         <component>
             <component-type>org.primefaces.component.DataTable</component-type>
-            <renderer-type>org.primefaces.component.DataTableRenderer</renderer-type>
             <handler-class>org.primefaces.component.datatable.DataTableHandler</handler-class>
+            <renderer-type>org.primefaces.component.DataTableRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -9229,8 +9230,8 @@
         <tag-name>fileUpload</tag-name>
         <component>
             <component-type>org.primefaces.component.FileUpload</component-type>
-            <renderer-type>org.primefaces.component.FileUploadRenderer</renderer-type>
             <handler-class>org.primefaces.component.fileupload.FileUploadHandler</handler-class>
+            <renderer-type>org.primefaces.component.FileUploadRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -12654,8 +12655,8 @@
         <tag-name>inputTextarea</tag-name>
         <component>
             <component-type>org.primefaces.component.InputTextarea</component-type>
-            <renderer-type>org.primefaces.component.InputTextareaRenderer</renderer-type>
             <handler-class>org.primefaces.component.inputtextarea.InputTextareaHandler</handler-class>
+            <renderer-type>org.primefaces.component.InputTextareaRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -18062,8 +18063,8 @@
         <tag-name>photoCam</tag-name>
         <component>
             <component-type>org.primefaces.component.PhotoCam</component-type>
-            <renderer-type>org.primefaces.component.PhotoCamRenderer</renderer-type>
             <handler-class>org.primefaces.component.photocam.PhotoCamHandler</handler-class>
+            <renderer-type>org.primefaces.component.PhotoCamRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -18661,8 +18662,8 @@
         <tag-name>poll</tag-name>
         <component>
             <component-type>org.primefaces.component.Poll</component-type>
-            <renderer-type>org.primefaces.component.PollRenderer</renderer-type>
             <handler-class>org.primefaces.component.poll.PollHandler</handler-class>
+            <renderer-type>org.primefaces.component.PollRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -24946,8 +24947,8 @@
         <tag-name>summaryRow</tag-name>
         <component>
             <component-type>org.primefaces.component.SummaryRow</component-type>
-            <renderer-type>org.primefaces.component.SummaryRowRenderer</renderer-type>
             <handler-class>org.primefaces.component.summaryrow.SummaryRowHandler</handler-class>
+            <renderer-type>org.primefaces.component.SummaryRowRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -25398,8 +25399,8 @@
         <tag-name>terminal</tag-name>
         <component>
             <component-type>org.primefaces.component.Terminal</component-type>
-            <renderer-type>org.primefaces.component.TerminalRenderer</renderer-type>
             <handler-class>org.primefaces.component.terminal.TerminalHandler</handler-class>
+            <renderer-type>org.primefaces.component.TerminalRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -26954,8 +26955,8 @@
         <tag-name>tree</tag-name>
         <component>
             <component-type>org.primefaces.component.Tree</component-type>
-            <renderer-type>org.primefaces.component.TreeRenderer</renderer-type>
             <handler-class>org.primefaces.component.tree.TreeComponentHandler</handler-class>
+            <renderer-type>org.primefaces.component.TreeRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -27350,8 +27351,8 @@
         <tag-name>treeTable</tag-name>
         <component>
             <component-type>org.primefaces.component.TreeTable</component-type>
-            <renderer-type>org.primefaces.component.TreeTableRenderer</renderer-type>
             <handler-class>org.primefaces.component.treetable.TreeTableHandler</handler-class>
+            <renderer-type>org.primefaces.component.TreeTableRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -28047,8 +28048,8 @@
         <tag-name>wizard</tag-name>
         <component>
             <component-type>org.primefaces.component.Wizard</component-type>
-            <renderer-type>org.primefaces.component.WizardRenderer</renderer-type>
             <handler-class>org.primefaces.component.wizard.WizardHandler</handler-class>
+            <renderer-type>org.primefaces.component.WizardRenderer</renderer-type>
         </component>
         <attribute>
             <description>
@@ -29358,4 +29359,388 @@
             <type>java.lang.String</type>
         </attribute>
     </tag>
+
+
+    <!-- ilogs extensions -->
+
+    <tag>
+		<tag-name>grid</tag-name>
+		<component>
+			<component-type>com.ilogs.component.grid.Grid</component-type>
+			<renderer-type>com.ilogs.component.grid.GridRenderer</renderer-type>
+		</component>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>columns</name>
+			<required>false</required>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>columnClasses</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>style</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>styleClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>role</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>flex</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>noPad</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<tag-name>container</tag-name>
+		<component>
+			<component-type>com.ilogs.component.container.Container</component-type>
+			<renderer-type>com.ilogs.component.container.ContainerRenderer</renderer-type>
+		</component>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>id</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>tag</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>style</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>styleClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<tag-name>div</tag-name>
+		<component>
+			<component-type>com.ilogs.component.container.Div</component-type>
+			<renderer-type>com.ilogs.component.container.DivRenderer</renderer-type>
+		</component>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>id</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>tag</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>style</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>styleClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<tag-name>card</tag-name>
+		<component>
+			<component-type>com.ilogs.component.card.Card</component-type>
+			<renderer-type>com.ilogs.component.card.CardRenderer</renderer-type>
+		</component>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>id</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>icon</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>style</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>styleClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>hoverable</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>selected</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>disabled</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+
+	</tag>
+
+	<tag>
+		<tag-name>cardLink</tag-name>
+		<component>
+			<component-type>com.ilogs.component.cardlink.CardLink</component-type>
+			<renderer-type>com.ilogs.component.cardlink.CardLinkRenderer</renderer-type>
+		</component>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>id</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>icon</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>style</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>styleClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>hoverable</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>selected</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>disabled</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<tag-name>exporterPlaceholder</tag-name>
+		<component>
+			<component-type>com.ilogs.component.exporterplaceholder.ExporterPlaceholder</component-type>
+			<renderer-type>com.ilogs.component.exporterplaceholder.ExporterPlaceholderRenderer</renderer-type>
+		</component>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>value</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<tag-name>field</tag-name>
+		<component>
+			<component-type>com.ilogs.component.field.Field</component-type>
+			<renderer-type>com.ilogs.component.field.FieldRenderer</renderer-type>
+		</component>
+
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>label</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>icon</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>iconPos</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>columnClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>for</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>disabled</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>readonly</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>editable</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<tag-name>status</tag-name>
+		<component>
+			<component-type>com.ilogs.component.status.Status</component-type>
+			<renderer-type>com.ilogs.component.status.StatusRenderer</renderer-type>
+		</component>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>id</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>icon</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>style</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>styleClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>value</name>
+			<required>true</required>
+			<type>java.lang.Object</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>label</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[DESCRIPTION]]></description>
+			<name>escape</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>
+			<![CDATA[
+				The <code>&lt;o:skipValidators&gt;</code> allows the developer to skip validators when
+				executing a submit. This taghandler must be placed inside the component that invokes the submit, may be an
+                <code>UICommand</code> (both ajaxified or not) as well as any <code>ClientBehaviorHolder</code> (ajax enabled) component.
+				<p>
+				Validation will happen, but no validator will be executed since they will be temporary detached from processed components.
+                Conversion errors could still occur. Note that the model values will be updated for all processed components.
+			]]>
+		</description>
+		<tag-name>skipValidators</tag-name>
+		<handler-class>com.ilogs.taghandler.SkipValidators</handler-class>
+
+		<attribute>
+			<description><![CDATA[If set input fields with the same validation group will still be validated.]]></description>
+			<name>includeGroup</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[If set input fields with the same validation group will NOT be validated, anything else will be validated.]]></description>
+			<name>excludeGroup</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<tag-name>logViewer</tag-name>
+		<component>
+			<resource-id>components/logViewerComponent.xhtml</resource-id>
+			<component-type>com.ilogs.component.logviewer.LogViewerComponent</component-type>
+		</component>
+	</tag>
+
+	<function>
+    	<description>Searches for a component within a given parent componentID. First param is child component id, second param is parent component ID</description>
+		<function-name>nestedComponent</function-name>
+		<function-class>org.primefaces.util.ComponentUtils</function-class>
+		<function-signature>java.lang.String findComponentClientId(java.lang.String, java.lang.String)</function-signature>
+	</function>
+
+
 </facelet-taglib>

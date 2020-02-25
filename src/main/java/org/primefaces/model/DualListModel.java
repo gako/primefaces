@@ -25,9 +25,12 @@ package org.primefaces.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
-public class DualListModel<T> implements Serializable {
+public class DualListModel<T> implements Serializable, Iterable<T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -56,6 +59,21 @@ public class DualListModel<T> implements Serializable {
 
     public void setTarget(List<T> target) {
         this.target = target;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return target.iterator();
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return target.spliterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super T> action) {
+	target.forEach(action);
     }
 
     @Override

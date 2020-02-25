@@ -38,10 +38,11 @@ import javax.faces.context.FacesContext;
 import org.primefaces.component.api.DynamicColumn;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.util.ComponentUtils;
 import org.primefaces.util.Constants;
 
-public class CSVExporter extends Exporter {
+public class CSVExporter extends ExtendedExporter {
 
     private CSVOptions csvOptions;
 
@@ -70,7 +71,7 @@ public class CSVExporter extends Exporter {
             preProcessor.invoke(context.getELContext(), new Object[]{builder});
         }
 
-        addColumnFacets(builder, table, ColumnType.HEADER);
+        addColumnFacets(builder, table.getColumns(), ColumnType.HEADER);
 
         if (pageOnly) {
             exportPageOnly(context, table, builder);
@@ -83,7 +84,7 @@ public class CSVExporter extends Exporter {
         }
 
         if (table.hasFooterColumn()) {
-            addColumnFacets(builder, table, ColumnType.FOOTER);
+            addColumnFacets(builder, table.getColumns(), ColumnType.FOOTER);
         }
 
         if (postProcessor != null) {
@@ -111,9 +112,13 @@ public class CSVExporter extends Exporter {
     }
 
     protected void addColumnFacets(StringBuilder builder, DataTable table, ColumnType columnType) throws IOException {
+	addColumnFacets(builder, table.getColumns(), columnType);
+    }
+
+    protected void addColumnFacets(StringBuilder builder, List<UIColumn>columns, ColumnType columnType) throws IOException {
         boolean firstCellWritten = false;
 
-        for (UIColumn col : table.getColumns()) {
+        for (UIColumn col : columns) {
             if (col instanceof DynamicColumn) {
                 ((DynamicColumn) col).applyStatelessModel();
             }
@@ -156,10 +161,19 @@ public class CSVExporter extends Exporter {
 
     @Override
     protected void exportCells(DataTable table, Object document) {
+	exportCells(table.getColumns(), document);
+    }
+
+    @Override
+    protected void exportCells(TreeTable table, Object document) {
+	exportCells(table.getColumns(), document);
+    }
+
+    protected void exportCells(List<UIColumn> columns, Object document) {
         StringBuilder builder = (StringBuilder) document;
         boolean firstCellWritten = false;
 
-        for (UIColumn col : table.getColumns()) {
+        for (UIColumn col : columns) {
             if (col instanceof DynamicColumn) {
                 ((DynamicColumn) col).applyStatelessModel();
             }
@@ -245,4 +259,44 @@ public class CSVExporter extends Exporter {
     protected void postRowExport(DataTable table, Object document) {
         ((StringBuilder) document).append(csvOptions.getEndOfLineSymbols());
     }
+
+    @Override
+    public void postRowExport(TreeTable table, Object document) {
+	((StringBuilder) document).append(csvOptions.getEndOfLineSymbols());
+    }
+
+    @Override
+	public void export(FacesContext context, TreeTable table, String filename, boolean pageOnly, boolean selectionOnly, String encodingType, MethodExpression preProcessor, MethodExpression postProcessor, ExporterOptions options,
+			MethodExpression onTableRendered) throws IOException {
+		ExternalContext externalContext = context.getExternalContext();
+		configureResponse(externalContext, filename, encodingType);
+		StringBuilder builder = new StringBuilder();
+
+		if (preProcessor != null) {
+			preProcessor.invoke(context.getELContext(), new Object[] { builder });
+		}
+
+		addColumnFacets(builder, table.getColumns(), ColumnType.HEADER);
+
+		if (pageOnly) {
+			exportPageOnly(context, table, builder);
+		} else if (selectionOnly) {
+			throw new IllegalArgumentException("Selection Export not supported for TreeTable");
+		} else {
+			exportAll(context, table, builder);
+		}
+
+		if (table.hasFooterColumn()) {
+			addColumnFacets(builder, table.getColumns(), ColumnType.FOOTER);
+		}
+
+		if (postProcessor != null) {
+			postProcessor.invoke(context.getELContext(), new Object[] { builder });
+		}
+
+		Writer writer = externalContext.getResponseOutputWriter();
+		writer.write(builder.toString());
+		writer.flush();
+		writer.close();
+	}
 }

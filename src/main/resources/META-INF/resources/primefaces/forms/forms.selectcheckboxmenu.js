@@ -67,6 +67,14 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
         //pfs metadata
         this.inputs.data(PrimeFaces.CLIENT_ID_DATA, this.id);
+
+
+        // ILOGS FEATURE ++ show number of selected options on selectcheckboxmenu
+        var label = this.jq.find('.ui-selectcheckboxmenu-label').text();
+		var checked = this.inputs.filter(":checked").length;
+		var available = this.inputs.filter("*").length;
+		this.jq.find('.ui-selectcheckboxmenu-label').text(label + " (" + checked + "/" + available+")");
+        // ILOGS FEATURE --
     },
 
     //@override
@@ -370,7 +378,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
                     e.preventDefault();
                 break;
-                
+
                 case keyCode.DOWN:
                     if (e.altKey) {
                         if ($this.panel.is(":hidden"))
@@ -495,7 +503,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
                 $this.uncheck(item.children('.ui-chkbox').children('.ui-chkbox-box'), true);
             }
-            
+
             e.stopPropagation();
         });
     },
@@ -749,6 +757,14 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             this.panel.hide();
             this.postHide();
         }
+
+        // ILOGS FEATURE ++ show number of selected options on selectcheckboxmenu
+        var full_label = this.jq.find('.ui-selectcheckboxmenu-label').text();
+		var label = full_label.substring(0, full_label.lastIndexOf(" ("));
+		var checked = this.inputs.filter(":checked").length;
+		var available = this.inputs.filter("*").length;
+		this.jq.find('.ui-selectcheckboxmenu-label').text(label + " (" + checked + "/" + available+")");
+        // ILOGS FEATURE --
     },
 
     postShow: function() {

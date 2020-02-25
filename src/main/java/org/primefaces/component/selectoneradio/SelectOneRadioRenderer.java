@@ -350,6 +350,9 @@ public class SelectOneRadioRenderer extends SelectOneRenderer {
         if (disabled) {
             writer.writeAttribute("disabled", "disabled", null);
         }
+        if (radio.isReadonly()) {
+            writer.writeAttribute("readonly", "readonly", null);
+        }
 
         renderValidationMetadata(context, radio);
 
@@ -390,7 +393,8 @@ public class SelectOneRadioRenderer extends SelectOneRenderer {
         ResponseWriter writer = context.getResponseWriter();
         String boxClass = HTML.RADIOBUTTON_BOX_CLASS;
         boxClass = selected ? boxClass + " ui-state-active" : boxClass;
-        boxClass = disabled ? boxClass + " ui-state-disabled" : boxClass;
+        boxClass = disabled || radio.isReadonly() ? boxClass + " ui-state-disabled" : boxClass;
+        boxClass = radio.isReadonly() ? boxClass + " ui-state-readonly" : boxClass;
         boxClass = !radio.isValid() ? boxClass + " ui-state-error" : boxClass;
         String iconClass = selected ? HTML.RADIOBUTTON_CHECKED_ICON_CLASS : HTML.RADIOBUTTON_UNCHECKED_ICON_CLASS;
 

@@ -234,6 +234,14 @@
             <version>2.4</version>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omnifaces</artifactId>
+            <version>2.7.3</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -380,7 +388,7 @@
                     </archive>
                 </configuration>
             </plugin>
-
+<!--
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -427,7 +435,7 @@
                     <excludedScopes>test,provided</excludedScopes>
                 </configuration>
             </plugin>
-
+ -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -855,7 +863,31 @@
         </plugins>
     </build>
 
+
     <profiles>
+    	<profile>
+			<id>dev</id>
+
+			<dependencies>
+				<!-- DO NOT shade in dev mode not supported by eclipse -->
+				<dependency>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+					<version>2.4</version>
+				</dependency>
+				<dependency>
+					<groupId>org.owasp.encoder</groupId>
+					<artifactId>encoder</artifactId>
+					<version>1.2.1</version>
+				</dependency>
+				<dependency>
+					<groupId>org.owasp.esapi</groupId>
+					<artifactId>esapi</artifactId>
+					<version>2.1.0.1</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
         <profile>
             <id>release</id>
             <build>

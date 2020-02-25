@@ -100,9 +100,10 @@ public class ChipsRenderer extends InputRenderer {
         String inputStyle = chips.getInputStyle();
         String inputStyleClass = chips.getInputStyleClass();
 
-        String listClass = disabled ? Chips.CONTAINER_CLASS + " ui-state-disabled" : Chips.CONTAINER_CLASS;
+        String listClass = disabled || chips.isReadonly() ? Chips.CONTAINER_CLASS + " ui-state-disabled" : Chips.CONTAINER_CLASS;
         listClass = (inputStyleClass == null) ? listClass : listClass + " " + inputStyleClass;
         listClass = chips.isValid() ? listClass : listClass + " ui-state-error";
+        listClass = chips.isReadonly() ? listClass +" ui-state-readonly" : listClass;
 
         writer.startElement("div", null);
         writer.writeAttribute("id", clientId, null);
@@ -138,9 +139,11 @@ public class ChipsRenderer extends InputRenderer {
                 writer.writeText(tokenValue, null);
                 writer.endElement("span");
 
-                writer.startElement("span", null);
-                writer.writeAttribute("class", Chips.TOKEN_CLOSE_ICON_CLASS, null);
-                writer.endElement("span");
+                if (!disabled && !chips.isReadonly()) {
+                    writer.startElement("span", null);
+                    writer.writeAttribute("class", Chips.TOKEN_CLOSE_ICON_CLASS, null);
+                    writer.endElement("span");
+                }
 
                 writer.endElement("li");
 
