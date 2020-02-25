@@ -21,10 +21,23 @@
         <![CDATA[PrimeFaces is one of the most popular UI libraries in Java EE Ecosystem and widely used by software companies, world renowned brands, banks, financial institutions, insurance companies, universities and more.]]>
     </description>
 
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>Releases</name>
+			<url>https://ils-central.ilogs.com/repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<name>Snapshot</name>
+			<url>https://ils-central.ilogs.com/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
     <scm>
-        <connection>scm:git:https://github.com/primefaces/primefaces.git</connection>
-        <developerConnection>scm:git:https://github.com/primefaces/primefaces.git</developerConnection>
-        <url>https://github.com/primefaces/primefaces</url>
+        <connection>scm:git:https://github.com/gako/primefaces.git</connection>
+        <developerConnection>scm:git:https://github.com/gako/primefaces.git</developerConnection>
+        <url>https://github.com/gako/primefaces</url>
     </scm>
 
     <developers>
