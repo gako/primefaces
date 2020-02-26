@@ -213,6 +213,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- required for skipValidator -->
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omnifaces</artifactId>
+            <version>2.7.3</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- will be included and relocated by shade plugin -->
         <dependency>
             <groupId>org.owasp.encoder</groupId>
@@ -247,14 +255,6 @@
             <version>2.4</version>
             <optional>true</optional>
         </dependency>
-
-        <dependency>
-            <groupId>org.omnifaces</groupId>
-            <artifactId>omnifaces</artifactId>
-            <version>2.7.3</version>
-            <scope>compile</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -264,6 +264,9 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                	<exclude>rebel.xml</exclude>
+                </excludes>
             </resource>
         </resources>
 
@@ -876,31 +879,7 @@
         </plugins>
     </build>
 
-
     <profiles>
-    	<profile>
-			<id>dev</id>
-
-			<dependencies>
-				<!-- DO NOT shade in dev mode not supported by eclipse -->
-				<dependency>
-					<groupId>commons-io</groupId>
-					<artifactId>commons-io</artifactId>
-					<version>2.4</version>
-				</dependency>
-				<dependency>
-					<groupId>org.owasp.encoder</groupId>
-					<artifactId>encoder</artifactId>
-					<version>1.2.1</version>
-				</dependency>
-				<dependency>
-					<groupId>org.owasp.esapi</groupId>
-					<artifactId>esapi</artifactId>
-					<version>2.1.0.1</version>
-				</dependency>
-			</dependencies>
-		</profile>
-
         <profile>
             <id>release</id>
             <build>
