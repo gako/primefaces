@@ -7001,7 +7001,7 @@ readers do not read off random characters that represent icons */
   font-weight: 400;
   font-display: auto;
   src: url("#{resource['primefaces:fa/fa-brands-400.eot']}");
-  src: url("#{resource['primefaces:fa/fa-brands-400.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-brands-400.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-brands-400.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-brands-400.ttf']}") format("truetype"), url("#{resource['primefaces:fa/fa-brands-400.svg']}#fontawesome") format("svg"); }
+  src: url("#{resource['primefaces:fa/fa-brands-400.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-brands-400.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-brands-400.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-brands-400.ttf']}") format("truetype"); }
 
 .fab {
   font-family: 'Font Awesome 5 Brands';
@@ -7012,7 +7012,7 @@ readers do not read off random characters that represent icons */
   font-weight: 900;
   font-display: auto;
   src: url("#{resource['primefaces:fa/fa-duotone-900.eot']}");
-  src: url("#{resource['primefaces:fa/fa-duotone-900.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-duotone-900.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-duotone-900.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-duotone-900.ttf']}") format("truetype"), url("#{resource['primefaces:fa/fa-duotone-900.svg']}#fontawesome") format("svg"); }
+  src: url("#{resource['primefaces:fa/fa-duotone-900.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-duotone-900.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-duotone-900.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-duotone-900.ttf']}") format("truetype"); }
 
 .fad {
   position: relative;
@@ -12521,7 +12521,7 @@ readers do not read off random characters that represent icons */
   font-weight: 300;
   font-display: auto;
   src: url("#{resource['primefaces:fa/fa-light-300.eot']}");
-  src: url("#{resource['primefaces:fa/fa-light-300.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-light-300.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-light-300.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-light-300.ttf']}") format("truetype"), url("#{resource['primefaces:fa/fa-light-300.svg']}#fontawesome") format("svg"); }
+  src: url("#{resource['primefaces:fa/fa-light-300.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-light-300.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-light-300.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-light-300.ttf']}") format("truetype"); }
 
 .fal {
   font-family: 'Font Awesome 5 Pro';
@@ -12532,7 +12532,7 @@ readers do not read off random characters that represent icons */
   font-weight: 400;
   font-display: auto;
   src: url("#{resource['primefaces:fa/fa-regular-400.eot']}");
-  src: url("#{resource['primefaces:fa/fa-regular-400.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-regular-400.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-regular-400.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-regular-400.ttf']}") format("truetype"), url("#{resource['primefaces:fa/fa-regular-400.svg']}#fontawesome") format("svg"); }
+  src: url("#{resource['primefaces:fa/fa-regular-400.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-regular-400.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-regular-400.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-regular-400.ttf']}") format("truetype"); }
 
 .far {
   font-family: 'Font Awesome 5 Pro';
@@ -12543,7 +12543,7 @@ readers do not read off random characters that represent icons */
   font-weight: 900;
   font-display: auto;
   src: url("#{resource['primefaces:fa/fa-solid-900.eot']}");
-  src: url("#{resource['primefaces:fa/fa-solid-900.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-solid-900.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-solid-900.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-solid-900.ttf']}") format("truetype"), url("#{resource['primefaces:fa/fa-solid-900.svg']}#fontawesome") format("svg"); }
+  src: url("#{resource['primefaces:fa/fa-solid-900.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-solid-900.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-solid-900.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-solid-900.ttf']}") format("truetype"); }
 
 .fa,
 .fas {
