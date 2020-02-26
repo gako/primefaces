@@ -29,8 +29,10 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.faces.context.FacesContext;
 import javax.validation.Validation;
+
 import org.primefaces.util.LangUtils;
 
 public class PrimeEnvironment {
@@ -100,7 +102,7 @@ public class PrimeEnvironment {
 
         InputStream is = null;
         try {
-            is = getClass().getResourceAsStream("/META-INF/maven/org.primefaces/primefaces/pom.properties");
+            is = getClass().getResourceAsStream("/META-INF/maven/com.ilogs.primefaces/primefaces/pom.properties");
 
             Properties buildProperties = new Properties();
             buildProperties.load(is);
