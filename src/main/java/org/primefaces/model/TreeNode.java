@@ -64,4 +64,6 @@ public interface TreeNode {
     public String getRowKey();
 
     public void clearParent();
+
+    public TreeNode clone(TreeNode newParent);
 }

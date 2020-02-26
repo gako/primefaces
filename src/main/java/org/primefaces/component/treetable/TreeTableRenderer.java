@@ -23,6 +23,10 @@
  */
 package org.primefaces.component.treetable;
 
+import static org.primefaces.component.api.UITree.ROOT_ROW_KEY;
+import static org.primefaces.component.treetable.TreeTable.FILTER_CONSTRAINTS;
+import static org.primefaces.component.treetable.TreeTable.GLOBAL_MODE;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,8 +57,6 @@ import org.primefaces.component.columns.Columns;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.row.Row;
 import org.primefaces.component.tree.Tree;
-import org.primefaces.model.CheckboxTreeNode;
-import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
@@ -71,10 +73,6 @@ import org.primefaces.util.SharedStringBuilder;
 import org.primefaces.util.TreeUtils;
 import org.primefaces.util.WidgetBuilder;
 import org.primefaces.visit.ResetInputVisitCallback;
-
-import static org.primefaces.component.api.UITree.ROOT_ROW_KEY;
-import static org.primefaces.component.treetable.TreeTable.FILTER_CONSTRAINTS;
-import static org.primefaces.component.treetable.TreeTable.GLOBAL_MODE;
 
 public class TreeTableRenderer extends DataRenderer {
 
@@ -187,26 +185,31 @@ public class TreeTableRenderer extends DataRenderer {
 			}
         }
         else if (tt.isFilterRequest(context)) {
-			tt.updateFilteredNode(context, null);
-			tt.setValue(null);
-			tt.setFirst(0);
+            tt.updateFilteredNode(context, null);
+            tt.setValue(null);
+            tt.setFirst(0);
 
-			// update rows with rpp value
-			String rppValue = params.get(clientId + "_rppDD");
-			if (rppValue != null) {
-				tt.setRows(Integer.parseInt(rppValue));
-			}
+            // update rows with rpp value
+            String rppValue = params.get(clientId + "_rppDD");
+            if (rppValue != null) {
+                tt.setRows(Integer.parseInt(rppValue));
+            }
 
-			String globalFilterParam = clientId + UINamingContainer.getSeparatorChar(context) + "globalFilter";
-			String globalFilterValue = params.get(globalFilterParam);
+            String globalFilterParam = clientId + UINamingContainer.getSeparatorChar(context) + "globalFilter";
+            String globalFilterValue = params.get(globalFilterParam);
 
-			filter(context, tt, tt.getFilterMetadata(), globalFilterValue);
+            filter(context, tt, tt.getFilterMetadata(), globalFilterValue);
 
-			// sort new filtered data to restore sort state
-			boolean sorted = (tt.getValueExpression("sortBy") != null || tt.getSortBy() != null);
-			if (sorted) {
-				sort(tt);
-			}
+            // sort new filtered data to restore sort state
+            boolean sorted = (tt.getValueExpression("sortBy") != null || tt.getSortBy() != null);
+            if (sorted) {
+                sort(tt);
+            } else {
+                TreeNode root = tt.getValue();
+                if (root != null) {
+                    tt.updateRowKeys(root);
+                }
+            }
 
 			encodeTbody(context, tt, true);
         }
@@ -1359,17 +1362,18 @@ public class TreeTableRenderer extends DataRenderer {
 	}
 
 	protected TreeNode createNewNode(TreeNode node, TreeNode parent) {
-		TreeNode newNode = null;
+		TreeNode newNode = node.clone(parent);
+		newNode.setRowKey(null);
 
-		if (node instanceof CheckboxTreeNode) {
-			newNode = new CheckboxTreeNode(node.getType(), node.getData(), parent);
-        }
-        else {
-			newNode = new DefaultTreeNode(node.getType(), node.getData(), parent);
-		}
-
-		newNode.setSelected(node.isSelected());
-		newNode.setExpanded(node.isExpanded());
+//		if (node instanceof CheckboxTreeNode) {
+//			newNode = new CheckboxTreeNode(node.getType(), node.getData(), parent);
+//                }
+//                else {
+//			newNode = new DefaultTreeNode(node.getType(), node.getData(), parent);
+//		}
+//
+//		newNode.setSelected(node.isSelected());
+//		newNode.setExpanded(node.isExpanded());
 
 		return newNode;
 	}

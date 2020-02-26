@@ -298,4 +298,17 @@ public class CheckboxTreeNode implements TreeNode, Serializable {
     public void setPartialSelected(boolean value) {
         this.partialSelected = value;
     }
+
+    @Override
+       public CheckboxTreeNode clone(TreeNode newParent)  {
+         CheckboxTreeNode node = new CheckboxTreeNode(getData(),newParent);
+         node.type = getType();
+         node.expanded = isExpanded();
+         node.selected = isSelected();
+         node.selectable = isSelectable();
+         node.partialSelected = isPartialSelected();
+         node.rowKey = getRowKey();
+         return node;
+
+        }
 }

@@ -244,4 +244,15 @@ public class DefaultTreeNode implements TreeNode, Serializable {
     public void setPartialSelected(boolean value) {
         //nothing
     }
+
+    @Override
+    public DefaultTreeNode clone(TreeNode newParent) {
+        DefaultTreeNode node = new DefaultTreeNode(getData(),newParent);
+        node.expanded = isExpanded();
+        node.rowKey = getRowKey();
+        node.selectable = isSelectable();
+        node.selected = isSelected();
+        node.type = getType();
+        return node;
+    }
 }
