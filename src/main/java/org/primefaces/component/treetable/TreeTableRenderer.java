@@ -204,11 +204,6 @@ public class TreeTableRenderer extends DataRenderer {
             boolean sorted = (tt.getValueExpression("sortBy") != null || tt.getSortBy() != null);
             if (sorted) {
                 sort(tt);
-            } else {
-                TreeNode root = tt.getValue();
-                if (root != null) {
-                    tt.updateRowKeys(root);
-                }
             }
 
 			encodeTbody(context, tt, true);
@@ -582,6 +577,7 @@ public class TreeTableRenderer extends DataRenderer {
 		boolean selected = treeNode.isSelected();
 		boolean partialSelected = treeNode.isPartialSelected();
 		boolean nativeElements = tt.isNativeElements();
+		boolean hidden = tt.getFilterMetadata()!=null && !tt.getFilterMetadata().isEmpty() && !isFilteredNodeVisible(treeNode, tt.getFilteredRowKeys());
 		List<UIColumn> columns = tt.getColumns();
 
 		String rowStyleClass = selected ? TreeTable.SELECTED_ROW_CLASS : TreeTable.ROW_CLASS;
@@ -599,6 +595,10 @@ public class TreeTableRenderer extends DataRenderer {
 
 		if (tt.isEditingRow()) {
 			rowStyleClass = rowStyleClass + " " + TreeTable.EDITING_ROW_CLASS;
+		}
+
+		if (hidden) {
+		    rowStyleClass = rowStyleClass+" "+ "ui-helper-hidden";
 		}
 
 		writer.startElement("tr", null);
@@ -1262,6 +1262,16 @@ public class TreeTableRenderer extends DataRenderer {
 		return filterMetadata;
 	}
 
+    private boolean isFilteredNodeVisible(TreeNode treeNode, List<String> filteredRowKeys) {
+        String rowKeyOfChildNode = treeNode.getRowKey();
+        for (String rk : filteredRowKeys) {
+            if (rk.equals(rowKeyOfChildNode) || rk.startsWith(rowKeyOfChildNode + "_") || rowKeyOfChildNode.startsWith(rk + "_")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	public void filter(FacesContext context, TreeTable tt, List<FilterMeta> filterMetadata, String globalFilterValue) throws IOException {
 		Locale filterLocale = context.getViewRoot().getLocale();
 		TreeNode root = tt.getValue();
@@ -1270,11 +1280,11 @@ public class TreeTableRenderer extends DataRenderer {
 		tt.getFilteredRowKeys().clear();
 		findFilteredRowKeys(context, tt, root, filterMetadata, filterLocale, globalFilterValue);
 
-		filteredNode = createNewNode(root, root.getParent());
+		//filteredNode = createNewNode(root, root.getParent());
+		filteredNode = root;
+		//List<String> filteredRowKeys = tt.getFilteredRowKeys();
 
-		List<String> filteredRowKeys = tt.getFilteredRowKeys();
-
-		createFilteredNodeFromRowKeys(tt, root, filteredNode, filteredRowKeys);
+		//createFilteredNodeFromRowKeys(tt, root, filteredNode, filteredRowKeys);
 
 		tt.updateFilteredNode(context, filteredNode);
 		tt.setValue(filteredNode);
@@ -1350,6 +1360,7 @@ public class TreeTableRenderer extends DataRenderer {
 			for (String rk : filteredRowKeys) {
 				if (rk.equals(rowKeyOfChildNode) || rk.startsWith(rowKeyOfChildNode + "_") || rowKeyOfChildNode.startsWith(rk + "_")) {
 					TreeNode newNode = createNewNode(childNode, filteredNode);
+
 					if (rk.startsWith(rowKeyOfChildNode + "_")) {
 						newNode.setExpanded(true);
 					}
