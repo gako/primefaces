@@ -883,22 +883,25 @@
     <profiles>
     	<profile>
 			<id>dev</id>
-			
-	        <resources>
-	            <resource>
-            	    <directory>src/main/resources</directory>
-        	        <filtering>true</filtering>
-    	        </resource>
-	            <resource>
-        	        <directory>src/main/generated-resources</directory>
-    	            <filtering>true</filtering>
-	            </resource>
-	        </resources>
+
 			<properties>
 				<resources.compressed.source>${basedir}/src/main/resources/META-INF/resources</resources.compressed.source>
 				<resources.compressed.target>${basedir}/src/main/generated-resources/META-INF/resources</resources.compressed.target>
 				<resources.compressed.removeIncluded>false</resources.compressed.removeIncluded>
 			</properties>
+
+			<build>
+		        <resources>
+		            <resource>
+	            	    <directory>src/main/resources</directory>
+	        	        <filtering>true</filtering>
+	    	        </resource>
+		            <resource>
+	        	        <directory>src/main/generated-resources</directory>
+	    	            <filtering>true</filtering>
+		            </resource>
+		        </resources>
+	        </build>
 		</profile>
         <profile>
             <id>release</id>
