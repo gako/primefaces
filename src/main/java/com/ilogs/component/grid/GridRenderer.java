@@ -18,6 +18,8 @@ import org.primefaces.component.row.Row;
 import org.primefaces.component.separator.UISeparator;
 import org.primefaces.renderkit.CoreRenderer;
 
+import com.ilogs.component.field.Field;
+
 @FacesRenderer(componentFamily = Grid.COMPONENT_FAMILY, rendererType = Grid.DEFAULT_RENDERER)
 public class GridRenderer extends CoreRenderer {
 
@@ -208,7 +210,7 @@ public class GridRenderer extends CoreRenderer {
 
 	    }
 
-	    if (child instanceof UISeparator) {
+	    if (child instanceof UISeparator || child instanceof Field) {
 		containerDiv = false;
 	    }
 

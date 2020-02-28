@@ -31,6 +31,9 @@ public class FieldRenderer extends OutputPanelRenderer {
 
 	private static final String FIELD_CLASS = "ipcp-field ui-widget ";
 
+	private static final String LABEL_CLASS_INPUT ="label-floatlabel";
+	private static final String LABEL_CLASS_OUTPUT ="label-floatlabel floatlabel-text";
+
 	private static final String FIELD_CLASS_DISABLED = "ipcp-field ui-widget ui-state-disabled ";
 
 	private static final String ICON_STYLE_CLASS_LEFT = "ui-inputgroup ui-inputgroup-icon-left";
@@ -93,12 +96,14 @@ public class FieldRenderer extends OutputPanelRenderer {
 			}
 		}
 
+		boolean showInput = field.isEditable() && !field.isReadonly() && !field.isDisabled();
+
 		if (!LangUtils.isValueBlank(field.getLabel())) {
 
 			OutputLabel outputLabel = (OutputLabel) context.getApplication().createComponent(OutputLabel.COMPONENT_TYPE);
 			outputLabel.setValue(field.getLabel());
 			outputLabel.setFor(field.getFor());
-			outputLabel.setStyleClass("label-floatlabel");
+			outputLabel.setStyleClass(showInput ? LABEL_CLASS_INPUT : LABEL_CLASS_OUTPUT);
 			outputLabel.setEscape(false);
 			outputLabel.setParent(field);
 			outputLabel.encodeAll(context);
@@ -112,7 +117,7 @@ public class FieldRenderer extends OutputPanelRenderer {
 			// writer.endElement("label");
 		}
 
-		boolean hasIcon = !LangUtils.isValueBlank(field.getIcon());
+		boolean hasIcon = !LangUtils.isValueBlank(field.getIcon()) && showInput;
 
 		final StringBuilder styleClass = SharedStringBuilder.get(context, SB_STYLE_CLASS);
 
@@ -156,7 +161,7 @@ public class FieldRenderer extends OutputPanelRenderer {
 			encodeIcon(context, styleClass, forClientId, field);
 		}
 
-		boolean showInput = field.isEditable() && !field.isReadonly() && !field.isDisabled();
+
 
 		UIComponent inputFacet = field.getFacet(FACET_INPUT);
 		if (inputFacet != null) {
