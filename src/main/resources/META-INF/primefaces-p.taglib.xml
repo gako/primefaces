@@ -29727,14 +29727,6 @@
 		</attribute>
 	</tag>
 
-	<tag>
-		<tag-name>logViewer</tag-name>
-		<component>
-			<resource-id>components/logViewerComponent.xhtml</resource-id>
-			<component-type>com.ilogs.component.logviewer.LogViewerComponent</component-type>
-		</component>
-	</tag>
-
 	<function>
     	<description>Searches for a component within a given parent componentID. First param is child component id, second param is parent component ID</description>
 		<function-name>nestedComponent</function-name>
