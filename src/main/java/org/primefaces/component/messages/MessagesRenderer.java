@@ -42,7 +42,6 @@ import org.primefaces.expression.SearchExpressionFacade;
 import org.primefaces.expression.SearchExpressionHint;
 import org.primefaces.renderkit.UINotificationRenderer;
 import org.primefaces.util.HTML;
-import org.primefaces.util.MessageFactory;
 
 public class MessagesRenderer extends UINotificationRenderer {
 
@@ -259,10 +258,6 @@ public class MessagesRenderer extends UINotificationRenderer {
 	}
 
 	// ILOGS FEATURE ++
-	private FacesMessage getMls(String key, Locale locale) {
-		return MessageFactory.getMessage(locale, key, null);
-	}
-
 	private List<FacesMessage> mergeMessages(List<FacesMessage> messages, FacesContext context) {
 
 		if (messages != null && !messages.isEmpty()) {
@@ -270,7 +265,7 @@ public class MessagesRenderer extends UINotificationRenderer {
 			Locale locale = context.getViewRoot().getLocale();
 			List<String> duplicatesCheck = new ArrayList<>();
 
-			FacesMessage requiredMessage = getMls(UIInput.REQUIRED_MESSAGE_ID, locale);
+			FacesMessage requiredMessage = com.sun.faces.util.MessageFactory.getMessage(UIInput.REQUIRED_MESSAGE_ID, locale);
 
 			String requiredPostFix = requiredMessage.getSummary().substring(requiredMessage.getSummary().indexOf('}') + 1);
 			String requiredPreFix = requiredMessage.getSummary().substring(0, requiredMessage.getSummary().indexOf('{'));
@@ -322,7 +317,7 @@ public class MessagesRenderer extends UINotificationRenderer {
 				sb.append(field);
 			}
 			if (sb.length() > 0) {
-				FacesMessage newRequiredMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, requiredMessage.getSummary(), sb.toString());
+				FacesMessage newRequiredMessage = com.sun.faces.util.MessageFactory.getMessage(UIInput.REQUIRED_MESSAGE_ID, locale, sb.toString());
 				messages.add(0, newRequiredMessage);
 			}
 		}
