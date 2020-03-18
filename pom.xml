@@ -109,13 +109,13 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.17</version>
+            <version>4.1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
+            <version>4.1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -268,6 +268,9 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+					<exclude>rebel.xml</exclude>
+	        	</excludes>
             </resource>
         </resources>
 
@@ -882,7 +885,7 @@
 
     <profiles>
     	<profile>
-			<id>dev</id>
+			<id>primefaces-dev</id>
 
 			<properties>
 				<resources.compressed.source>${basedir}/src/main/resources/META-INF/resources</resources.compressed.source>
@@ -895,6 +898,9 @@
 		            <resource>
 	            	    <directory>src/main/resources</directory>
 	        	        <filtering>true</filtering>
+	        	        <includes>
+	        	        	<include>rebel.xml</include>
+	        	        </includes>
 	    	        </resource>
 		            <resource>
 	        	        <directory>src/main/generated-resources</directory>

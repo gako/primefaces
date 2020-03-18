@@ -96,7 +96,7 @@ public class FieldRenderer extends OutputPanelRenderer {
 			}
 		}
 
-		boolean showInput = field.isEditable() && !field.isReadonly() && !field.isDisabled();
+		boolean showInput = (!field.isEditableDefined() || field.isEditable()) && !field.isReadonly() && !field.isDisabled();
 
 		if (!LangUtils.isValueBlank(field.getLabel())) {
 

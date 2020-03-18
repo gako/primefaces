@@ -96,6 +96,10 @@ public class Field extends OutputPanel {
 		return (java.lang.Boolean) getStateHelper().eval(PropertyKeys.editable, false);
 	}
 
+	public boolean isEditableDefined() {
+        return getStateHelper().eval(PropertyKeys.editable, null)!=null;
+    }
+
 	public void setEditable(boolean disabled) {
 		getStateHelper().put(PropertyKeys.editable, disabled);
 	}
