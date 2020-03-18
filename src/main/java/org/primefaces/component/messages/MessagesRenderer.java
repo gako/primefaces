@@ -42,6 +42,7 @@ import org.primefaces.expression.SearchExpressionFacade;
 import org.primefaces.expression.SearchExpressionHint;
 import org.primefaces.renderkit.UINotificationRenderer;
 import org.primefaces.util.HTML;
+import org.primefaces.util.MessageFactory;
 
 public class MessagesRenderer extends UINotificationRenderer {
 
@@ -265,7 +266,7 @@ public class MessagesRenderer extends UINotificationRenderer {
 			Locale locale = context.getViewRoot().getLocale();
 			List<String> duplicatesCheck = new ArrayList<>();
 
-			FacesMessage requiredMessage = com.sun.faces.util.MessageFactory.getMessage(UIInput.REQUIRED_MESSAGE_ID, locale);
+			FacesMessage requiredMessage = MessageFactory.getMessage(locale, UIInput.REQUIRED_MESSAGE_ID, null);
 
 			String requiredPostFix = requiredMessage.getSummary().substring(requiredMessage.getSummary().indexOf('}') + 1);
 			String requiredPreFix = requiredMessage.getSummary().substring(0, requiredMessage.getSummary().indexOf('{'));
