@@ -331,7 +331,7 @@ public class MessagesRenderer extends UINotificationRenderer {
 			for (FacesMessage message: messages) {
 				// remove detail if the same as summary
 				if (Objects.equals(message.getSummary(), message.getDetail())) {
-					message.setDetail(null);
+					message.setDetail("");
 				}
 			}
 		}
