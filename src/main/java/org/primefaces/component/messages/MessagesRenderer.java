@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -266,7 +267,10 @@ public class MessagesRenderer extends UINotificationRenderer {
 			Locale locale = context.getViewRoot().getLocale();
 			List<String> duplicatesCheck = new ArrayList<>();
 
-			FacesMessage requiredMessage = MessageFactory.getMessage(locale, UIInput.REQUIRED_MESSAGE_ID, null);
+			FacesMessage requiredMessage = MessageFactory.getMessage(locale, UIInput.REQUIRED_MESSAGE_ID,new Object[] {"{}"});
+			if (requiredMessage.getSummary()==null || !requiredMessage.getSummary().contains("{}")) {
+				return messages;
+			}
 
 			String requiredPostFix = requiredMessage.getSummary().substring(requiredMessage.getSummary().indexOf('}') + 1);
 			String requiredPreFix = requiredMessage.getSummary().substring(0, requiredMessage.getSummary().indexOf('{'));
@@ -318,8 +322,17 @@ public class MessagesRenderer extends UINotificationRenderer {
 				sb.append(field);
 			}
 			if (sb.length() > 0) {
-				FacesMessage newRequiredMessage = com.sun.faces.util.MessageFactory.getMessage(UIInput.REQUIRED_MESSAGE_ID, locale, sb.toString());
+				FacesMessage newRequiredMessage = MessageFactory.getMessage(locale, UIInput.REQUIRED_MESSAGE_ID, new Object[] {sb.toString()});
+				newRequiredMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
 				messages.add(0, newRequiredMessage);
+			}
+
+
+			for (FacesMessage message: messages) {
+				// remove detail if the same as summary
+				if (Objects.equals(message.getSummary(), message.getDetail())) {
+					message.setDetail(null);
+				}
 			}
 		}
 		return messages;
