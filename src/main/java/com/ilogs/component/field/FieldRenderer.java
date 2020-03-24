@@ -23,6 +23,8 @@ public class FieldRenderer extends OutputPanelRenderer {
 
 	private static final String FACET_INPUT = "input";
 
+	private static final String FACET_LABEL = "label";
+
 	private static final String ICON_POS_RIGHT = "right";
 
 	private static final String ICON_POS_LEFT = "left";
@@ -98,7 +100,11 @@ public class FieldRenderer extends OutputPanelRenderer {
 
 		boolean showInput = (!field.isEditableDefined() || field.isEditable()) && !field.isReadonly() && !field.isDisabled();
 
-		if (!LangUtils.isValueBlank(field.getLabel())) {
+
+		UIComponent labelFacet = field.getFacet(FACET_LABEL);
+		if (labelFacet != null && labelFacet.isRendered()) {
+			labelFacet.encodeAll(context);
+		} else if (!LangUtils.isValueBlank(field.getLabel())) {
 
 			OutputLabel outputLabel = (OutputLabel) context.getApplication().createComponent(OutputLabel.COMPONENT_TYPE);
 			outputLabel.setValue(field.getLabel());
