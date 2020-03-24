@@ -310,6 +310,13 @@
                     <key>d816b12ad43493419135c1dfdd08e73c</key>
                     <sourceLang>en</sourceLang>
                     <interactiveMode>false</interactiveMode>
+                    
+                    <!-- # Settings to import all translations -->
+					<!--  
+					<locales>de,en,es,fr</locales>
+					<pushType>both</pushType>
+					<merge>import</merge>
+					 -->
                 </configuration>
             </plugin>
             <plugin>
