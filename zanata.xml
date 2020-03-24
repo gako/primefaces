@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+  <url>https://ils-translate.ilogs.com/</url>
+  <project>ilsBaseEE</project>
+  <project-version>7.0</project-version>
+  <project-type>properties</project-type>
+
+  <src-dir>src/main/resources/lang</src-dir>
+  <trans-dir>src/main/resources/lang</trans-dir>  
+  
+  <includes>**/Messages.properties</includes>
+  
+</config>

@@ -73,6 +73,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <maven.translate.skip>false</maven.translate.skip>
 
         <resources.compressed.source>${project.build.directory}/classes/META-INF/resources</resources.compressed.source>
         <resources.compressed.target>${project.build.directory}/classes/META-INF/resources</resources.compressed.target>
@@ -281,6 +283,35 @@
         </testResources>
 
         <plugins>
+        	<plugin>
+                <groupId>org.zanata</groupId>
+                <artifactId>zanata-maven-plugin</artifactId>
+                <version>4.6.2</version>
+                <executions>
+                    <execution>
+                        <id>push-source</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>pull-translations</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>pull</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                	<skip>${maven.translate.skip}</skip>
+                    <url>https://ils-translate.ilogs.com/</url>
+                    <username>jenkins</username>
+                    <key>d816b12ad43493419135c1dfdd08e73c</key>
+                    <sourceLang>en</sourceLang>
+                    <interactiveMode>false</interactiveMode>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
