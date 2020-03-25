@@ -13,7 +13,7 @@ import org.primefaces.util.LangUtils;
 @FacesRenderer(componentFamily =  Card.COMPONENT_FAMILY, rendererType = Card.DEFAULT_RENDERER)
 public class CardRenderer extends OutputPanelRenderer {
 
-	private static final String CARD_CLASS = "Card OvHidden HeiAutoOnMobile ui-widget";
+	private static final String CARD_CLASS = "Card ui-widget";
 	private static final Object CARD_TITLEBAR_CLASS = "CardTopic";
 	private static final Object CARD_ACTIONS_CLASS = "CardFooter";
 	private static final Object CARD_FOOTER_CLASS = "CardFooter";
@@ -56,7 +56,7 @@ public class CardRenderer extends OutputPanelRenderer {
 		}
 
 		writer.startElement("div", card);
-		writer.writeAttribute("class", wrapperStyleClass, "styleclass");
+		writer.writeAttribute("class", wrapperStyleClass, "styleClass");
 
 		encodeMarkup(context, card);
 
