@@ -1,0 +1,331 @@
+div.ui-g>div>div.ui-card {
+	 height: 100%;
+	 margin-bottom: 0 !important;
+}
+ div.ui-card {
+	 display: block;
+	 background-color: white;
+	 border-radius: 2px;
+	 box-shadow: 0 1px 2px 0 rgba(43,59,93,0.4);
+	 display: -ms-flexbox;
+	 display: -webkit-flex;
+	 display: flex;
+	 -webkit-flex-direction: column;
+	 -ms-flex-direction: column;
+	 flex-direction: column;
+}
+ div.ui-card:before, div.ui-card:after {
+	 content: "";
+	 display: table;
+	 border-collapse: collapse;
+}
+ div.ui-card:after {
+	 clear: both;
+}
+ div.ui-card h1 {
+	 background-color: transparent;
+	 padding: 0;
+	 text-align: center;
+	 margin: 1em 0 2em !important;
+}
+ div.ui-card .ui-separator {
+	 margin-left: 0;
+	 margin-right: 0;
+}
+ div.ui-card div.ui-card-actions {
+	 border-top: solid 1px #E0E0E0;
+	 margin: 0;
+	 padding: 0;
+	 overflow: hidden;
+	 display: block;
+	 clear: both;
+}
+ div.ui-card div.ui-card-actions a {
+	 padding: 10px;
+}
+ div.ui-card div.ui-card-actions .ui-button.ui-button-big {
+	 margin: 10px;
+}
+ div.ui-card div.ui-card-actions .ui-selectbooleancheckbox {
+	 float: right;
+	 padding: 15px;
+	 border-left: solid 1px #E0E0E0;
+	 min-height: 27px;
+}
+ div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .ui-icon, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fa, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fab, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fal, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .far, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fas, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fad {
+	 margin-top: -12px !important;
+	 margin-left: 0;
+}
+ div.ui-card div.ui-card-actions .ui-menubutton {
+	 float: right;
+}
+ div.ui-card div.ui-card-actions .ui-menubutton .ui-button {
+	 padding: 0 !important;
+	 min-height: 44px !important;
+}
+ div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain), div.ui-card div.ui-card-actions .CardFooterBtn {
+	 padding: 10px;
+	 margin: 0;
+	 float: right;
+	 min-height: 24px;
+	 border-left: solid 1px #E0E0E0;
+	 background: transparent none;
+	 color: #546e7a;
+	 -webkit-border-radius: 0 !important;
+	 -moz-border-radius: 0 !important;
+	 border-radius: 0 !important;
+	 -moz-background-clip: padding !important;
+	 -webkit-background-clip: padding-box !important;
+	 background-clip: padding-box !important;
+}
+ div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain).Fleft, div.ui-card div.ui-card-actions .CardFooterBtn.Fleft {
+	 border-right: solid 1px #E0E0E0;
+	 border-left: none;
+}
+ div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain):not(.ui-state-disabled):hover, div.ui-card div.ui-card-actions .CardFooterBtn:not(.ui-state-disabled):hover {
+	 background-color: #F5F5F5;
+	 color: #546e7a;
+}
+ div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .ui-icon, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fa, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fab, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fal, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .far, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fas, div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) .fad, div.ui-card div.ui-card-actions .CardFooterBtn .ui-icon, div.ui-card div.ui-card-actions .CardFooterBtn .fa, div.ui-card div.ui-card-actions .CardFooterBtn .fab, div.ui-card div.ui-card-actions .CardFooterBtn .fal, div.ui-card div.ui-card-actions .CardFooterBtn .far, div.ui-card div.ui-card-actions .CardFooterBtn .fas, div.ui-card div.ui-card-actions .CardFooterBtn .fad {
+	 font-size: 24px;
+	 line-height: 24px;
+	 vertical-align: middle;
+}
+ div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain) span.HoverText, div.ui-card div.ui-card-actions .CardFooterBtn span.HoverText {
+	 display: none;
+}
+ div.ui-card div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain):hover span.HoverText, div.ui-card div.ui-card-actions .CardFooterBtn:hover span.HoverText {
+	 display: inline-block;
+}
+ div.ui-card div.ui-card-wrapper, div.ui-card a.ui-card-wrapper {
+	 margin: 0;
+	 padding: 0;
+	 width: 100%;
+	 text-decoration: none !important;
+	 flex-grow: 1;
+	 -webkit-flex-grow: 1;
+	 -ms-flex-grow: 1;
+	 display: -ms-flexbox;
+	 display: -webkit-flex;
+	 display: flex;
+	 -webkit-flex-direction: row;
+	 -ms-flex-direction: row;
+	 flex-direction: row;
+	 -webkit-flex-wrap: nowrap;
+	 -ms-flex-wrap: nowrap;
+	 flex-wrap: nowrap;
+	 -webkit-justify-content: flex-start;
+	 -ms-flex-pack: start;
+	 justify-content: flex-start;
+	 -webkit-align-content: stretch;
+	 -ms-flex-line-pack: stretch;
+	 align-content: stretch;
+	 -webkit-align-items: stretch;
+	 -ms-flex-align: stretch;
+	 align-items: stretch;
+}
+ div.ui-card div.ui-card-wrapper:hover, div.ui-card a.ui-card-wrapper:hover {
+	 text-decoration: none !important;
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-icon-container, div.ui-card a.ui-card-wrapper div.ui-card-icon-container {
+	 background-color: #F5F5F5;
+	 color: #546e7a !important;
+	 padding: 0;
+	 -webkit-order: 0;
+	 -ms-flex-order: 0;
+	 order: 0;
+	 flex-grow: 1;
+	 -webkit-flex-grow: 1;
+	 -ms-flex-grow: 1;
+	 flex-shrink: 0;
+	 -webkit-flex-shrink: 0;
+	 -ms-flex-shrink: 0;
+	 flex-basis: auto;
+	 -webkit-flex-basis: auto;
+	 -ms-flex-basis: auto;
+	 -webkit-align-self: auto;
+	 -ms-flex-item-align: auto;
+	 align-self: auto;
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-icon-container span, div.ui-card div.ui-card-wrapper div.ui-card-icon-container i, div.ui-card a.ui-card-wrapper div.ui-card-icon-container span, div.ui-card a.ui-card-wrapper div.ui-card-icon-container i {
+	 display: block;
+	 margin: 10px;
+	 -webkit-box-sizing: border-box;
+	 -moz-box-sizing: border-box;
+	 box-sizing: border-box;
+	 font-size: calc 64px;
+	 width: 1.25em;
+	 text-align: center;
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-icon-container img, div.ui-card a.ui-card-wrapper div.ui-card-icon-container img {
+	 margin: 0;
+	 -webkit-box-sizing: border-box;
+	 -moz-box-sizing: border-box;
+	 box-sizing: border-box;
+	 display: block;
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-text-container, div.ui-card a.ui-card-wrapper div.ui-card-text-container {
+	 padding: 10px;
+	 box-sizing: border-box;
+	 width: 100%;
+	 -webkit-order: 0;
+	 -ms-flex-order: 0;
+	 order: 0;
+	 flex-grow: 1;
+	 -webkit-flex-grow: 1;
+	 -ms-flex-grow: 1;
+	 flex-shrink: 1;
+	 -webkit-flex-shrink: 1;
+	 -ms-flex-shrink: 1;
+	 flex-basis: auto;
+	 -webkit-flex-basis: auto;
+	 -ms-flex-basis: auto;
+	 -webkit-align-self: auto;
+	 -ms-flex-item-align: auto;
+	 align-self: auto;
+	 display: flex;
+	 flex-wrap: wrap;
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-text-container h3.ui-card-header, div.ui-card a.ui-card-wrapper div.ui-card-text-container h3.ui-card-header {
+	 font-size: 18px;
+	 margin: 0;
+	 padding-bottom: 0.3em;
+	 width: 100%;
+	 display: block;
+	 min-height: 1.2em;
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-text-container div.ui-card-content, div.ui-card a.ui-card-wrapper div.ui-card-text-container div.ui-card-content {
+	 flex-grow: 1;
+	 flex-basis: 0;
+	 flex-shrink: 0;
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-text-container div.ui-card-links, div.ui-card a.ui-card-wrapper div.ui-card-text-container div.ui-card-links {
+	 display: block;
+	 flex: 0 0 auto;
+	 white-space: nowrap;
+	 padding: 5px;
+	 border-left: solid 1px #E0E0E0;
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-text-container div.ui-card-links a, div.ui-card a.ui-card-wrapper div.ui-card-text-container div.ui-card-links a {
+	 display: block;
+	 padding: 0.25em 0;
+}
+ @media (min-width:576px) and (max-width: 767px),(max-width: 575px) {
+	 div.ui-card div.ui-card-wrapper div.ui-card-text-container div.ui-card-links, div.ui-card a.ui-card-wrapper div.ui-card-text-container div.ui-card-links {
+		 width: 100%;
+		 padding-top: 5px;
+		 border-left: none;
+		 border-top: solid 1px #E0E0E0;
+		 white-space: normal;
+	}
+}
+ div.ui-card div.ui-card-wrapper div.ui-card-text-container div.ui-card-footer, div.ui-card a.ui-card-wrapper div.ui-card-text-container div.ui-card-footer {
+	 width: 100%;
+}
+ div.ui-card.ui-card-center div.ui-card-text-container h3.ui-card-header {
+	 text-align: center;
+}
+ div.ui-card.ui-card-secondary {
+	 -webkit-box-shadow: 0 0 25px 0 rgba(0,0,0,0.1);
+	 -moz-box-shadow: 0 0 25px 0 rgba(0,0,0,0.1);
+	 box-shadow: 0 0 25px 0 rgba(0,0,0,0.1);
+}
+ div.ui-card.ui-card-secondary>div.ui-card-wrapper>div.ui-card-icon-container, div.ui-card.ui-card-secondary>a.ui-card-wrapper>div.ui-card-icon-container {
+	 background-color: #ffffff;
+	 color: tint(#546e7a,40%) !important;
+}
+ div.ui-card.ui-card-secondary>div.ui-card-actions {
+	 border-top: 0 none;
+}
+ div.ui-card.ui-card-secondary>div.ui-card-actions .ui-button:not(.ui-button-big):not(.ui-button-plain), div.ui-card.ui-card-secondary>div.ui-card-actions .CardFooterBtn {
+	 border-left: 0 none;
+}
+ @media (min-width:576px) and (max-width: 767px),(max-width: 575px) {
+	 div.ui-card h1 {
+		 font-size: 1.5em;
+		 margin: 0.5em 0 1em !important;
+	}
+	 div.ui-card .CardFooterBtn:hover span.HoverText {
+		 display: none;
+	}
+}
+ @media (min-width: 992px) {
+	 div.ui-card .CardFooterBtn.Responsive100 {
+		 float: right !important;
+		 width: auto !important;
+	}
+}
+ @media (max-width: 575px),(min-width:576px) and (max-width: 767px),(min-width: 768px) and (max-width: 991px) {
+	 div.ui-card .CardFooterBtn.Responsive100 {
+		 display: block !important;
+		 width: 100% !important;
+		 float: none !important;
+		 margin: 0 0 0 -10px !important;
+		 border-left: none;
+		 border-bottom: solid 1px #E0E0E0;
+	}
+	 div.ui-card .CardFooterBtn.Responsive100::first-child {
+		 margin-top: -10px !important;
+	}
+}
+ @media (max-width: 575px) {
+	 div.Card {
+		 position: relative;
+	}
+	 div.Card div.ui-card-wrapper, div.Card a.ui-card-wrapper {
+		 display: block;
+	}
+	 div.Card div.ui-card-wrapper div.ui-card-icon-container, div.Card a.ui-card-wrapper div.ui-card-icon-container {
+		 display: block;
+		 float: none;
+		 width: 100%;
+		 overflow: hidden;
+		 max-height: 150px;
+		 box-sizing: border-box;
+	}
+	 div.Card div.ui-card-wrapper div.ui-card-icon-container span, div.Card div.ui-card-wrapper div.ui-card-icon-container i, div.Card a.ui-card-wrapper div.ui-card-icon-container span, div.Card a.ui-card-wrapper div.ui-card-icon-container i {
+		 margin: 0 auto;
+		 padding: 0;
+		 text-align: center;
+		 width: 100%;
+		 box-sizing: border-box;
+	}
+	 div.Card div.ui-card-wrapper div.ui-card-icon-container img, div.Card a.ui-card-wrapper div.ui-card-icon-container img {
+		 box-sizing: border-box;
+		 margin: 0 auto;
+		 max-width: 0;
+		 max-height: 0;
+	}
+	 div.Card div.ui-card-wrapper div.ui-card-icon-container img.cover, div.Card a.ui-card-wrapper div.ui-card-icon-container img.cover {
+		 width: 100%;
+	}
+	 div.Card div.ui-card-wrapper div.ui-card-text-container, div.Card a.ui-card-wrapper div.ui-card-text-container {
+		 display: block;
+		 width: 100%;
+	}
+	 div.Card div.ui-card-wrapper div.ui-card-text-container .button-bar, div.Card a.ui-card-wrapper div.ui-card-text-container .button-bar {
+		 position: absolute;
+		 right: 0;
+		 top: -45px;
+	}
+	 div.Card div.ui-card-wrapper div.ui-card-text-container div.ui-card-links, div.Card a.ui-card-wrapper div.ui-card-text-container div.ui-card-links {
+		 display: block;
+		 width: 100%;
+		 min-width: 0;
+		 white-space: normal;
+	}
+	 div.Card div.ui-card-actions {
+		 margin: 0;
+		 padding: 0;
+		 display: block;
+		 height: auto;
+	}
+	 div.Card div.ui-card-actions .ui-button.ui-button-next {
+		 margin: 0;
+		 font-size: 1.6em;
+		 width: 100%;
+		 box-sizing: border-box;
+		 float: none !important;
+	}
+}
+ 

@@ -13,10 +13,18 @@ import org.primefaces.util.LangUtils;
 @FacesRenderer(componentFamily =  Card.COMPONENT_FAMILY, rendererType = Card.DEFAULT_RENDERER)
 public class CardRenderer extends OutputPanelRenderer {
 
-	private static final String CARD_CLASS = "Card ui-widget";
-	private static final Object CARD_TITLEBAR_CLASS = "CardTopic";
-	private static final Object CARD_ACTIONS_CLASS = "CardFooter";
-	private static final Object CARD_FOOTER_CLASS = "CardFooter";
+	public static final String CARD_CLASS = "ui-widget ui-card";
+	public static final String CARD_TITLEBAR_CLASS = "ui-card-header";
+	public static final String CARD_ACTIONS_CLASS = "ui-card-actions";
+	public static final String CARD_FOOTER_CLASS = "ui-card-footer";
+	public static final String CARD_LINKS_CLASS = "ui-card-links";
+
+	public static final String CARD_WRAPPER_CLASS = "ui-card-wrapper";
+
+	public static final String CARD_ICON_CONTAINER_CLASS = "ui-card-icon-container accent";
+	public static final String CARD_TEXT_CONTAINER_CLASS = "ui-card-text-container";
+
+	public static final String CARD_CONTENT_CLASS = "ui-card-content";
 
 	@Override
 	public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
@@ -47,16 +55,8 @@ public class CardRenderer extends OutputPanelRenderer {
 		}
 		// CommandLink Start
 
-		UIComponent facetActions = card.getFacet("actions");
-		String wrapperStyleClass = "CardWrapper";
-		if (facetActions != null && facetActions.isRendered()) {
-			wrapperStyleClass = "CardWrapper CardWrapperWithFooter";
-		} else {
-			wrapperStyleClass = "CardWrapper";
-		}
-
 		writer.startElement("div", card);
-		writer.writeAttribute("class", wrapperStyleClass, "styleClass");
+		writer.writeAttribute("class", CARD_WRAPPER_CLASS, "styleClass");
 
 		encodeMarkup(context, card);
 
@@ -74,8 +74,8 @@ public class CardRenderer extends OutputPanelRenderer {
 
 		UIComponent icon = panel.getFacet("icon");
 		if (!LangUtils.isValueBlank(panel.getIcon()) || icon != null) {
-			writer.startElement("div", null); // CardIconContainer
-			writer.writeAttribute("class", "CardIconContainer accent", "styleClass");
+			writer.startElement("div", null); // ui-card-icon-container
+			writer.writeAttribute("class", CARD_ICON_CONTAINER_CLASS, "styleClass");
 
 			if (icon != null) {
 				renderChild(context, icon);
@@ -84,22 +84,22 @@ public class CardRenderer extends OutputPanelRenderer {
 				writer.writeAttribute("class", panel.getIcon(), "styleClass");
 				writer.endElement("i");
 			}
-			writer.endElement("div"); // CardIconContainer
+			writer.endElement("div"); // ui-card-icon-container
 		}
 		{
-			writer.startElement("div", null); // CardTextContainer
-			writer.writeAttribute("class", "CardTextContainer", "styleClass");
+			writer.startElement("div", null); // ui-card-text-container
+			writer.writeAttribute("class", CARD_TEXT_CONTAINER_CLASS, "styleClass");
 
 			encodeHeader(context, panel);
 
-			writer.startElement("div", null); // CardContent
-			writer.writeAttribute("class", "CardContent", "styleClass");
+			writer.startElement("div", null); // ui-card-content
+			writer.writeAttribute("class", CARD_CONTENT_CLASS, "styleClass");
 			renderChildren(context, panel);
-			writer.endElement("div");// CardContent
+			writer.endElement("div");// ui-card-content
 			encodeLinks(context, panel);
 			encodeFooter(context, panel);
 
-			writer.endElement("div"); // CardTextContainer
+			writer.endElement("div"); // ui-card-text-container
 		}
 
 	}
@@ -109,12 +109,12 @@ public class CardRenderer extends OutputPanelRenderer {
 		UIComponent header = panel.getFacet("header");
 
 		if (header != null && header.isRendered()) {
-			writer.startElement("div", null);
+			writer.startElement("h3", null);
 			writer.writeAttribute("class", CARD_TITLEBAR_CLASS, "styleClass");
 
 			renderChild(context, header);
 
-			writer.endElement("div");
+			writer.endElement("h3");
 		}
 
 	}
@@ -125,7 +125,7 @@ public class CardRenderer extends OutputPanelRenderer {
 
 		if (header != null && header.isRendered()) {
 			writer.startElement("div", null);
-			writer.writeAttribute("class", "CardLinkContainer", "styleClass");
+			writer.writeAttribute("class", CARD_LINKS_CLASS, "styleClass");
 
 			renderChild(context, header);
 

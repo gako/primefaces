@@ -1,10 +1,15 @@
 package com.ilogs.component.cardlink;
 
+import javax.faces.application.ResourceDependencies;
+import javax.faces.application.ResourceDependency;
 import javax.faces.component.FacesComponent;
 
 import org.primefaces.component.commandlink.CommandLink;
 
 @FacesComponent(value = CardLink.COMPONENT_TYPE)
+@ResourceDependencies({
+	@ResourceDependency(library = "primefaces", name = "components.css")
+})
 public class CardLink extends CommandLink {
 
 	public static final String COMPONENT_TYPE = "com.ilogs.component.cardlink.CardLink";

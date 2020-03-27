@@ -1,10 +1,15 @@
 package com.ilogs.component.card;
 
+import javax.faces.application.ResourceDependencies;
+import javax.faces.application.ResourceDependency;
 import javax.faces.component.FacesComponent;
 
 import org.primefaces.component.outputpanel.OutputPanel;
 
 @FacesComponent(value = Card.COMPONENT_TYPE)
+@ResourceDependencies({
+	@ResourceDependency(library = "primefaces", name = "components.css")
+})
 public class Card extends OutputPanel {
 
 	public static final String COMPONENT_TYPE = "com.ilogs.component.card.Card";

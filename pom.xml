@@ -559,7 +559,7 @@
                                 <include>${resources.compressed.source}/primefaces/accordion/accordion.css</include>
                                 <include>${resources.compressed.source}/primefaces/autocomplete/autocomplete.css</include>
                                 <include>${resources.compressed.source}/primefaces/blockui/blockui.css</include>
-                                <include>${resources.compressed.source}/primefaces/carousel/carousel.css</include>
+                                <include>${resources.compressed.source}/primefaces/carousel/carousel.css</include>                                
                                 <include>${resources.compressed.source}/primefaces/columntoggler/columntoggler.css</include>
                                 <include>${resources.compressed.source}/primefaces/dashboard/dashboard.css</include>
                                 <include>${resources.compressed.source}/primefaces/datalist/datalist.css</include>
@@ -598,6 +598,8 @@
                                 <include>${resources.compressed.source}/primefaces/sidebar/sidebar.css</include>
                                 <include>${resources.compressed.source}/primefaces/dataview/dataview.css</include>
                                 <include>${resources.compressed.source}/primefaces/datepicker/datepicker.css</include>
+                                <!--  ilogs FEATURE -->
+                                <include>${resources.compressed.source}/primefaces/card/card.css</include>
                             </includes>
                         </aggregation>
                         <aggregation>

@@ -1,4 +1,13 @@
 package com.ilogs.component.cardlink;
+import static com.ilogs.component.card.CardRenderer.CARD_ACTIONS_CLASS;
+import static com.ilogs.component.card.CardRenderer.CARD_CLASS;
+import static com.ilogs.component.card.CardRenderer.CARD_CONTENT_CLASS;
+import static com.ilogs.component.card.CardRenderer.CARD_FOOTER_CLASS;
+import static com.ilogs.component.card.CardRenderer.CARD_ICON_CONTAINER_CLASS;
+import static com.ilogs.component.card.CardRenderer.CARD_LINKS_CLASS;
+import static com.ilogs.component.card.CardRenderer.CARD_TEXT_CONTAINER_CLASS;
+import static com.ilogs.component.card.CardRenderer.CARD_TITLEBAR_CLASS;
+import static com.ilogs.component.card.CardRenderer.CARD_WRAPPER_CLASS;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,9 +37,6 @@ public class CardLinkRenderer extends CoreRenderer {
 
 	private static final String SB_BUILD_ONCLICK = CardLink.class.getName() + "#buildOnclick";
 
-	private static final String CARD_CLASS = "Card OvHidden HeiAutoOnMobile";
-	private static final Object CARD_TITLEBAR_CLASS = "CardTopic";
-	private static final Object CARD_ACTIONS_CLASS = "CardFooter";
 
 	@Override
 	public void decode(FacesContext context, UIComponent component) {
@@ -81,13 +87,6 @@ public class CardLinkRenderer extends CoreRenderer {
 		}
 		// CommandLink Start
 
-		UIComponent facetActions = card.getFacet("actions");
-		String wrapperStyleClass = "CardWrapper";
-		if (facetActions != null && facetActions.isRendered()) {
-			wrapperStyleClass = "CardWrapper CardWrapperWithFooter";
-		} else {
-			wrapperStyleClass = "CardWrapper";
-		}
 
 		if (!card.isDisabled() && isLink(card)) {
 			String request;
@@ -109,7 +108,7 @@ public class CardLinkRenderer extends CoreRenderer {
 			writer.startElement("a", card);
 			writer.writeAttribute("id", clientId + "_link", "id");
 			writer.writeAttribute("href", "#", null);
-			writer.writeAttribute("class", wrapperStyleClass, null);
+			writer.writeAttribute("class", CARD_WRAPPER_CLASS, "styleClass");
 			if (card.getTitle() != null) {
 				writer.writeAttribute("aria-label", card.getTitle(), null);
 			}
@@ -141,7 +140,7 @@ public class CardLinkRenderer extends CoreRenderer {
 				}
 			}
 
-			List<ClientBehaviorContext.Parameter> behaviorParams = new ArrayList<ClientBehaviorContext.Parameter>();
+			List<ClientBehaviorContext.Parameter> behaviorParams = new ArrayList<>();
 			behaviorParams.add(new ClientBehaviorContext.Parameter(Constants.CLIENT_BEHAVIOR_RENDERING_MODE, ClientBehaviorRenderingMode.UNOBSTRUSIVE));
 			String dialogReturnBehavior = getEventBehaviors(context, card, "dialogReturn", behaviorParams);
 			if (dialogReturnBehavior != null) {
@@ -155,7 +154,7 @@ public class CardLinkRenderer extends CoreRenderer {
 			writer.endElement("a");
 		} else {
 			writer.startElement("div", card);
-			writer.writeAttribute("class", wrapperStyleClass, "styleclass");
+			writer.writeAttribute("class", CARD_WRAPPER_CLASS, "styleClass");
 
 			encodeMarkup(context, card);
 
@@ -173,8 +172,8 @@ public class CardLinkRenderer extends CoreRenderer {
 
 		UIComponent icon = panel.getFacet("icon");
 		if (!LangUtils.isValueBlank(panel.getIcon()) || icon != null) {
-			writer.startElement("div", null); // CardIconContainer
-			writer.writeAttribute("class", "CardIconContainer accent", "styleClass");
+			writer.startElement("div", null); // ui-card-icon-container
+			writer.writeAttribute("class", CARD_ICON_CONTAINER_CLASS, "styleClass");
 
 			if (icon != null) {
 				renderChild(context, icon);
@@ -183,21 +182,21 @@ public class CardLinkRenderer extends CoreRenderer {
 				writer.writeAttribute("class", panel.getIcon(), "styleClass");
 				writer.endElement("i");
 			}
-			writer.endElement("div"); // CardIconContainer
+			writer.endElement("div"); // ui-card-icon-container
 		}
 		{
-			writer.startElement("div", null); // CardTextContainer
-			writer.writeAttribute("class", "CardTextContainer", "styleClass");
+			writer.startElement("div", null); // ui-card-text-container
+			writer.writeAttribute("class", CARD_TEXT_CONTAINER_CLASS, "styleClass");
 
 			encodeHeader(context, panel);
-			writer.startElement("div", null); // CardContent
-			writer.writeAttribute("class", "CardContent", "styleClass");
+			writer.startElement("div", null); // ui-card-content
+			writer.writeAttribute("class", CARD_CONTENT_CLASS, "styleClass");
 			renderChildren(context, panel);
-			writer.endElement("div");// CardContent
+			writer.endElement("div");// ui-card-content
 			encodeLinks(context, panel);
 			encodeFooter(context, panel);
 
-			writer.endElement("div"); // CardTextContainer
+			writer.endElement("div"); // ui-card-text-container
 		}
 
 	}
@@ -207,13 +206,13 @@ public class CardLinkRenderer extends CoreRenderer {
 		UIComponent header = panel.getFacet("header");
 
 		if (header != null && header.isRendered()) {
-			writer.startElement("div", null);
+			writer.startElement("h3", null);
 			writer.writeAttribute("id", panel.getClientId(context) + "_header", null);
 			writer.writeAttribute("class", CARD_TITLEBAR_CLASS, "styleClass");
 
 			renderChild(context, header);
 
-			writer.endElement("div");
+			writer.endElement("h3");
 		}
 
 	}
@@ -224,7 +223,7 @@ public class CardLinkRenderer extends CoreRenderer {
 
 		if (header != null && header.isRendered()) {
 			writer.startElement("div", null);
-			writer.writeAttribute("class", "CardLinkContainer", "styleClass");
+			writer.writeAttribute("class", CARD_LINKS_CLASS, "styleClass");
 
 			renderChild(context, header);
 
@@ -240,6 +239,7 @@ public class CardLinkRenderer extends CoreRenderer {
 		if (footer != null && footer.isRendered()) {
 			writer.startElement("div", null);
 			writer.writeAttribute("id", panel.getClientId(context) + "_footer", null);
+			writer.writeAttribute("class", CARD_FOOTER_CLASS, "styleClass");
 
 			renderChild(context, footer);
 
