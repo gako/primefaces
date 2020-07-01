@@ -77,7 +77,7 @@ PrimeFaces.widget.Sticky = PrimeFaces.widget.BaseWidget.extend({
     },
 
     unsticky: function() {
-        Primefaces.utils.unbindScrollHandler(this,'scroll.' + this.id + '_align');
+        PrimeFaces.utils.unbindScrollHandler(this,'scroll.' + this.id + '_align');
         $(window).off(this, 'resize.' + this.id + '_align');
         this.restore();
     }
