@@ -22,13 +22,15 @@ PrimeFaces.widget.DefaultCommand = PrimeFaces.widget.BaseWidget.extend({
             var keyCode = $.ui.keyCode;
 
             data = data || e.data;
-            if (($this.scope && data.scopeEnter) || (!$this.scope && (e.which == keyCode.ENTER || e.which == keyCode.NUMPAD_ENTER))) {
+            if (($this.scope && data.scopeEnter) || (!$this.scope && !data.scopeEnter && (e.which == keyCode.ENTER))) {
                 //do not proceed if target is a textarea,button or link
                 if ($(e.target).is('textarea,button,input[type="submit"],a')) {
                     return true;
                 }
 
-                $this.jqTarget.click();
+                if (!$this.jqTarget.is(':disabled, .ui-state-disabled')) {
+                    $this.jqTarget.click();
+                }
                 e.preventDefault();
                 e.stopImmediatePropagation();
             }
@@ -37,14 +39,13 @@ PrimeFaces.widget.DefaultCommand = PrimeFaces.widget.BaseWidget.extend({
         if (this.scope) {
             this.scope.off('keydown.' + this.id).on('keydown.' + this.id, function (e) {
                 var keyCode = $.ui.keyCode;
-                if (e.which == keyCode.ENTER || e.which == keyCode.NUMPAD_ENTER) {
+                if (e.which == keyCode.ENTER) {
                     closestForm.trigger('keydown.' + $this.id, {scopeEnter: true});
-                    e.preventDefault();
+                    //e.preventDefault();
                     e.stopPropagation();
                 }
             });
         }
-
         this.removeScriptElement(this.id);
     }
 });
