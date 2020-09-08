@@ -42,6 +42,7 @@ import javax.faces.view.facelets.TagConfig;
 import javax.faces.view.facelets.TagHandler;
 
 import org.omnifaces.util.Callback;
+import org.primefaces.component.calendar.Calendar;
 import org.primefaces.util.LangUtils;
 
 /**
@@ -174,6 +175,8 @@ public class SkipValidators extends TagHandler {
 		private Map<String, ValueExpression> requiredExpressions = new HashMap<String, ValueExpression>();
 		private Map<String, Boolean> required = new HashMap<String, Boolean>();
 		private Map<String, Validator[]> allValidators = new HashMap<String, Validator[]>();
+		private Map<String, Object> validationValues = new HashMap<String, Object>();
+		private Map<String, ValueExpression> validationExpressions = new HashMap<String, ValueExpression>();
 
 		public SkipValidatorsEventListener(String includeGroup, String excludeGroup) {
 			this.includeGroup = includeGroup;
@@ -248,6 +251,27 @@ public class SkipValidators extends TagHandler {
 
 			required.put(clientId, input.isRequired());
 			requiredExpressions.put(clientId, input.getValueExpression("required"));
+
+			if (input instanceof Calendar) {
+				Calendar calendar = (Calendar) input;
+
+				if (calendar.getMindate()!=null) {
+					validationValues.put(clientId+"-mindate", calendar.getMindate());
+
+				}
+				validationExpressions.put(clientId+"-mindate", calendar.getValueExpression("mindate"));
+
+				calendar.setMindate(null);
+				calendar.setValueExpression("mindate", null);
+
+				if (calendar.getMaxdate()!=null) {
+                    validationValues.put(clientId+"-maxdate", calendar.getMaxdate());
+				}
+				validationExpressions.put(clientId+"-maxdate", calendar.getValueExpression("maxdate"));
+
+				calendar.setMaxdate(null);
+                calendar.setValueExpression("maxdate", null);
+			}
 		}
 
 		protected void restoreRequired(UIInput input) {
@@ -261,6 +285,26 @@ public class SkipValidators extends TagHandler {
 			} else {
 				input.setRequired(TRUE.equals(requiredValue));
 			}
+
+			if (input instanceof Calendar) {
+                Calendar calendar = (Calendar) input;
+
+                ValueExpression mindateExpression = validationExpressions.remove(clientId+"-mindate");
+                Object mindate = validationValues.remove(clientId+"-mindate");
+                if (mindateExpression instanceof ValueExpression) {
+                	calendar.setValueExpression("mindate", mindateExpression);
+                } else if (mindate!=null) {
+                	calendar.setMindate(mindate);
+                }
+
+                ValueExpression maxdateExpression = validationExpressions.remove(clientId+"-maxdate");
+                Object maxdate = validationValues.remove(clientId+"-maxdate");
+                if (maxdateExpression instanceof ValueExpression) {
+                    calendar.setValueExpression("maxdate", maxdateExpression);
+                } else if (maxdate!=null) {
+                    calendar.setMaxdate(maxdate);
+                }
+            }
 		}
 
 		private void overwriteRequired(UIInput input, boolean required) {
