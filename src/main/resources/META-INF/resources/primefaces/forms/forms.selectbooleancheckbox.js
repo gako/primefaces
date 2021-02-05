@@ -116,6 +116,9 @@ PrimeFaces.widget.SelectBooleanCheckbox = PrimeFaces.widget.BaseWidget.extend({
         }
     },
 
+    /**
+     * Enables this checkbox
+     */
     enable : function() {
 		this.input.removeAttr("disabled");
 		this.jq.removeClass("ui-state-disabled");
@@ -123,6 +126,9 @@ PrimeFaces.widget.SelectBooleanCheckbox = PrimeFaces.widget.BaseWidget.extend({
 		this.__turnOffAndInit();
 	},
 
+    /**
+     * Disabled this checkbox
+     */
 	disable : function() {
 		this.input.attr("disabled","disabled");
 		this.jq.addClass("ui-state-disabled");
@@ -131,6 +137,9 @@ PrimeFaces.widget.SelectBooleanCheckbox = PrimeFaces.widget.BaseWidget.extend({
 		this.__turnOffAndInit();
 	},
 
+    /**
+     * Internal helper methods to reinit component
+     */
 	__turnOffAndInit: function() {
 		this.jq.off("remove");
 		this.box.off();

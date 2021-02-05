@@ -119,6 +119,9 @@ PrimeFaces.widget.Sticky = PrimeFaces.widget.BaseWidget.extend({
         }
     },
 
+    /**
+     * Removed sticky functionality from component
+     */
     unsticky: function() {
         Primefaces.utils.unbindScrollHandler(this,'scroll.' + this.id + '_align');
         $(window).off(this, 'resize.' + this.id + '_align');

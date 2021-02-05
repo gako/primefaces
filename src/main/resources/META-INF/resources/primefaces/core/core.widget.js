@@ -562,22 +562,8 @@ if (!PrimeFaces.widget) {
                 this.refreshListeners = [];
             }
             this.refreshListeners.push(listener);
-        },
+        }
 
-        /**
-         * Add experimental enable, disable methods not fully working, just adds attribute and css style, does not disable listeners from components.
-         */
-        enable: function() {
-    		this.jq.removeAttr("disabled");
-    		this.jq.removeClass("ui-state-disabled");
-    		this.disabled = false;
-    	},
-
-    	disable: function() {
-    		this.jq.attr("disabled","disabled");
-    		this.jq.addClass("ui-state-disabled");
-    		this.disabled = true;
-    	}
     });
 
     /**
