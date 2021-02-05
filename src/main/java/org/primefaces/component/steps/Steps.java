@@ -41,6 +41,7 @@ public class Steps extends StepsBase {
     public static final String VISITED_ITEM_CLASS = "ui-steps-item ui-state-default ui-corner-all";
     public static final String STEP_NUMBER_CLASS = "ui-steps-number";
     public static final String STEP_TITLE_CLASS = "ui-steps-title";
+    public static final String STEP_ICON_CLASS = "ui-steps-icon";
 
     @Override
     public void processDecodes(FacesContext context) {
