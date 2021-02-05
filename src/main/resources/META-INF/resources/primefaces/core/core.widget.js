@@ -206,20 +206,20 @@ if (!PrimeFaces.widget) {
      * during a `refresh` (AJAX update).
      * @this {BaseWidget} PrimeFaces.widget.PostConstructCallback
      * @param {BaseWidget} PrimeFaces.widget.PostConstructCallback.widget The widget that was constructed.
-     * 
+     *
      * @typedef PrimeFaces.widget.PostRefreshCallback An optional callback that is invoked after a widget was refreshed
      * after an AJAX update, at the end of the {@link BaseWidget.refresh | refresh} method. This is usually specified
      * via the `widgetPostRefresh` attribute on the JSF component.
      * @this {BaseWidget} PrimeFaces.widget.PostRefreshCallback
      * @param {BaseWidget} PrimeFaces.widget.PostRefreshCallback.widget The widget that was refreshed.
-     * 
+     *
      * @typedef PrimeFaces.widget.PreDestroyCallback An optional callback that is invoked before a widget is about to be
      * destroyed, e.g. when the component was removed at the end of an AJAX update. This is called at the beginning
      * of the {@link BaseWidget.destroy | destroy} method. This is usually specified via the `widgetPreDestroy`
      * attribute on the JSF component.
      * @this {BaseWidget} PrimeFaces.widget.PreDestroyCallback
      * @param {BaseWidget} PrimeFaces.widget.PreDestroyCallback.widget The widget that is about to be destroyed.
-     * 
+     *
      * @template {PrimeFaces.widget.BaseWidgetCfg} [TCfg=PrimeFaces.widget.BaseWidgetCfg] Type of the configuration
      * object for this widget.
      *
@@ -244,7 +244,7 @@ if (!PrimeFaces.widget) {
      * instead.
      * @prop {string} widgetVar The name of the widget variables of this widget. The widget variable can be used to
      * access a widget instance by calling `PF('myWidgetVar')`.
-     * 
+     *
      * @method constructor Creates a new instance of this widget. Please note that you should __NOT__ override this
      * constructor. Instead, override the {@link init} method, which is called at the end of the constructor once the
      * instance is created.
@@ -562,7 +562,22 @@ if (!PrimeFaces.widget) {
                 this.refreshListeners = [];
             }
             this.refreshListeners.push(listener);
-        }
+        },
+
+        /**
+         * Add experimental enable, disable methods not fully working, just adds attribute and css style, does not disable listeners from components.
+         */
+        enable: function() {
+    		this.jq.removeAttr("disabled");
+    		this.jq.removeClass("ui-state-disabled");
+    		this.disabled = false;
+    	},
+
+    	disable: function() {
+    		this.jq.attr("disabled","disabled");
+    		this.jq.addClass("ui-state-disabled");
+    		this.disabled = true;
+    	}
     });
 
     /**
@@ -580,7 +595,7 @@ if (!PrimeFaces.widget) {
      * You can access this configuration via {@link PrimeFaces.widget.BaseWidget.cfg|BaseWidget.cfg}. Please note that this
      * configuration is usually meant to be read-only and should not be modified.
      * @extends {PrimeFaces.widget.BaseWidgetCfg} cfg
-     * 
+     *
      */
     PrimeFaces.widget.DynamicOverlayWidget = PrimeFaces.widget.BaseWidget.extend({
 
