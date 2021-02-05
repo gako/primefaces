@@ -1,12 +1,12 @@
 /**
  * __PrimeFaces SelectCheckboxMenu Widget__
- * 
+ *
  * SelectCheckboxMenu is a multi select component that displays options in an overlay.
- * 
+ *
  * @typedef {"startsWith" |  "contains" |  "endsWith" | "custom"} PrimeFaces.widget.SelectCheckboxMenu.FilterMatchMode
  * Available modes for filtering the options of a select list box. When `custom` is set, a `filterFunction` must be
  * specified.
- * 
+ *
  * @typedef PrimeFaces.widget.SelectCheckboxMenu.FilterFunction A function for filtering the options of a select list
  * box.
  * @param {string} PrimeFaces.widget.SelectCheckboxMenu.FilterFunction.itemLabel The label of the currently selected
@@ -14,19 +14,19 @@
  * @param {string} PrimeFaces.widget.SelectCheckboxMenu.FilterFunction.filterValue The value to search for.
  * @return {boolean} PrimeFaces.widget.SelectCheckboxMenu.FilterFunction `true` if the item label matches the filter
  * value, or `false` otherwise.
- * 
+ *
  * @typedef PrimeFaces.widget.SelectCheckboxMenu.OnChangeCallback Callback that is invoked when a checkbox option was
  * checked or unchecked. See also {@link SelectCheckboxMenuCfg.onChange}.
- * @this {PrimeFaces.widget.SelectCheckboxMenu} PrimeFaces.widget.SelectCheckboxMenu.OnChangeCallback 
- * 
+ * @this {PrimeFaces.widget.SelectCheckboxMenu} PrimeFaces.widget.SelectCheckboxMenu.OnChangeCallback
+ *
  * @typedef PrimeFaces.widget.SelectCheckboxMenu.OnHideCallback Callback that is invoked when the overlay panel is
  * brought up. See also {@link SelectCheckboxMenuCfg.onHide}.
- * @this {PrimeFaces.widget.SelectCheckboxMenu} PrimeFaces.widget.SelectCheckboxMenu.OnHideCallback 
- * 
+ * @this {PrimeFaces.widget.SelectCheckboxMenu} PrimeFaces.widget.SelectCheckboxMenu.OnHideCallback
+ *
  * @typedef PrimeFaces.widget.SelectCheckboxMenu.OnShowCallback Callback that is invoked when the overlay panel is
  * hidden. See also {@link SelectCheckboxMenuCfg.onShow}.
- * @this {PrimeFaces.widget.SelectCheckboxMenu} PrimeFaces.widget.SelectCheckboxMenu.OnShowCallback 
- * 
+ * @this {PrimeFaces.widget.SelectCheckboxMenu} PrimeFaces.widget.SelectCheckboxMenu.OnShowCallback
+ *
  * @prop {JQuery} checkboxes The DOM element for the checkboxes that can be selected.
  * @prop {JQuery} defaultLabel The DOM element for the default label.
  * @prop {boolean} disabled Whether this widget is currently disabled.
@@ -43,7 +43,7 @@
  * @prop {JQuery} itemContainerWrapper The DOM element for the wrapper with the container with the available checkbox
  * options.
  * @prop {JQuery} keyboardTarget The DOM element for the hidden input element that that can be selected via pressing
- * tab. 
+ * tab.
  * @prop {JQuery} label The DOM element for the label indicating the currently selected option.
  * @prop {JQuery} labelContainer The DOM element for the container with the label indicating the currently selected
  * option.
@@ -56,12 +56,12 @@
  * @prop {JQuery} triggers The DOM elements for the buttons that can trigger (hide or show) the overlay panel with the
  * available checkbox options.
  * @prop {boolean} widthAligned Whether the width of the overlay panel was aligned already.
- * 
+ *
  * @interface {PrimeFaces.widget.SelectCheckboxMenuCfg} cfg The configuration for the {@link  SelectCheckboxMenu| SelectCheckboxMenu widget}.
  * You can access this configuration via {@link PrimeFaces.widget.BaseWidget.cfg|BaseWidget.cfg}. Please note that this
  * configuration is usually meant to be read-only and should not be modified.
  * @extends {PrimeFaces.widget.BaseWidgetCfg} cfg
- * 
+ *
  * @prop {string} cfg.appendTo The search expression for the element to which the overlay panel should be appended.
  * @prop {boolean} cfg.caseSensitive Defines if filtering would be case sensitive.
  * @prop {boolean} cfg.dynamic Defines if dynamic loading is enabled for the element's panel. If the value is `true`,
@@ -88,6 +88,7 @@
  * @prop {number} cfg.scrollHeight Height of the overlay panel.
  * @prop {boolean} cfg.showHeader When enabled, the header of overlay panel is displayed.
  * @prop {boolean} cfg.updateLabel When enabled, the selected items are displayed on the label.
+ * @prop {boolean} cfg.updateLabelCount When enabled, the count of selected items are displayed on the label. e.g. (4/9).
  */
 PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
@@ -139,7 +140,15 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
                     this.updateLabel();
                 }
+                else if(this.cfg.updateLabelCount) {
+                    this.defaultLabel = this.label.text();
+                    this.label.css({
+                        'text-overflow': 'ellipsis',
+                        overflow: 'hidden'
+                    });
 
+                    this.updateLabelCount();
+                }
                 this.label.attr('id', this.labelId);
                 this.keyboardTarget.attr('aria-expanded', false).attr('aria-labelledby', this.labelId);
             }
@@ -154,6 +163,15 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
                     });
 
                     this.updateLabel();
+                }
+                else if(this.cfg.updateLabelCount) {
+                    this.defaultLabel = this.label.text();
+                    this.label.css({
+                        'text-overflow': 'ellipsis',
+                        overflow: 'hidden'
+                    });
+
+                    this.updateLabelCount();
                 }
             }
         }
@@ -899,6 +917,9 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             if(this.cfg.updateLabel) {
                 this.updateLabel();
             }
+            else if(this.cfg.updateLabelCount) {
+                this.updateLabelCount();
+            }
         }
     },
 
@@ -932,6 +953,9 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             if(this.cfg.updateLabel) {
                 this.updateLabel();
             }
+            else if(this.cfg.updateLabelCount) {
+                this.updateLabelCount();
+            }
         }
     },
 
@@ -956,13 +980,13 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         var $this = this;
         if (this.panel.is(':visible')) {
             this.keyboardTarget.attr('aria-expanded', false);
-    
+
             if(animate) {
                 this.panel.fadeOut('fast', function() {
                     $this.postHide();
                 });
             }
-    
+
             else {
                 this.panel.hide();
                 this.postHide();
@@ -1123,9 +1147,33 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
     },
 
     /**
+     * Updates the label to show the count of currently selected items (4/8).
+     * @private
+     */
+    updateLabelCount: function() {
+        var checkedItems = this.jq.find(':checked'),
+            labelText = '';
+
+        if(checkedItems && checkedItems.length) {
+            labelText = "(" + checkedItems.length + "/" + this.inputs.filter("*").length + ")";
+        }
+        else {
+            if (this.cfg.emptyLabel) {
+                labelText = this.cfg.emptyLabel;
+            } else {
+                labelText = this.defaultLabel;
+            }
+        }
+
+        this.label.text(labelText);
+        this.labelContainer.attr('title', labelText);
+
+    },
+
+    /**
      * When multi mode is enabled: Creates a tag for the given item that was checked.
      * @private
-     * @param {JQuery} item The checkbox item that was checked. 
+     * @param {JQuery} item The checkbox item that was checked.
      */
     createMultipleItem: function(item) {
         var items = this.multiItemContainer.children();

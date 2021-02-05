@@ -52,6 +52,7 @@ public abstract class SelectCheckboxMenuBase extends HtmlSelectManyCheckbox impl
         title,
         showHeader,
         updateLabel,
+        updateLabelCount,
         multiple,
         dynamic,
         labelSeparator,
@@ -197,6 +198,14 @@ public abstract class SelectCheckboxMenuBase extends HtmlSelectManyCheckbox impl
 
     public void setUpdateLabel(boolean updateLabel) {
         getStateHelper().put(PropertyKeys.updateLabel, updateLabel);
+    }
+
+    public boolean isUpdateLabelCount() {
+        return (Boolean) getStateHelper().eval(PropertyKeys.updateLabelCount, true);
+    }
+
+    public void setUpdateLabelCount(boolean updateLabel) {
+        getStateHelper().put(PropertyKeys.updateLabelCount, updateLabel);
     }
 
     public boolean isMultiple() {
