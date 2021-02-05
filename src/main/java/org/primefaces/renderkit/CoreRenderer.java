@@ -43,9 +43,18 @@ import javax.faces.validator.Validator;
 import org.primefaces.component.api.AjaxSource;
 import org.primefaces.component.api.ClientBehaviorRenderingMode;
 import org.primefaces.component.api.MixedClientBehaviorHolder;
+import org.primefaces.component.menu.AbstractMenu;
+import org.primefaces.component.ribbon.Ribbon;
+import org.primefaces.component.ribbon.RibbonGroup;
+import org.primefaces.component.separator.UISeparator;
+import org.primefaces.component.tabview.Tab;
+import org.primefaces.component.toolbar.Toolbar;
+import org.primefaces.component.toolbar.ToolbarGroup;
 import org.primefaces.context.PrimeApplicationContext;
 import org.primefaces.context.PrimeRequestContext;
 import org.primefaces.convert.ClientConverter;
+import org.primefaces.model.menu.MenuElement;
+import org.primefaces.model.menu.Separator;
 import org.primefaces.util.*;
 import org.primefaces.validate.ClientValidator;
 import org.primefaces.validate.bean.BeanValidationMetadata;
@@ -813,5 +822,76 @@ public abstract class CoreRenderer extends Renderer {
                 || val.endsWith("em") || val.endsWith("ex") || val.endsWith("ch") || val.endsWith("rem")
                 || val.endsWith("vw") || val.endsWith("vh")
                 || val.endsWith("vmin") || val.endsWith("vmax");
+    }
+
+    protected boolean shouldRenderComponent(FacesContext context, UIComponent component) {
+        if (component == null || !component.isRendered()) {
+            return false;
+        }
+
+        String skipIfEmpty = context.getExternalContext().getInitParameter("primefaces.skipEmptyContainer");
+        if (skipIfEmpty != null && Boolean.parseBoolean(skipIfEmpty) && !shouldRenderChildrenNested(component)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Checks if the given component or any of it's known children or childrens children are rendered. Since the nested check may be expensive we only check for known containers: Ribbon, Tab, ToolbarGroup, Toolbar, RibbonGroup. All other components are only checked on the first level.<br/>
+     * Also Separators are ignored since they alone usually do not make much sense.
+     *
+     * @param component
+     *            The component to check
+     * @return <code>true</code> if anything within the compoent shall be rendered, <code>false</code> if this component itself is rendered=false or has no children, or all children have rendered=false
+     */
+    private static boolean shouldRenderChildrenNested(UIComponent component) {
+        boolean rendered = component.isRendered();
+
+        if (rendered && component instanceof AbstractMenu) {
+            AbstractMenu menuButton = (AbstractMenu) component;
+            // a menu is only rendered if any of its children are rendered, hide empty menus
+            rendered = false;
+            if (menuButton.getModel() != null) {
+                for (MenuElement element : menuButton.getModel().getElements()) {
+                    if (!(element instanceof Separator) && element.isRendered()) {
+                        rendered = true;
+                        break;
+                    }
+                }
+            }
+
+            if (menuButton.getChildren() != null) {
+                for (UIComponent child : menuButton.getChildren()) {
+                    if (!(child instanceof Separator) && !(child instanceof UISeparator) && shouldRenderChildrenNested(child)) {
+                        rendered = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (rendered) {
+
+            if ((component instanceof Ribbon || component instanceof Tab || component instanceof ToolbarGroup || component instanceof Toolbar || component instanceof RibbonGroup)) {
+                UIComponentBase componentbase = (UIComponentBase) component;
+
+                // a menu... is only rendered if any of its children are rendered, hide empty menus
+                rendered = false;
+                // iterate over tabs
+                if (componentbase.getChildren() != null) {
+                    for (UIComponent child : componentbase.getChildren()) {
+                        if (!(child instanceof Separator) && !(child instanceof UISeparator) && shouldRenderChildrenNested(child)) {
+                            rendered = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                ComponentUtils.shouldRenderChildren(component);
+            }
+        }
+
+        return rendered;
     }
 }

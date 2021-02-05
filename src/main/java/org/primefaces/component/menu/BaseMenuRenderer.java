@@ -41,7 +41,10 @@ public abstract class BaseMenuRenderer extends MenuItemAwareRenderer {
 
     @Override
     public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
-        AbstractMenu menu = (AbstractMenu) component;
+    	if (!shouldRenderComponent(context, component)) {
+			return;
+		}
+    	AbstractMenu menu = (AbstractMenu) component;
         MenuModel model = menu.getModel();
         if (model != null && menu.getElementsCount() > 0) {
             model.generateUniqueIds();
