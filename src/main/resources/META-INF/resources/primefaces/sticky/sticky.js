@@ -1,25 +1,25 @@
 /**
  * __PrimeFaces Sticky Widget__
- * 
+ *
  * Sticky component positions other components as fixed so that these components stay in window viewport during
  * scrolling.
- * 
+ *
  * @interface {PrimeFaces.widget.Sticky.InitialState} InitialState Describes some of the initial geometry of the target
  * component before it was made sticky, see {@link Sticky.initialState}.
- * @prop {number} InitialState.height The initial height of the target element. 
+ * @prop {number} InitialState.height The initial height of the target element.
  * @prop {number} InitialState.top The initial position of the top edge of the target element.
- * 
+ *
  * @prop {boolean} fixed Whether this sticky is currently fixed to the top of the page.
  * @prop {JQuery} ghost The DOM element for the ghost helper element.
  * @prop {PrimeFaces.widget.Sticky.InitialState} initialState The initial position and height of the target component
  * before it was pinned to the page.
  * @prop {JQuery} target The DOM element for the component to be made sticky.
- * 
+ *
  * @interface {PrimeFaces.widget.StickyCfg} cfg The configuration for the {@link  Sticky| Sticky widget}.
  * You can access this configuration via {@link PrimeFaces.widget.BaseWidget.cfg|BaseWidget.cfg}. Please note that this
  * configuration is usually meant to be read-only and should not be modified.
  * @extends {PrimeFaces.widget.BaseWidgetCfg} cfg
- * 
+ *
  * @prop {number} margin Margin to the top of the page during fixed scrolling.
  * @prop {string} target The client ID of the component to be made sticky.
  */
@@ -117,6 +117,12 @@ PrimeFaces.widget.Sticky = PrimeFaces.widget.BaseWidget.extend({
             this.ghost.remove();
             this.fixed = false;
         }
+    },
+
+    unsticky: function() {
+        Primefaces.utils.unbindScrollHandler(this,'scroll.' + this.id + '_align');
+        $(window).off(this, 'resize.' + this.id + '_align');
+        this.restore();
     }
 
 });
