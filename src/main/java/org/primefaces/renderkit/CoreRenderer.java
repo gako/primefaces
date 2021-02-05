@@ -832,18 +832,22 @@ public abstract class CoreRenderer extends Renderer {
         String skipIfEmpty = context.getExternalContext().getInitParameter("primefaces.skipEmptyContainer");
         if (skipIfEmpty != null && Boolean.parseBoolean(skipIfEmpty) && !shouldRenderChildrenNested(component)) {
             return false;
-        } else {
+        }
+        else {
             return true;
         }
     }
 
     /**
-     * Checks if the given component or any of it's known children or childrens children are rendered. Since the nested check may be expensive we only check for known containers: Ribbon, Tab, ToolbarGroup, Toolbar, RibbonGroup. All other components are only checked on the first level.<br/>
+     * Checks if the given component or any of it's known children or childrens children are rendered.
+     * Since the nested check may be expensive we only check for known containers: Ribbon, Tab, ToolbarGroup, Toolbar, RibbonGroup.
+     * All other components are only checked on the first level.<br/>
      * Also Separators are ignored since they alone usually do not make much sense.
      *
      * @param component
      *            The component to check
-     * @return <code>true</code> if anything within the compoent shall be rendered, <code>false</code> if this component itself is rendered=false or has no children, or all children have rendered=false
+     * @return <code>true</code> if anything within the compoent shall be rendered,
+     *         <code>false</code> if this component itself is rendered=false or has no children, or all children have rendered=false
      */
     private static boolean shouldRenderChildrenNested(UIComponent component) {
         boolean rendered = component.isRendered();
@@ -873,7 +877,8 @@ public abstract class CoreRenderer extends Renderer {
 
         if (rendered) {
 
-            if ((component instanceof Ribbon || component instanceof Tab || component instanceof ToolbarGroup || component instanceof Toolbar || component instanceof RibbonGroup)) {
+            if ((component instanceof Ribbon || component instanceof Tab || component instanceof ToolbarGroup
+                    || component instanceof Toolbar || component instanceof RibbonGroup)) {
                 UIComponentBase componentbase = (UIComponentBase) component;
 
                 // a menu... is only rendered if any of its children are rendered, hide empty menus
@@ -887,7 +892,8 @@ public abstract class CoreRenderer extends Renderer {
                         }
                     }
                 }
-            } else {
+            }
+            else {
                 ComponentUtils.shouldRenderChildren(component);
             }
         }

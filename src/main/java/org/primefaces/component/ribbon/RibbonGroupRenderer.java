@@ -35,10 +35,10 @@ public class RibbonGroupRenderer extends CoreRenderer {
 
     @Override
     public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
-    	if (!shouldRenderComponent(context, component)) {
-			return;
-		}
-    	ResponseWriter writer = context.getResponseWriter();
+        if (!shouldRenderComponent(context, component)) {
+            return;
+        }
+        ResponseWriter writer = context.getResponseWriter();
         RibbonGroup group = (RibbonGroup) component;
         String label = group.getLabel();
         String groupClass = group.getStyleClass();

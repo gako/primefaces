@@ -46,11 +46,11 @@ public class RibbonRenderer extends CoreRenderer {
 
     @Override
     public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
-    	if (!shouldRenderComponent(context, component)) {
-			return;
-		}
+        if (!shouldRenderComponent(context, component)) {
+            return;
+        }
 
-    	Ribbon ribbon = (Ribbon) component;
+        Ribbon ribbon = (Ribbon) component;
 
         encodeMarkup(context, ribbon);
         encodeScript(context, ribbon);
