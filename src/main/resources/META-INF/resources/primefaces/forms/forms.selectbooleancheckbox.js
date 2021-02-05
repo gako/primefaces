@@ -1,14 +1,14 @@
 /**
  * __PrimeFaces SelectBooleanCheckbox Widget__
- * 
+ *
  * SelectBooleanCheckbox is an extended version of the standard checkbox with theme integration.
- * 
+ *
  * @prop {JQuery} input The DOM element for the hidden input field storing the current value of this widget.
  * @prop {JQuery} box The DOM element for the box with the checkbox.
  * @prop {JQuery} icon The DOM element for the checked or unchecked checkbox icon.
  * @prop {JQuery} itemLabel The DOM element for the label of the checkbox.
  * @prop {boolean} disabled Whether this checkbox is disabled.
- * 
+ *
  * @interface {PrimeFaces.widget.SelectBooleanCheckboxCfg} cfg The configuration for the {@link  SelectBooleanCheckbox| SelectBooleanCheckbox widget}.
  * You can access this configuration via {@link PrimeFaces.widget.BaseWidget.cfg|BaseWidget.cfg}. Please note that this
  * configuration is usually meant to be read-only and should not be modified.
@@ -76,6 +76,10 @@ PrimeFaces.widget.SelectBooleanCheckbox = PrimeFaces.widget.BaseWidget.extend({
      * Checks this checkbox if it is currently unchecked, or unchecks it otherwise.
      */
     toggle: function() {
+    	if (this.disabled) { // add check to do nothing in disabled state
+    		return;
+        }
+
         if(this.isChecked())
             this.uncheck();
         else
@@ -110,6 +114,29 @@ PrimeFaces.widget.SelectBooleanCheckbox = PrimeFaces.widget.BaseWidget.extend({
             this.input.attr('aria-checked', false);
             this.box.removeClass('ui-state-active').children('.ui-chkbox-icon').addClass('ui-icon-blank').removeClass('ui-icon-check');
         }
-    }
+    },
+
+    enable : function() {
+		this.input.removeAttr("disabled");
+		this.jq.removeClass("ui-state-disabled");
+
+		this.__turnOffAndInit();
+	},
+
+	disable : function() {
+		this.input.attr("disabled","disabled");
+		this.jq.addClass("ui-state-disabled");
+
+		this.uncheck();
+		this.__turnOffAndInit();
+	},
+
+	__turnOffAndInit: function() {
+		this.jq.off("remove");
+		this.box.off();
+		this.input.off();
+		this.itemLabel.off();
+		this.init(this.cfg);
+	}
 
 });
