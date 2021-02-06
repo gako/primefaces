@@ -102,7 +102,7 @@ public class PrimeEnvironment {
     protected String resolveBuildVersion() {
         String buildVersion = null;
 
-        try (InputStream is = getClass().getResourceAsStream("/META-INF/maven/org.primefaces/primefaces/pom.properties")) {
+        try (InputStream is = getClass().getResourceAsStream("/META-INF/maven/com.ilogs.primefaces/primefaces/pom.properties")) {
             Properties buildProperties = new Properties();
             buildProperties.load(is);
             buildVersion = buildProperties.getProperty("version");
