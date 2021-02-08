@@ -4705,10 +4705,6 @@ declare namespace PrimeFaces.widget {
          */
         check(chkbox: JQuery): void;
         /**
-         * Triggers the events listeners and behaviors when the popup is closed.
-         */
-        private fireCloseEvent(): void;
-        /**
          * Triggers the events listeners and behaviors when a column was selected or unselected.
          * @param visible `true` if the column was selected, `false` otherwise.
          * @param index Index of the toggled column.
@@ -12081,10 +12077,6 @@ declare namespace PrimeFaces.widget {
          */
         focusOnSelect: boolean;
         /**
-         * Client ID of the form that is used for AJAX requests.
-         */
-        formId: string;
-        /**
          * Whether the datepicker is rendered inline or as an overlay.
          */
         inline: boolean;
@@ -15007,10 +14999,6 @@ declare namespace PrimeFaces.widget {
          */
         fileLimitMessage: string;
         /**
-         * Global AJAX requests are listened by ajaxStatus, false will not trigger ajaxStatus.
-         */
-        global: string;
-        /**
          * Message to display when file is not accepted.
          */
         invalidFileMessage: string;
@@ -15224,10 +15212,6 @@ declare namespace PrimeFaces.widget {
          * Message to display when file limit exceeds.
          */
         fileLimitMessage: string;
-        /**
-         * Global AJAX requests are listened by ajaxStatus, false will not trigger ajaxStatus.
-         */
-        global: string;
         /**
          * Message to display when file is not accepted.
          */
@@ -16174,14 +16158,6 @@ declare namespace PrimeFaces.widget {
          */
         check(): void;
         /**
-         * Disabled this checkbox
-         */
-        disable(): void;
-        /**
-         * Enables this checkbox
-         */
-        enable(): void;
-        /**
          * A widget class should not declare an explicit constructor, the default constructor provided by this base
          * widget should be used. Instead, override this initialize method which is called after the widget instance
          * was constructed. You can use this method to perform any initialization that is required. For widgets that
@@ -16565,10 +16541,6 @@ declare namespace PrimeFaces.widget {
          */
         private updateLabel(): void;
         /**
-         * Updates the label to show the count of currently selected items (4/8).
-         */
-        private updateLabelCount(): void;
-        /**
          * Updates the `select all` / `unselect all` toggler so that it reflects the currently selected options.
          */
         private updateToggler(): void;
@@ -16664,10 +16636,6 @@ declare namespace PrimeFaces.widget {
          * When enabled, the selected items are displayed on the label.
          */
         updateLabel: boolean;
-        /**
-         * When enabled, the count of selected items are displayed on the label. e.g. (4/9).
-         */
-        updateLabelCount: boolean;
     }
 }
 declare namespace PrimeFaces.widget.SelectListbox {
@@ -29058,10 +29026,6 @@ declare namespace PrimeFaces.widget {
          */
         dynamic: boolean;
         /**
-         * Whether the sidebar is modal and blocks the main content and other dialogs.
-         */
-        modal: boolean;
-        /**
          * Callback that is invoked when the sidebar is opened.
          */
         onHide: PrimeFaces.widget.Sidebar.OnHideCallback;
@@ -29069,10 +29033,6 @@ declare namespace PrimeFaces.widget {
          * Callback that is invoked when the sidebar is closed.
          */
         onShow: PrimeFaces.widget.Sidebar.OnShowCallback;
-        /**
-         * Whether the close icon is displayed.
-         */
-        showCloseIcon: boolean;
         /**
          * Whether the sidebar is initially opened.
          */
@@ -30214,10 +30174,6 @@ declare namespace PrimeFaces.widget {
          * Unpins this sticky and returns it to its normal position.
          */
         restore(): void;
-        /**
-         * Removed sticky functionality from component
-         */
-        unsticky(): void;
     }
 }
 declare namespace PrimeFaces.widget {
@@ -33406,13 +33362,6 @@ declare namespace PrimeFaces.widget {
          * @return An estimate in pixels for the width of the native scrollbar.
          */
         private getScrollbarWidth(): number;
-        /**
-         * Creates the sort order message shown to indicate what the current sort order is.
-         * @param ariaLabel Optional label text from an aria attribute.
-         * @param sortOrderMessage Sort order message.
-         * @return The sort order message to use.
-         */
-        private getSortMessage(ariaLabel: string | undefined, sortOrderMessage: string): string;
         /**
          * Handles a pagination event by updating this tree table and invoking the appropriate behaviors.
          * @param newState The new pagination state to apply.
