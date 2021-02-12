@@ -264,6 +264,7 @@ if (!PrimeFaces.utils) {
          * when the user clicks on one those elements.
          * @param {(event: JQuery.TriggeredEvent, eventTarget: JQuery) => void} hideCallback A callback that is invoked when the
          * user clicks on an element outside the overlay widget.
+         * @return {() => void} unbind callback handler
          */
         registerHideOverlayHandler: function(widget, hideNamespace, overlay, resolveIgnoredElementsCallback, hideCallback) {
 
@@ -311,6 +312,12 @@ if (!PrimeFaces.utils) {
 
                 hideCallback(e, $eventTarget);
             });
+
+            return {
+                unbind: function() {
+                    $(document).off(hideNamespace);
+                }
+            };
         },
 
         /**
@@ -322,6 +329,7 @@ if (!PrimeFaces.utils) {
          * @param {(event: JQuery.TriggeredEvent) => void} resizeCallback A callback that is invoked when the window is resized.
          * @param {string} [params] Optional CSS selector. If given, the callback is invoked only when the resize event
          * is triggered on an element the given selector.
+         * @return {() => void} unbind callback handler
          */
         registerResizeHandler: function(widget, resizeNamespace, element, resizeCallback, params) {
 
@@ -336,6 +344,12 @@ if (!PrimeFaces.utils) {
 
                 resizeCallback(e);
             });
+
+            return {
+                unbind: function() {
+                    $(window).off(resizeNamespace);
+                }
+            };
         },
 
         /**
@@ -373,6 +387,7 @@ if (!PrimeFaces.utils) {
          * @param {string} scrollNamespace A scroll event with a namespace, such as `scroll.widgetId`.
          * @param {(event: JQuery.TriggeredEvent) => void} scrollCallback A callback that is invoked when a scroll event
          * occurs on the widget.
+         * @return {() => void} unbind callback handler
          */
         registerScrollHandler: function(widget, scrollNamespace, scrollCallback) {
 
@@ -388,6 +403,12 @@ if (!PrimeFaces.utils) {
             scrollParent.off(scrollNamespace).on(scrollNamespace, function(e) {
                 scrollCallback(e);
             });
+
+            return {
+                unbind: function() {
+                    scrollParent.off(scrollNamespace);
+                }
+            };
         },
 
         /**
@@ -397,6 +418,7 @@ if (!PrimeFaces.utils) {
          * @param {string} scrollNamespace A scroll event with a namespace, such as `scroll.widgetId`.
          * @param {(event: JQuery.TriggeredEvent) => void} scrollCallback A callback that is invoked when a scroll event
          * occurs on the widget.
+         * @return {() => void} unbind callback handler
          */
         registerConnectedOverlayScrollHandler: function(widget, scrollNamespace, scrollCallback) {
             var element = widget.getJQ().get(0);
@@ -443,6 +465,14 @@ if (!PrimeFaces.utils) {
                 scrollParent.off(scrollNamespace).on(scrollNamespace, function(e) {
                     scrollCallback(e);
                 });
+            }
+
+            return {
+                unbind: function() {
+                    for (var i = 0; i < scrollableParents.length; i++) {
+                        $(scrollableParents[i]).off(scrollNamespace);
+                    }
+                }
             }
         },
 
@@ -573,8 +603,82 @@ if (!PrimeFaces.utils) {
                 }
             }
             event.preventDefault();
-        }
+        },
 
+        /**
+         * CSS Transition method for overlay panels such as SelectOneMenu/SelectCheckboxMenu/Datepicker's panel etc.
+         * @param {JQuery} element An element for which to execute the transition.
+         * @param {string} className Class name used for transition phases.
+         * @return {() => JQuery|null} two callbacks named show and hide. If element or className property is empty/null, it returns null.
+         */
+        registerCSSTransition: function(element, className) {
+            if (element && className != null) {
+                var classNameStates = {
+                   'enter': className + '-enter',
+                   'enterActive': className + '-enter-active',
+                   'enterDone': className + '-enter-done',
+                   'exit': className + '-exit',
+                   'exitActive': className + '-exit-active',
+                   'exitDone': className + '-exit-done'
+                };
+                var callTransitionEvent = function(callbacks, key, param) {
+                    if (callbacks != null && callbacks[key] != null) {
+                        callbacks[key].call(param);
+                    }
+                };
+        
+                return {
+                    show: function(callbacks) {
+                        //clear exit state classes
+                        element.removeClass([classNameStates.exit, classNameStates.exitActive, classNameStates.exitDone]);
+        
+                        if (element.is(':hidden')) {
+                            element.css('display', 'block').addClass(classNameStates.enter);
+                            callTransitionEvent(callbacks, 'onEnter');
+            
+                            requestAnimationFrame(function() {
+                                setTimeout(function() {
+                                    element.addClass(classNameStates.enterActive);
+                                }, 0);
+                
+                                element.one('transitionrun.css-transition-show', function(event) {
+                                    callTransitionEvent(callbacks, 'onEntering', event);
+                                }).one('transitioncancel.css-transition-show', function() {
+                                    element.removeClass([classNameStates.enter, classNameStates.enterActive, classNameStates.enterDone]);
+                                }).one('transitionend.css-transition-show', function(event) {
+                                    element.removeClass([classNameStates.enterActive, classNameStates.enter]).addClass(classNameStates.enterDone);
+                                    callTransitionEvent(callbacks, 'onEntered', event);
+                                });
+                            });
+                        }
+                    },
+                    hide: function(callbacks) {
+                        //clear enter state classes
+                        element.removeClass([classNameStates.enter, classNameStates.enterActive, classNameStates.enterDone]);
+        
+                        if (element.is(':visible')) {
+                            element.addClass(classNameStates.exit);
+                            callTransitionEvent(callbacks, 'onExit');
+            
+                            setTimeout(function() {
+                                element.addClass(classNameStates.exitActive);
+                            }, 0);
+
+                            element.one('transitionrun.css-transition-hide', function(event) {
+                                callTransitionEvent(callbacks, 'onExiting', event);
+                            }).one('transitioncancel.css-transition-hide', function() {
+                                element.removeClass([classNameStates.exit, classNameStates.exitActive, classNameStates.exitDone]);
+                            }).one('transitionend.css-transition-hide', function(event) {
+                                element.css('display', 'none').removeClass([classNameStates.exitActive, classNameStates.exit]).addClass(classNameStates.exitDone);
+                                callTransitionEvent(callbacks, 'onExited', event);
+                            });
+                        }
+                    }
+                }
+            }
+        
+            return null;
+        }
     };
 
 }
