@@ -48,6 +48,8 @@ PrimeFaces.widget.ConfirmPopup = PrimeFaces.widget.DynamicOverlayWidget.extend({
         this.content = this.jq.children('.ui-confirm-popup-content');
         this.message = this.content.children('.ui-confirm-popup-message');
         this.icon = this.content.children('.ui-confirm-popup-icon');
+
+        this.transition = PrimeFaces.utils.registerCSSTransition(this.jq, 'ui-connected-overlay');
     
         this.bindEvents();
     },
@@ -82,10 +84,19 @@ PrimeFaces.widget.ConfirmPopup = PrimeFaces.widget.DynamicOverlayWidget.extend({
                 e.preventDefault();
             });
         }
-    
+    },
+
+    /**
+     * Sets up all panel event listeners
+     * @param {string | JQuery} [target] Selector or DOM element of the target component that triggers this popup.
+     * @private
+     */
+    bindPanelEvents: function(target) {
+        var $this = this;
+
         //hide overlay when mousedown is at outside of overlay
         if (this.cfg.dismissable) {
-            PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', this.jq,
+            this.hideOverlayHandler = PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', this.jq,
                 function() { return PrimeFaces.confirmPopupSource; },
                 function(e, eventTarget) {
                     if (!($this.jq.is(eventTarget) || $this.jq.has(eventTarget).length > 0)) {
@@ -94,13 +105,31 @@ PrimeFaces.widget.ConfirmPopup = PrimeFaces.widget.DynamicOverlayWidget.extend({
                 });
         }
     
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_hide', this.jq, function() {
+        this.resizeHandler = PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_hide', this.jq, function() {
             $this.hide();
         });
     
-        PrimeFaces.utils.registerConnectedOverlayScrollHandler(this, 'scroll.' + this.id + '_hide', function() {
+        this.scrollHandler = PrimeFaces.utils.registerConnectedOverlayScrollHandler(this, 'scroll.' + this.id + '_hide', target, function() {
             $this.hide();
         });
+    },
+
+    /**
+     * Unbind all panel event listeners
+     * @private
+     */
+    unbindPanelEvents: function() {
+        if (this.hideOverlayHandler) {
+            this.hideOverlayHandler.unbind();
+        }
+
+        if (this.resizeHandler) {
+            this.resizeHandler.unbind();
+        }
+    
+        if (this.scrollHandler) {
+            this.scrollHandler.unbind();
+        }
     },
     
     /**
@@ -108,29 +137,26 @@ PrimeFaces.widget.ConfirmPopup = PrimeFaces.widget.DynamicOverlayWidget.extend({
      * @param {string | JQuery} [target] Selector or DOM element of the target component that triggers this popup.
      */
     show: function(target) {
-        var $this = this;
-    
-        if (typeof target === 'string') {
-            target = $(document.querySelector(target));
-        }
-        else if (!(target instanceof $)) {
-            target = $(target);
-        }
-    
-        this.jq.css({'display':'block', 'opacity':'0', 'pointer-events': 'none'});
-    
-        this.align(target);
-    
-        this.jq.css({'display':'none', 'opacity':'', 'pointer-events': '', 'z-index': PrimeFaces.nextZindex()});
-    
-        if (this.cfg.showEffect) {
-            this.jq.show(this.cfg.showEffect, {}, 200, function() {
-                $this.applyFocus();
+        if (this.transition) {
+            var $this = this;
+
+            if (typeof target === 'string') {
+                target = $(document.querySelector(target));
+            }
+            else if (!(target instanceof $)) {
+                target = $(target);
+            }
+
+            this.transition.show({
+                onEnter: function() {
+                    $this.jq.css('z-index', PrimeFaces.nextZindex());
+                    $this.align(target);
+                },
+                onEntered: function() {
+                    $this.bindPanelEvents(target);
+                    $this.applyFocus();
+                }
             });
-        }
-        else {
-            this.jq.show();
-            this.applyFocus();
         }
     },
     
@@ -139,14 +165,19 @@ PrimeFaces.widget.ConfirmPopup = PrimeFaces.widget.DynamicOverlayWidget.extend({
      * @param {PrimeFaces.widget.ConfirmPopup.HideCallback} callback Callback that is invoked after this popup was closed.
      */
     hide: function(callback) {
-        if (this.cfg.hideEffect) {
-            this.jq.hide(this.cfg.hideEffect, {}, 200, callback);
-        }
-        else {
-            this.jq.hide();
-            if (callback) {
-                callback();
-            }
+        var $this = this;
+
+        if (this.transition) {
+            this.transition.hide({
+                onExit: function() {
+                    $this.unbindPanelEvents();
+                },
+                onExited: function() {
+                    if (callback) {
+                        callback();
+                    }
+                }
+            });
         }
     },
     
@@ -161,12 +192,12 @@ PrimeFaces.widget.ConfirmPopup = PrimeFaces.widget.DynamicOverlayWidget.extend({
     
             this.jq.removeClass('ui-confirm-popup-flipped');
     
-            this.jq.css({left:'0px', top:'0px'}).position({
+            this.jq.css({left:'0px', top:'0px', 'transform-origin': 'center top'}).position({
                     my: 'left top'
                     ,at: 'left bottom'
                     ,of: target
                     ,collision: 'flipfit'
-                    ,using: function(pos) {
+                    ,using: function(pos, directions) {
                         var targetOffset = target.offset();
                         var arrowLeft = 0;
     
@@ -182,7 +213,7 @@ PrimeFaces.widget.ConfirmPopup = PrimeFaces.widget.DynamicOverlayWidget.extend({
                             pos.top += parseFloat($this.jq.css('margin-top'));
                         }
     
-                        $(this).css(pos);
+                        $(this).css('transform-origin', 'center ' + directions.vertical).css(pos);
                     }
                 });
         }

@@ -37,6 +37,7 @@ PrimeFaces.widget.MenuButton = PrimeFaces.widget.TieredMenu.extend({
         if(!this.cfg.disabled) {
             this.bindButtonEvents();
             PrimeFaces.utils.registerDynamicOverlay(this, this.menu, this.id + '_menu');
+            this.transition = PrimeFaces.utils.registerCSSTransition(this.menu, 'ui-connected-overlay');
         }
     },
 
@@ -176,23 +177,55 @@ PrimeFaces.widget.MenuButton = PrimeFaces.widget.TieredMenu.extend({
             }
         });
 
+        //aria
+        this.button.attr('role', 'button').attr('aria-disabled', this.button.is(':disabled'));
+    },
+
+    /**
+     * Sets up all panel event listeners
+     *
+     * @override
+     */
+    bindPanelEvents: function() {
+        var $this = this;
+
         if (!$this.cfg.disabled) {
-            PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', $this.menu,
+            this.hideOverlayHandler = PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', this.menu,
                 function() { return $this.button; },
                 function(e, eventTarget) {
-                    if(!($this.menu.is(eventTarget) || $this.menu.has(eventTarget).length > 0)) {
+                    if (!($this.menu.is(eventTarget) || $this.menu.has(eventTarget).length > 0)) {
                         $this.button.removeClass('ui-state-focus ui-state-hover');
                         $this.hide();
                     }
                 });
         }
 
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', $this.menu, function() {
-            $this.alignPanel();
+        this.resizeHandler = PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', this.menu, function() {
+            $this.hide();
         });
 
-        //aria
-        this.button.attr('role', 'button').attr('aria-disabled', this.button.is(':disabled'));
+        this.scrollHandler = PrimeFaces.utils.registerConnectedOverlayScrollHandler(this, 'scroll.' + this.id + '_hide', this.jq, function() {
+            $this.hide();
+        });
+    },
+
+    /**
+     * Unbind all panel event listeners
+     *
+     * @override
+     */
+    unbindPanelEvents: function() {
+        if (this.hideOverlayHandler) {
+            this.hideOverlayHandler.unbind();
+        }
+
+        if (this.resizeHandler) {
+            this.resizeHandler.unbind();
+        }
+    
+        if (this.scrollHandler) {
+            this.scrollHandler.unbind();
+        }
     },
 
     /**
@@ -201,9 +234,19 @@ PrimeFaces.widget.MenuButton = PrimeFaces.widget.TieredMenu.extend({
      * @override
      */
     show: function() {
-        this.alignPanel();
+        var $this = this;
 
-        this.menu.show();
+        if (this.transition) {
+            this.transition.show({
+                onEnter: function() {
+                    $this.menu.css('z-index', PrimeFaces.nextZindex());
+                    $this.alignPanel();
+                },
+                onEntered: function() {
+                    $this.bindPanelEvents();
+                }
+            });
+        }
     },
 
     /**
@@ -212,16 +255,25 @@ PrimeFaces.widget.MenuButton = PrimeFaces.widget.TieredMenu.extend({
      * @override
      */
     hide: function() {
-        this.menuitems.filter('.ui-state-hover').removeClass('ui-state-hover');
+        if (this.transition) {
+            var $this = this;
 
-        this.menu.fadeOut('fast');
+            this.transition.hide({
+                onExit: function() {
+                    $this.unbindPanelEvents();
+                },
+                onExited: function() {
+                    $this.menuitems.filter('.ui-state-hover').removeClass('ui-state-hover');
+                }
+            });
+        }
     },
 
     /**
      * Align the overlay panel with the menu items so that it is positioned next to the menu button.
      */
     alignPanel: function() {
-        this.menu.css({left:'', top:'','z-index': PrimeFaces.nextZindex()});
+        this.menu.css({left:'', top:'', 'transform-origin': 'center top'});
 
         if(this.menu.parent().is(this.jq)) {
             this.menu.css({
@@ -234,7 +286,10 @@ PrimeFaces.widget.MenuButton = PrimeFaces.widget.TieredMenu.extend({
                 my: 'left top',
                 at: 'left bottom',
                 of: this.button,
-                collision: this.cfg.collision || "flip"
+                collision: this.cfg.collision || "flip",
+                using: function(pos, directions) {
+                    $(this).css('transform-origin', 'center ' + directions.vertical).css(pos);
+                }
             });
         }
     }

@@ -123,8 +123,18 @@ PrimeFaces.widget.ContextMenu = PrimeFaces.widget.TieredMenu.extend({
             }
         }
 
+        this.transition = PrimeFaces.utils.registerCSSTransition(this.jq, 'ui-connected-overlay');
+    },
 
-        PrimeFaces.utils.registerHideOverlayHandler(this, 'click.' + this.id + '_hide', this.jq,
+    /**
+     * @override
+     * @protected
+     * @inheritdoc
+     */
+    bindPanelEvents: function() {
+        var $this = this;
+
+        this.hideOverlayHandler = PrimeFaces.utils.registerHideOverlayHandler(this, 'click.' + this.id + '_hide', this.jq,
             function(e) { return e.which == 3 ? $this.jqTarget : null; },
             function(e, eventTarget) {
                 if(!($this.jq.is(eventTarget) || $this.jq.has(eventTarget).length > 0)) {
@@ -132,9 +142,32 @@ PrimeFaces.widget.ContextMenu = PrimeFaces.widget.TieredMenu.extend({
                 }
             });
 
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', this.jq, function() {
+        this.resizeHandler = PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_hide', this.jq, function() {
             $this.hide();
         });
+
+        this.scrollHandler = PrimeFaces.utils.registerConnectedOverlayScrollHandler(this, 'scroll.' + this.id + '_hide', this.jqTarget, function() {
+            $this.hide();
+        });
+    },
+
+    /**
+     * @override
+     * @protected
+     * @inheritdoc
+     */
+    unbindPanelEvents: function() {
+        if (this.hideOverlayHandler) {
+            this.hideOverlayHandler.unbind();
+        }
+
+        if (this.resizeHandler) {
+            this.resizeHandler.unbind();
+        }
+    
+        if (this.scrollHandler) {
+            this.scrollHandler.unbind();
+        }
     },
 
     /**
@@ -190,6 +223,8 @@ PrimeFaces.widget.ContextMenu = PrimeFaces.widget.TieredMenu.extend({
      * that does not have any parameters. Do not (implicitly) cast an instance of this class to a parent type.
      */
     show: function(e) {
+        var $this = this;
+
         if(this.cfg.targetFilter && $(e.target).is(':not(' + this.cfg.targetFilter + ')')) {
             return;
         }
@@ -204,28 +239,38 @@ PrimeFaces.widget.ContextMenu = PrimeFaces.widget.TieredMenu.extend({
             }
         }
 
-        var win = $(window),
-        left = e.pageX,
-        top = e.pageY,
-        width = this.jq.outerWidth(),
-        height = this.jq.outerHeight();
+        if (this.transition) {
+            this.transition.show({
+                onEnter: function() {
+                    var win = $(window),
+                    left = e.pageX,
+                    top = e.pageY,
+                    width = $this.jq.outerWidth(),
+                    height = $this.jq.outerHeight();
 
-        //collision detection for window boundaries
-        if((left + width) > (win.width())+ win.scrollLeft()) {
-            left = left - width;
-        }
-        if((top + height ) > (win.height() + win.scrollTop())) {
-            top = top - height;
-        }
-        if(top < 0) {
-            top = e.pageY;
-        }
+                    //collision detection for window boundaries
+                    if ((left + width) > (win.width())+ win.scrollLeft()) {
+                        left = left - width;
+                    }
+                    if ((top + height ) > (win.height() + win.scrollTop())) {
+                        top = top - height;
+                    }
+                    if (top < 0) {
+                        top = e.pageY;
+                    }
 
-        this.jq.css({
-            'left': left + 'px',
-            'top': top + 'px',
-            'z-index': PrimeFaces.nextZindex()
-        }).show();
+                    $this.jq.css({
+                        'left': left + 'px',
+                        'top': top + 'px',
+                        'z-index': PrimeFaces.nextZindex(),
+                        'transform-origin': 'center top'
+                    });
+                },
+                onEntered: function() {
+                    $this.bindPanelEvents();
+                }
+            });
+        }
 
         e.preventDefault();
         e.stopPropagation();
@@ -236,14 +281,21 @@ PrimeFaces.widget.ContextMenu = PrimeFaces.widget.TieredMenu.extend({
      * @inheritdoc
      */
     hide: function() {
-        var $this = this;
+        if (this.transition) {
+            var $this = this;
 
-        //hide submenus
-        this.jq.find('li.ui-menuitem-active').each(function() {
-            $this.deactivate($(this), true);
-        });
-
-        this.jq.fadeOut('fast');
+            this.transition.hide({
+                onExit: function() {
+                    $this.unbindPanelEvents();
+                },
+                onExited: function() {
+                    //hide submenus
+                    $this.jq.find('li.ui-menuitem-active').each(function() {
+                        $this.deactivate($(this), true);
+                    });
+                }
+            });
+        }
     },
 
     /**

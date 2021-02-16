@@ -57,12 +57,16 @@ PrimeFaces.widget.Menu = PrimeFaces.widget.BaseWidget.extend({
 
         this.cfg.appendTo = '@(body)';
         PrimeFaces.utils.registerDynamicOverlay(this, this.jq, this.id);
+        this.transition = PrimeFaces.utils.registerCSSTransition(this.jq, 'ui-connected-overlay');
 
         this.cfg.pos = {
             my: this.cfg.my,
             at: this.cfg.at,
             of: this.trigger,
-            collision: this.cfg.collision || "flip"
+            collision: this.cfg.collision || "flip",
+            using: function(pos, directions) {
+                $(this).css('transform-origin', 'center ' + directions.vertical).css(pos);
+            }
         };
 
         this.trigger.off(this.cfg.triggerEvent + '.ui-menu').on(this.cfg.triggerEvent + '.ui-menu', function(e) {
@@ -82,10 +86,21 @@ PrimeFaces.widget.Menu = PrimeFaces.widget.BaseWidget.extend({
             }
         });
 
+        //dialog support
+        this.setupDialogSupport();
+    },
+
+    /**
+     * Sets up all panel event listeners
+     * @protected
+     */
+    bindPanelEvents: function() {
+        var $this = this;
+
         //hide overlay on document click
         this.itemMouseDown = false;
 
-        PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', $this.jq,
+        this.hideOverlayHandler = PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', this.jq,
             function() { return $this.trigger; },
             function(e, eventTarget) {
                 var menuItemLink = '.ui-menuitem-link:not(.ui-submenu-link, .ui-state-disabled)';
@@ -98,21 +113,41 @@ PrimeFaces.widget.Menu = PrimeFaces.widget.BaseWidget.extend({
                 }
             });
 
-        var hideUpNS = 'mouseup.' + this.id;
-        $(document.body).off(hideUpNS).on(hideUpNS, function (e) {
-            if($this.itemMouseDown) {
+        $(document.body).on('mouseup.' + this.id, function (e) {
+            if ($this.itemMouseDown) {
                 $this.hide(e);
                 $this.itemMouseDown = false;
             }
         });
 
         //Hide overlay on resize
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', $this.jq, function() {
-            $this.align();
+        this.resizeHandler = PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_hide', this.jq, function() {
+            $this.hide();
         });
 
-        //dialog support
-        this.setupDialogSupport();
+        this.scrollHandler = PrimeFaces.utils.registerConnectedOverlayScrollHandler(this, 'scroll.' + this.id + '_hide', this.trigger, function() {
+            $this.hide();
+        });
+    },
+
+    /**
+     * Unbind all panel event listeners
+     * @protected
+     */
+    unbindPanelEvents: function() {
+        if (this.hideOverlayHandler) {
+            this.hideOverlayHandler.unbind();
+        }
+
+        if (this.resizeHandler) {
+            this.resizeHandler.unbind();
+        }
+    
+        if (this.scrollHandler) {
+            this.scrollHandler.unbind();
+        }
+
+        $(document.body).off('mouseup.' + this.id);
     },
 
     /**
@@ -131,23 +166,38 @@ PrimeFaces.widget.Menu = PrimeFaces.widget.BaseWidget.extend({
      * Shows (displays) this menu so that it becomes visible and can be interacted with.
      */
     show: function() {
-        this.jq.css({
-            'z-index': PrimeFaces.nextZindex(),
-            'visibility': 'hidden'
-        });
-        this.align();
-        this.jq.show();
-        this.jq.css('visibility', '');
+        var $this = this;
+
+        if (this.transition) {
+            this.transition.show({
+                onEnter: function() {
+                    $this.jq.css('z-index', PrimeFaces.nextZindex());
+                    $this.align();
+                },
+                onEntered: function() {
+                    $this.bindPanelEvents();
+                }
+            });
+        }
     },
 
     /**
      * Hides this menu so that it becomes invisible and cannot be interacted with any longer.
      */
     hide: function() {
-        this.jq.fadeOut('fast');
+        if (this.transition) {
+            var $this = this;
 
-        if(this.trigger && this.trigger.is(':button')) {
-            this.trigger.removeClass('ui-state-focus');
+            this.transition.hide({
+                onExit: function() {
+                    $this.unbindPanelEvents();
+                },
+                onExited: function() {
+                    if ($this.trigger && $this.trigger.is(':button')) {
+                        $this.trigger.removeClass('ui-state-focus');
+                    }
+                }
+            });
         }
     },
 
@@ -155,7 +205,7 @@ PrimeFaces.widget.Menu = PrimeFaces.widget.BaseWidget.extend({
      * Aligns this menu as specified in its widget configuration (property `pos`).
      */
     align: function() {
-        this.jq.css({left:'', top:''}).position(this.cfg.pos);
+        this.jq.css({left:'', top:'', 'transform-origin': 'center top'}).position(this.cfg.pos);
     }
 });
 

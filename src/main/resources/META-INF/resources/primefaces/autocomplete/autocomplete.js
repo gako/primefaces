@@ -269,21 +269,48 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
                 $this.touchToDropdownButton = true;
             });
         }
+    },
 
-        PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', $this.panel,
+    /**
+     * Sets up all panel event listeners
+     * @private
+     */
+    bindPanelEvents: function() {
+        var $this = this;
+
+        this.hideOverlayHandler = PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', this.panel,
             function() { return $this.itemtip; },
             function(e, eventTarget) {
-                if(!($this.panel.is(eventTarget) || $this.panel.has(eventTarget).length > 0)) {
+                if (!($this.panel.is(eventTarget) || $this.panel.has(eventTarget).length > 0)) {
                     $this.hide();
                 }
             });
 
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_hide', $this.panel, function() {
+        this.resizeHandler = PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_hide', this.panel, function() {
             $this.hide();
         });
-        PrimeFaces.utils.registerScrollHandler(this, 'scroll.' + this.id + '_hide', function() {
+
+        this.scrollHandler = PrimeFaces.utils.registerConnectedOverlayScrollHandler(this, 'scroll.' + this.id + '_hide', this.jq, function() {
             $this.hide();
         });
+    },
+
+    /**
+     * Unbind all panel event listeners
+     * @private
+     */
+    unbindPanelEvents: function() {
+        if (this.hideOverlayHandler) {
+            this.hideOverlayHandler.unbind();
+        }
+
+        if (this.resizeHandler) {
+            this.resizeHandler.unbind();
+        }
+    
+        if (this.scrollHandler) {
+            this.scrollHandler.unbind();
+        }
     },
 
     /**
@@ -928,9 +955,10 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
             this.transition.show({
                 onEnter: function() {
                     $this.panel.css('z-index', PrimeFaces.nextZindex());
-                },
-                onEntering: function() {
                     $this.alignPanel();
+                },
+                onEntered: function() {
+                    $this.bindPanelEvents();
                 }
             });
         }
@@ -945,6 +973,9 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
             var $this = this;
 
             this.transition.hide({
+                onExit: function() {
+                    $this.unbindPanelEvents();
+                },
                 onExited: function() {
                     $this.panel.css('height', 'auto');
                 }
