@@ -26,13 +26,14 @@ package org.primefaces.component.datascroller;
 import javax.faces.application.ResourceDependencies;
 import javax.faces.application.ResourceDependency;
 import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
 
 @ResourceDependencies({
-        @ResourceDependency(library = "primefaces", name = "components.css"),
-        @ResourceDependency(library = "primefaces", name = "jquery/jquery.js"),
-        @ResourceDependency(library = "primefaces", name = "jquery/jquery-plugins.js"),
-        @ResourceDependency(library = "primefaces", name = "core.js"),
-        @ResourceDependency(library = "primefaces", name = "components.js")
+    @ResourceDependency(library = "primefaces", name = "components.css"),
+    @ResourceDependency(library = "primefaces", name = "jquery/jquery.js"),
+    @ResourceDependency(library = "primefaces", name = "jquery/jquery-plugins.js"),
+    @ResourceDependency(library = "primefaces", name = "core.js"),
+    @ResourceDependency(library = "primefaces", name = "components.js")
 })
 public class DataScroller extends DataScrollerBase {
 
@@ -49,5 +50,19 @@ public class DataScroller extends DataScrollerBase {
     public boolean isLoadRequest() {
         FacesContext context = getFacesContext();
         return context.getExternalContext().getRequestParameterMap().containsKey(getClientId(context) + "_load");
+    }
+
+    @Override
+    protected boolean shouldProcessChild(FacesContext context, int rowIndex, PhaseId phaseId) {
+        if (isLoadRequest()) {
+            // if rowIndex of child is after offset of current load request do not process decode, validator
+            // and updateModel phases since components were just added to parent
+            String clientId = this.getClientId(context);
+            int offset = Integer.parseInt(context.getExternalContext().getRequestParameterMap().get(clientId + "_offset"));
+            return rowIndex < offset;
+        }
+        else {
+            return super.shouldProcessChild(context, rowIndex, phaseId);
+        }
     }
 }
