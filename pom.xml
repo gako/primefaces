@@ -12,7 +12,7 @@
     <groupId>com.ilogs.primefaces</groupId>
     <artifactId>primefaces</artifactId>
     <packaging>jar</packaging>
-    <version>7.0</version>
+    <version>7.0.1</version>
 
     <name>PrimeFaces</name>
     <url>https://www.primefaces.org</url>
@@ -73,7 +73,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
+
         <maven.translate.skip>false</maven.translate.skip>
 
         <resources.compressed.source>${project.build.directory}/classes/META-INF/resources</resources.compressed.source>
@@ -283,6 +283,7 @@
         </testResources>
 
         <plugins>
+        	<!--
         	<plugin>
                 <groupId>org.zanata</groupId>
                 <artifactId>zanata-maven-plugin</artifactId>
@@ -310,15 +311,9 @@
                     <key>d816b12ad43493419135c1dfdd08e73c</key>
                     <sourceLang>en</sourceLang>
                     <interactiveMode>false</interactiveMode>
-                    
-                    <!-- # Settings to import all translations -->
-					<!--  
-					<locales>de,en,es,fr</locales>
-					<pushType>both</pushType>
-					<merge>import</merge>
-					 -->
                 </configuration>
             </plugin>
+             -->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -559,7 +554,7 @@
                                 <include>${resources.compressed.source}/primefaces/accordion/accordion.css</include>
                                 <include>${resources.compressed.source}/primefaces/autocomplete/autocomplete.css</include>
                                 <include>${resources.compressed.source}/primefaces/blockui/blockui.css</include>
-                                <include>${resources.compressed.source}/primefaces/carousel/carousel.css</include>                                
+                                <include>${resources.compressed.source}/primefaces/carousel/carousel.css</include>
                                 <include>${resources.compressed.source}/primefaces/columntoggler/columntoggler.css</include>
                                 <include>${resources.compressed.source}/primefaces/dashboard/dashboard.css</include>
                                 <include>${resources.compressed.source}/primefaces/datalist/datalist.css</include>
