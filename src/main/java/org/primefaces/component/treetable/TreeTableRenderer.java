@@ -1391,11 +1391,11 @@ public class TreeTableRenderer extends DataRenderer {
     protected TreeNode cloneTreeNode(TreeTable tt, TreeNode node, TreeNode parent) {
         TreeNode clone = null;
 
-        // equals check instead of instanceof to allow subclassing of CheckboxTreeNode and still get concreate subclass by cloning here
+        // equals check instead of instanceof to allow subclassing
         if (CheckboxTreeNode.class.equals(node.getClass())) {
             clone = new CheckboxTreeNode(node.getType(), node.getData(), parent);
         }
-        // equals check instead of instanceof to allow subclassing of DefaultTreeNode and still get concreate subclass by cloning here
+        // equals check instead of instanceof to allow subclassing
         else if (DefaultTreeNode.class.equals(node.getClass())) {
             clone = new DefaultTreeNode(node.getType(), node.getData(), parent);
         }
@@ -1446,7 +1446,12 @@ public class TreeTableRenderer extends DataRenderer {
         }
 
         if (clone == null) {
-            clone = new DefaultTreeNode(node.getType(), node.getData(), parent);
+            if (node instanceof CheckboxTreeNode) {
+                clone = new CheckboxTreeNode(node.getType(), node.getData(), parent);
+            }
+            else {
+                clone = new DefaultTreeNode(node.getType(), node.getData(), parent);
+            }
         }
 
         clone.setSelected(node.isSelected());

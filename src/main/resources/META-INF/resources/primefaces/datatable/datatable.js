@@ -187,7 +187,13 @@
  * @prop {string} cfg.stickyTopAt Selector to position on the page according to other fixing elements on the top of the
  * table.
  * @prop {string} cfg.tabindex The value of the `tabindex` attribute for this data table.
- * @prop {boolean} cfg.virtualScroll Loads data on demand as the scrollbar gets close to the bottom.
+ * @prop {boolean} cfg.allowUnsorting When true columns can be unsorted upon clicking sort.
+ * @prop {boolean} cfg.virtualScroll Loads data on demand as the scrollbar gets close to the bottom. 
+ *
+ * @interface {PrimeFaces.widget.DataTable.WidthInfo} WidthInfo Describes the width information of a DOM element.
+ * @prop {number | string} WidthInfo.width The width of the element. It's either a unitless numeric pixel value or a
+ * string containing the width including an unit.
+ * @prop {boolean} WidthInfo.isOuterWidth Tells whether the width includes the border-box or not. 
  */
 PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
@@ -302,6 +308,9 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         if(this.cfg.expansion) {
             this.initRowExpansion();
             this.updateExpandedRowsColspan();
+        }
+        if(this.cfg.reflow) {
+           this.jq.css('visibility', 'visible');
         }
     },
 
@@ -781,7 +790,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         this.rowSelectorForRowClick = this.cfg.rowSelector||'td:not(.ui-column-unselectable),span:not(.ui-c)';
 
         var preselection = $(this.selectionHolder).val();
-        this.selection = (preselection === "") ? [] : preselection.split(',');
+        this.selection = !preselection ? [] : preselection.split(',');
 
         //shift key based range selection
         this.originRowIndex = null;
@@ -1522,7 +1531,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                     col.data('original', originalId);
                 }
 
-                $this.setOuterWidth($(PrimeFaces.escapeClientId(originalId)), col[0].style.width);
+                $(PrimeFaces.escapeClientId(originalId))[0].style.width = col[0].style.width;
             });
 
             clonedSortableColumns.on('blur.dataTable', function() {
@@ -1582,11 +1591,58 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
      */
     setOuterWidth: function(element, width) {
         if (element.css('box-sizing') === 'border-box') { // Github issue: #5014
-            var diff = element.outerWidth() - element.width();
-            element.width(parseFloat(width) - diff);
+            element.outerWidth(width);
         }
         else {
             element.width(width);
+        }
+    },
+
+    /**
+     * Retrieves width information of the given column.
+     * @private
+     * @param {JQuery} col The column of which the width should be retrieved.
+     * @param {boolean} isIncludeResizeableState Tells whether the width should be retrieved from the resizable state,
+     * if it exists.
+     * @return {PrimeFaces.widget.DataTable.WidthInfo} The width information of the given column.
+     */
+    getColumnWidthInfo: function(col, isIncludeResizeableState) {
+        var $this = this;
+        var width, isOuterWidth;
+
+        if(isIncludeResizeableState && this.resizableState) {
+            width = $this.findColWidthInResizableState(col.attr('id'));
+            isOuterWidth = false;
+        }
+
+        if(!width) {
+            width = col[0].style.width;
+            isOuterWidth = width && (col.css('box-sizing') === 'border-box');
+        }
+
+        if(!width) {
+            width = col.width();
+            isOuterWidth = false;
+        }
+
+        return {
+            width: width,
+            isOuterWidth: isOuterWidth
+        };
+    },
+
+    /**
+     * Applies the width information to the given element.
+     * @private
+     * @param {JQuery} element The element to which the width should be applied.
+     * @param {PrimeFaces.widget.DataTable.WidthInfo} widthInfo The width information (retrieved using the method {@link getColumnWidthInfo}).
+     */
+    applyWidthInfo: function(element, widthInfo) {
+        if(widthInfo.isOuterWidth) {
+            element.outerWidth(widthInfo.width);
+        }
+        else {
+            element.width(widthInfo.width);
         }
     },
 
@@ -1685,18 +1741,13 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                 this.scrollHeader.find('> .ui-datatable-scrollable-header-box > table > thead > tr > th').each(function() {
                     var headerCol = $(this),
                     colIndex = headerCol.index(),
-                    headerStyle = headerCol[0].style,
-                    width = headerStyle.width||headerCol.width();
+                    widthInfo = $this.getColumnWidthInfo(headerCol, true);
 
-                    if ($this.resizableState) {
-                        width = $this.findColWidthInResizableState(headerCol.attr('id')) || width;
-                    }
-
-                    $this.setOuterWidth(headerCol, width);
+                    $this.applyWidthInfo(headerCol, widthInfo);
 
                     if($this.footerCols.length > 0) {
                         var footerCol = $this.footerCols.eq(colIndex);
-                        $this.setOuterWidth(footerCol, width);
+                        $this.applyWidthInfo(footerCol, widthInfo);
                     }
                 });
             }
@@ -1725,14 +1776,9 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
             columns.each(function() {
                 var col = $(this),
-                colStyle = col[0].style,
-                width = colStyle.width||col.width();
+                widthInfo = $this.getColumnWidthInfo(col, true);
 
-                if ($this.resizableState) {
-                    width = $this.findColWidthInResizableState(col.attr('id')) || width;
-                }
-
-                col.width(width);
+                $this.applyWidthInfo(col, widthInfo);
             });
         }
     },
@@ -3036,11 +3082,16 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                         });
 
             // GitHub #433 Allow ENTER to submit ESC to cancel row editor
-            $(document).off("keydown", "tr.ui-row-editing")
-                        .on("keydown", "tr.ui-row-editing", function(e) {
+            $(document).off("keydown.datatable", "tr.ui-row-editing")
+                        .on("keydown.datatable", "tr.ui-row-editing", function(e) {
                             var keyCode = $.ui.keyCode;
                             switch (e.which) {
                                 case keyCode.ENTER:
+                                    var target = $(e.target);
+                                    // GitHub #7028
+                                    if(target.is("textarea")) {
+                                         return true;
+                                    }
                                     $(this).closest("tr").find(".ui-row-editor-check").trigger("click");
                                     return false; // prevents executing other event handlers (adding new row to the table)
                                 case keyCode.ESCAPE:
@@ -3322,6 +3373,10 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                         input = $(this);
 
                         if(key === keyCode.ENTER) {
+                            // GitHub #7028
+                            if(input.is("textarea")) {
+                                return true;
+                            }
                             $this.saveCell(cell);
                             $this.currentCell = null;
 
@@ -5350,6 +5405,7 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
      * @inheritdoc
      */
     fixColumnWidths: function() {
+        var $this = this;
         if(!this.columnWidthsFixed) {
 
             if(this.cfg.scrollable) {
@@ -5359,9 +5415,9 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
             else {
                 this.jq.find('> .ui-datatable-tablewrapper > table > thead > tr > th').each(function() {
                     var col = $(this),
-                    colStyle = col[0].style,
-                    width = colStyle.width||col.width();
-                    col.width(width);
+                    widthInfo = $this.getColumnWidthInfo(col);
+
+                    $this.applyWidthInfo(col, widthInfo);
                 });
             }
 
@@ -5381,14 +5437,13 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
         header.find('> .ui-datatable-scrollable-header-box > table > thead > tr > th').each(function() {
             var headerCol = $(this),
             colIndex = headerCol.index(),
-            headerStyle = headerCol[0].style,
-            width = headerStyle.width||headerCol.width();
+            widthInfo = $this.getColumnWidthInfo(headerCol);
 
-            $this.setOuterWidth(headerCol, width);
+            $this.applyWidthInfo(headerCol, widthInfo);
 
             if(footerCols.length > 0) {
                 var footerCol = footerCols.eq(colIndex);
-                $this.setOuterWidth(footerCol, width);
+                $this.applyWidthInfo(footerCol, widthInfo);
             }
         });
     },
