@@ -128,7 +128,9 @@ public class FilterFeature implements DataTableFeature {
 
         context.getApplication().publishEvent(context, PostFilterEvent.class, table);
 
-        renderer.encodeTbody(context, table, true);
+        if (!table.isFullUpdateRequest(context)) {
+            renderer.encodeTbody(context, table, true);
+        }
     }
 
     public void filter(FacesContext context, DataTable table) {
@@ -162,7 +164,7 @@ public class FilterFeature implements DataTableFeature {
 
                 Object columnValue = filter.getLocalValue(elContext);
 
-                if (globalFilter != null && !globalMatch.get() && !hasGlobalFilterFunction) {
+                if (globalFilter != null && globalFilter.isActive() && !globalMatch.get() && !hasGlobalFilterFunction) {
                     FilterConstraint constraint = globalFilter.getConstraint();
                     Object filterValue = globalFilter.getFilterValue();
                     globalMatch.set(constraint.isMatching(context, columnValue, filterValue, filterLocale));
@@ -180,7 +182,7 @@ public class FilterFeature implements DataTableFeature {
             });
 
             boolean matches = localMatch.get();
-            if (globalFilter != null) {
+            if (globalFilter != null && globalFilter.isActive()) {
                 matches = matches && globalMatch.get();
             }
 

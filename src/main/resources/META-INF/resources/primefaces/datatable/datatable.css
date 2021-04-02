@@ -62,7 +62,11 @@
     display: block;
     box-sizing: border-box;
     width: 100%;
-    margin:auto;
+    margin: .5rem auto auto auto;
+}
+
+.ui-datatable .ui-column-customfilter {
+    margin: .5rem auto auto auto;
 }
 
 .ui-datatable .ui-row-toggler {
@@ -190,8 +194,10 @@
 
 .ui-datatable .ui-datatable-data tr.ui-row-editing td.ui-editable-column,
 .ui-datatable .ui-datatable-data td.ui-cell-editing {
-    padding:0;
-    margin:0;
+    padding-top:0;
+    padding-bottom:0;
+    margin-top:0;
+    margin-bottom:0;
 }
 
 .ui-row-editor-outline {

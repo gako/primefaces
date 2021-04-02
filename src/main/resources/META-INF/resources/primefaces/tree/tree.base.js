@@ -52,7 +52,6 @@
  * @prop {string} cfg.event Event for the context menu.
  * @prop {boolean} cfg.filter `true` if filtering is enabeld, `false` otherwise.
  * @prop {PrimeFaces.widget.BaseTree.FilterMode} cfg.filterMode Mode for filtering.
- * @prop {string} cfg.formId ID of the form to use for AJAX requests.
  * @prop {boolean} cfg.highlight `true` if selected nodes are highlighted, or `false` otherwise.
  * @prop {Record<string, PrimeFaces.widget.BaseTree.NodeIconSet>} iconStates A map between the type of a node and the
  * icons for that node.
@@ -626,6 +625,7 @@ PrimeFaces.widget.BaseTree = PrimeFaces.widget.BaseWidget.extend({
         treeNode = checkbox.closest('.ui-treenode'),
         rowKey = this.getRowKey(treeNode);
 
+        box.removeClass('ui-state-active');
         treeNode.find('> .ui-treenode-content > .ui-treenode-label').removeClass('ui-state-highlight');
         icon.removeClass('ui-icon-blank ui-icon-check').addClass('ui-icon-minus');
         treeNode.removeClass('ui-treenode-selected ui-treenode-unselected').addClass('ui-treenode-hasselected').attr('aria-checked', false).attr('aria-selected', false);
@@ -644,7 +644,7 @@ PrimeFaces.widget.BaseTree = PrimeFaces.widget.BaseWidget.extend({
         treeNode = checkbox.closest('.ui-treenode'),
         rowKey = this.getRowKey(treeNode);
 
-        box.removeClass('ui-state-hover');
+        box.addClass('ui-state-active');
         icon.removeClass('ui-icon-blank ui-icon-minus').addClass('ui-icon-check');
         treeNode.removeClass('ui-treenode-hasselected ui-treenode-unselected').addClass('ui-treenode-selected').attr('aria-checked', true).attr('aria-selected', true);
 
@@ -662,7 +662,7 @@ PrimeFaces.widget.BaseTree = PrimeFaces.widget.BaseWidget.extend({
         treeNode = checkbox.closest('.ui-treenode'),
         rowKey = this.getRowKey(treeNode);
 
-        box.removeClass('ui-state-hover');
+        box.removeClass('ui-state-active');
         icon.removeClass('ui-icon-minus ui-icon-check').addClass('ui-icon-blank');
         treeNode.removeClass('ui-treenode-hasselected ui-treenode-selected').addClass('ui-treenode-unselected').attr('aria-checked', false).attr('aria-selected', false);
 

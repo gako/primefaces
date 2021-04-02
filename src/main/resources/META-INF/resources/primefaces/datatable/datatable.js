@@ -38,10 +38,10 @@
  * current contents of the row or `cancel` the row edit and discard all changes.
  *
  * @typedef PrimeFaces.widget.DataTable.OnRowClickCallback Callback that is invoked when the user clicks on a row of the
- * data table. 
+ * data table.
  * @param {JQuery.TriggeredEvent} PrimeFaces.widget.DataTable.OnRowClickCallback.event The click event that occurred.
  * @param {JQuery} PrimeFaces.widget.DataTable.OnRowClickCallback.row The TR row that was clicked.
- * 
+ *
  * @interface {PrimeFaces.widget.DataTable.RowMeta} RowMeta Describes the meta information of row, such as its index and
  * its row key.
  * @prop {string | undefined} RowMeta.key The unique key of the row. `undefined` when no key was defined for the rows.
@@ -148,7 +148,6 @@
  * @prop {boolean} cfg.filter `true` if filtering is enabled, or `false` otherwise.
  * @prop {number} cfg.filterDelay Delay for filtering in milliseconds.
  * @prop {string} cfg.filterEvent Event to invoke filtering for input filters.
- * @prop {string} cfg.formId Client ID of the form that is used for AJAX requests.
  * @prop {number} cfg.frozenColumns The number of frozen columns.
  * @prop {boolean} cfg.liveResize Columns are resized live in this mode without using a resize helper.
  * @prop {boolean} cfg.liveScroll Enables live scrolling.
@@ -187,13 +186,12 @@
  * @prop {string} cfg.stickyTopAt Selector to position on the page according to other fixing elements on the top of the
  * table.
  * @prop {string} cfg.tabindex The value of the `tabindex` attribute for this data table.
- * @prop {boolean} cfg.allowUnsorting When true columns can be unsorted upon clicking sort.
- * @prop {boolean} cfg.virtualScroll Loads data on demand as the scrollbar gets close to the bottom. 
+ * @prop {boolean} cfg.virtualScroll Loads data on demand as the scrollbar gets close to the bottom.
  *
  * @interface {PrimeFaces.widget.DataTable.WidthInfo} WidthInfo Describes the width information of a DOM element.
- * @prop {number | string} WidthInfo.width The width of the element. It's either a unitless numeric pixel value or a
+ * @prop {number | string} WidthInfo.width The width of the element. It's either a unit-less numeric pixel value or a
  * string containing the width including an unit.
- * @prop {boolean} WidthInfo.isOuterWidth Tells whether the width includes the border-box or not. 
+ * @prop {boolean} WidthInfo.isOuterWidth Tells whether the width includes the border-box or not.
  */
 PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
@@ -279,6 +277,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
      */
     _render: function() {
         this.isRTL = this.jq.hasClass('ui-datatable-rtl');
+        this.cfg.partialUpdate = (this.cfg.partialUpdate === false) ? false : true;
 
         if(this.cfg.scrollable) {
             this.setupScrolling();
@@ -965,18 +964,10 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
     bindRowHover: function(selector) {
         this.tbody.off('mouseenter.dataTable mouseleave.dataTable', selector)
                     .on('mouseenter.dataTable', selector, null, function() {
-                        var element = $(this);
-
-                        if(!element.hasClass('ui-state-highlight')) {
-                            element.addClass('ui-state-hover');
-                        }
+                        $(this).addClass('ui-state-hover');
                     })
                     .on('mouseleave.dataTable', selector, null, function() {
-                        var element = $(this);
-
-                        if(!element.hasClass('ui-state-highlight')) {
-                            element.removeClass('ui-state-hover');
-                        }
+                        $(this).removeClass('ui-state-hover');
                     });
     },
 
@@ -998,14 +989,14 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         }
         else {
             var radioSelector = '> tr.ui-widget-content:not(.ui-datatable-empty-message) > td.ui-selection-column .ui-radiobutton .ui-radiobutton-box';
-            this.tbody.off('click.dataTable mouseover.dataTable mouseout.dataTable', radioSelector)
-                .on('mouseover.dataTable', radioSelector, null, function() {
+            this.tbody.off('click.dataTable mouseenter.dataTable mouseleave.dataTable', radioSelector)
+                .on('mouseenter.dataTable', radioSelector, null, function() {
                     var radio = $(this);
-                    if(!radio.hasClass('ui-state-disabled')&&!radio.hasClass('ui-state-active')) {
+                    if(!radio.hasClass('ui-state-disabled')) {
                         radio.addClass('ui-state-hover');
                     }
                 })
-                .on('mouseout.dataTable', radioSelector, null, function() {
+                .on('mouseleave.dataTable', radioSelector, null, function() {
                     var radio = $(this);
                     radio.removeClass('ui-state-hover');
                 })
@@ -1014,8 +1005,11 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                     checked = radio.hasClass('ui-state-active'),
                     disabled = radio.hasClass('ui-state-disabled');
 
-                    if(!disabled && !checked) {
-                        $this.selectRowWithRadio(radio);
+                    if (!disabled) {
+                        radio.prev().children(':radio').trigger('focus.dataTable');
+                        if (!checked) {
+                            $this.selectRowWithRadio(radio);
+                        }
                     }
                 });
         }
@@ -1026,19 +1020,11 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                 var input = $(this),
                 box = input.parent().next();
 
-                if(input.prop('checked')) {
-                    box.removeClass('ui-state-active');
-                }
-
                 box.addClass('ui-state-focus');
             })
             .on('blur.dataTable', radioInputSelector, null, function() {
                 var input = $(this),
                 box = input.parent().next();
-
-                if(input.prop('checked')) {
-                    box.addClass('ui-state-active');
-                }
 
                 box.removeClass('ui-state-focus');
             })
@@ -1080,13 +1066,13 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             checkboxSelector = '> tr.ui-widget-content.ui-datatable-selectable > td.ui-selection-column > div.ui-chkbox > div.ui-chkbox-box';
             this.checkAllToggler = this.thead.find('> tr > th.ui-selection-column > div.ui-chkbox.ui-chkbox-all > div.ui-chkbox-box');
 
-            this.checkAllToggler.on('mouseover', function() {
+            this.checkAllToggler.on('mouseenter', function() {
                 var box = $(this);
-                if(!box.hasClass('ui-state-disabled')&&!box.hasClass('ui-state-active')) {
+                if(!box.hasClass('ui-state-disabled')) {
                     box.addClass('ui-state-hover');
                 }
             })
-            .on('mouseout', function() {
+            .on('mouseleave', function() {
                 $(this).removeClass('ui-state-hover');
             })
             .on('click', function() {
@@ -1111,14 +1097,11 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                 }
             });
 
-            this.tbody.off('mouseover.dataTable mouseover.dataTable click.dataTable', checkboxSelector)
-                        .on('mouseover.dataTable', checkboxSelector, null, function() {
-                            var box = $(this);
-                            if(!box.hasClass('ui-state-active')) {
-                                box.addClass('ui-state-hover');
-                            }
+            this.tbody.off('mouseenter.dataTable mouseleave.dataTable click.dataTable', checkboxSelector)
+                        .on('mouseenter.dataTable', checkboxSelector, null, function() {
+                            $(this).addClass('ui-state-hover');
                         })
-                        .on('mouseout.dataTable', checkboxSelector, null, function() {
+                        .on('mouseleave.dataTable', checkboxSelector, null, function() {
                             $(this).removeClass('ui-state-hover');
                         })
                         .on('click.dataTable', checkboxSelector, null, function() {
@@ -1138,10 +1121,6 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                     .on('focus.dataTable', checkboxSelector, null, function() {
                         var input = $(this);
 
-                        if(input.attr('aria-checked') === "true" || input.prop('checked')) {
-                            input.removeClass('ui-state-active');
-                        }
-
                         input.addClass('ui-state-focus');
 
                         $this.focusedRow = input.closest('.ui-datatable-selectable');
@@ -1149,10 +1128,6 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                     })
                     .on('blur.dataTable', checkboxSelector, null, function() {
                         var input = $(this);
-
-                        if(input.attr('aria-checked') === "true" || input.prop('checked')) {
-                            input.addClass('ui-state-active');
-                        }
 
                         input.removeClass('ui-state-focus');
 
@@ -1175,19 +1150,11 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                         var input = $(this);
 
                         if(!input.hasClass('ui-state-disabled')) {
-                            if(input.attr('aria-checked') === "true" || input.prop('checked')) {
-                                input.removeClass('ui-state-active');
-                            }
-
                             input.addClass('ui-state-focus');
                         }
                     })
                     .on('blur.dataTable', function(e) {
                         var input = $(this);
-
-                        if(input.attr('aria-checked') === "true" || input.prop('checked')) {
-                            input.addClass('ui-state-active');
-                        }
 
                         input.removeClass('ui-state-focus');
                     })
@@ -1202,7 +1169,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                             $this.toggleCheckAll();
 
                             if(input.attr('aria-checked') === "true" || input.prop('checked')) {
-                                input.removeClass('ui-state-active').addClass('ui-state-focus');
+                                input.removeClass('ui-state-active');
                             }
                         }
                     });
@@ -1914,8 +1881,25 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                     {name: this.id + '_first', value: newState.first},
                     {name: this.id + '_rows', value: newState.rows},
                     {name: this.id + '_skipChildren', value: true},
-                    {name: this.id + '_encodeFeature', value: true}],
-            onsuccess: function(responseXML, status, xhr) {
+                    {name: this.id + '_encodeFeature', value: true}]
+        };
+
+        if (!this.cfg.partialUpdate) {
+            options.params.push({name: this.id + '_fullUpdate', value: true});
+
+            options.onsuccess = function(responseXML, status, xhr) {
+                PrimeFaces.ajax.Response.handle(responseXML, status, xhr, {
+                        widget: $this,
+                        handle: function(content) {
+                            this.jq.replaceWith(content);
+                        }
+                    });
+
+                return true;
+            };
+        }
+        else {
+            options.onsuccess = function(responseXML, status, xhr) {
                 PrimeFaces.ajax.Response.handle(responseXML, status, xhr, {
                         widget: $this,
                         handle: function(content) {
@@ -1936,8 +1920,9 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                     });
 
                 return true;
-            },
-            oncomplete: function(xhr, status, args, data) {
+            };
+
+            options.oncomplete = function(xhr, status, args, data) {
                 $this.paginator.cfg.page = newState.page;
                 if(args && typeof args.totalRecords !== 'undefined') {
                     $this.paginator.updateTotalRecords(args.totalRecords);
@@ -1948,8 +1933,8 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                 $this.updateColumnsView();
                 // reset index of shift selection on multiple mode
                 $this.originRowIndex = null;
-            }
-        };
+            };
+        }
 
         if(this.hasBehavior('page')) {
             this.callBehavior('page', options);
@@ -2047,8 +2032,27 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             formId: this.getParentFormId(),
             params: [{name: this.id + '_sorting', value: true},
                      {name: this.id + '_skipChildren', value: true},
-                     {name: this.id + '_encodeFeature', value: true}],
-            onsuccess: function(responseXML, status, xhr) {
+                     {name: this.id + '_encodeFeature', value: true},
+                     {name: this.id + '_sortKey', value: $this.joinSortMetaOption('col')},
+                     {name: this.id + '_sortDir', value: $this.joinSortMetaOption('order')}]
+        };
+
+        if (!this.cfg.partialUpdate) {
+            options.params.push({name: this.id + '_fullUpdate', value: true});
+
+            options.onsuccess = function(responseXML, status, xhr) {
+                PrimeFaces.ajax.Response.handle(responseXML, status, xhr, {
+                        widget: $this,
+                        handle: function(content) {
+                            this.jq.replaceWith(content);
+                        }
+                    });
+
+                return true;
+            };
+        }
+        else {
+            options.onsuccess = function(responseXML, status, xhr) {
                 PrimeFaces.ajax.Response.handle(responseXML, status, xhr, {
                         widget: $this,
                         handle: function(content) {
@@ -2061,8 +2065,9 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                     });
 
                 return true;
-            },
-            oncomplete: function(xhr, status, args, data) {
+            };
+
+            options.oncomplete = function(xhr, status, args, data) {
                 var paginator = $this.getPaginator();
                 if(args) {
                     if(args.totalRecords) {
@@ -2101,7 +2106,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                                         .find('.ui-sortable-column-icon').removeClass('ui-icon-triangle-1-n ui-icon-triangle-1-s');
                         }
 
-                        columnHeader.data('sortorder', order).removeClass('ui-state-hover').addClass('ui-state-active');
+                        columnHeader.data('sortorder', order).addClass('ui-state-active');
                         var sortIcon = columnHeader.find('.ui-sortable-column-icon'),
                         ariaLabel = columnHeader.attr('aria-label');
 
@@ -2147,21 +2152,18 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                 // reset index of shift selection on multiple mode
                 $this.originRowIndex = null;
             }
-        };
+        }
 
-        options.params.push({name: this.id + '_sortKey', value: $this.joinSortMetaOption('col')});
-        options.params.push({name: this.id + '_sortDir', value: $this.joinSortMetaOption('order')});
-
-        if(this.hasBehavior('sort')) {
+        if (this.hasBehavior('sort')) {
             this.callBehavior('sort', options);
         }
         else {
             PrimeFaces.ajax.Request.handle(options);
         }
     },
-    
+
     /**
-     * In multi-sort mode this will add number indicators to let the user know the current 
+     * In multi-sort mode this will add number indicators to let the user know the current
      * sort order. If only one column is sorted then no indicator is displayed and will
      * only be displayed once more than one column is sorted.
      * @private
@@ -2218,8 +2220,26 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             process: this.id,
             formId: this.getParentFormId(),
             params: [{name: this.id + '_filtering', value: true},
-                     {name: this.id + '_encodeFeature', value: true}],
-            onsuccess: function(responseXML, status, xhr) {
+                     {name: this.id + '_encodeFeature', value: true}]
+        };
+
+
+        if (!this.cfg.partialUpdate){
+            options.params.push({name: this.id + '_fullUpdate', value: true});
+
+            options.onsuccess = function(responseXML, status, xhr) {
+                PrimeFaces.ajax.Response.handle(responseXML, status, xhr, {
+                        widget: $this,
+                        handle: function(content) {
+                            this.jq.replaceWith(content);
+                        }
+                    });
+
+                return true;
+            };
+        }
+        else {
+            options.onsuccess = function(responseXML, status, xhr) {
                 PrimeFaces.ajax.Response.handle(responseXML, status, xhr, {
                         widget: $this,
                         handle: function(content) {
@@ -2236,8 +2256,9 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                     });
 
                 return true;
-            },
-            oncomplete: function(xhr, status, args, data) {
+            };
+
+            options.oncomplete = function(xhr, status, args, data) {
                 var paginator = $this.getPaginator();
                 if(args && typeof args.totalRecords !== 'undefined') {
                     $this.cfg.scrollLimit = args.totalRecords;
@@ -2287,7 +2308,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                 // reset index of shift selection on multiple mode
                 $this.originRowIndex = null;
             }
-        };
+        }
 
         if(this.hasBehavior('filter')) {
             this.callBehavior('filter', options);
@@ -2532,7 +2553,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
      * @param {JQuery} row Row to highlight.
      */
     highlightRow: function(row) {
-        row.removeClass('ui-state-hover').addClass('ui-state-highlight').attr('aria-selected', true);
+        row.addClass('ui-state-highlight').attr('aria-selected', true);
     },
 
     /**
@@ -2541,7 +2562,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
      * @param {JQuery} row Row to unhighlight.
      */
     unhighlightRow: function(row) {
-        row.removeClass('ui-state-highlight ui-state-hover').attr('aria-selected', false);
+        row.removeClass('ui-state-highlight').attr('aria-selected', false);
     },
 
     /**
@@ -2810,9 +2831,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
      * @param {JQuery} checkbox A checkbox to select.
      */
     selectCheckbox: function(checkbox) {
-        if(!checkbox.hasClass('ui-state-focus')) {
-            checkbox.addClass('ui-state-active');
-        }
+        checkbox.addClass('ui-state-active');
 
         if (this.cfg.nativeElements) {
             checkbox.prop('checked', true);
@@ -2846,10 +2865,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
      * @param {JQuery} radio A radio button to select.
      */
     selectRadio: function(radio){
-        radio.removeClass('ui-state-hover');
-        if(!radio.hasClass('ui-state-focus')) {
-            radio.addClass('ui-state-active');
-        }
+        radio.addClass('ui-state-active');
         radio.children('.ui-radiobutton-icon').addClass('ui-icon-bullet').removeClass('ui-icon-blank');
         radio.prev().children('input').prop('checked', true);
     },
@@ -3198,7 +3214,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
         var inputs=row.find(':input:enabled');
         if (inputs.length > 0) {
-            inputs.first().triggerHandler('focus');
+            inputs.first().trigger('focus');
         }
     },
 
@@ -3215,7 +3231,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             cellIndex = (this.scrollTbody.is(cell.closest('tbody'))) ? (cellIndex + $this.cfg.frozenColumns) : cellIndex;
         }
 
-        if (!rowMeta || !rowMeta.index) {
+        if (rowMeta === undefined || rowMeta.index === undefined) {
             return null;
         }
         var cellInfo = rowMeta.index + ',' + cellIndex;
@@ -3337,8 +3353,8 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             displayContainer.hide();
             inputContainer.show();
             var input = inputs.eq(0);
-            input.triggerHandler('focus');
-            input.triggerHandler('select');
+            input.trigger('focus');
+            input.trigger('select');
 
             //metadata
             if(multi) {
@@ -5540,24 +5556,20 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
     bindRowHover: function(selector) {
         var $this = this;
 
-        this.tbody.off('mouseover.datatable mouseout.datatable', selector)
-                    .on('mouseover.datatable', selector, null, function() {
+        this.tbody.off('mouseenter.datatable mouseleave.datatable', selector)
+                    .on('mouseenter.datatable', selector, null, function() {
                         var row = $(this),
                         twinRow = $this.getTwinRow(row);
 
-                        if(!row.hasClass('ui-state-highlight')) {
-                            row.addClass('ui-state-hover');
-                            twinRow.addClass('ui-state-hover');
-                        }
+                        row.addClass('ui-state-hover');
+                        twinRow.addClass('ui-state-hover');
                     })
-                    .on('mouseout.datatable', selector, null, function() {
+                    .on('mouseleave.datatable', selector, null, function() {
                         var row = $(this),
                         twinRow = $this.getTwinRow(row);
 
-                        if(!row.hasClass('ui-state-highlight')) {
-                            row.removeClass('ui-state-hover');
-                            twinRow.removeClass('ui-state-hover');
-                        }
+                        row.removeClass('ui-state-hover');
+                        twinRow.removeClass('ui-state-hover');
                     });
     },
 

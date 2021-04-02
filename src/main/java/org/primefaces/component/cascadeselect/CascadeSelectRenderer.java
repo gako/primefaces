@@ -25,7 +25,6 @@ package org.primefaces.component.cascadeselect;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.faces.component.UIComponent;
 import javax.faces.component.UISelectOne;
 import javax.faces.context.FacesContext;
@@ -41,6 +40,7 @@ import org.primefaces.expression.SearchExpressionUtils;
 import org.primefaces.renderkit.SelectOneRenderer;
 import org.primefaces.util.ComponentUtils;
 import org.primefaces.util.HTML;
+import org.primefaces.util.LangUtils;
 import org.primefaces.util.WidgetBuilder;
 
 public class CascadeSelectRenderer extends SelectOneRenderer {
@@ -83,18 +83,18 @@ public class CascadeSelectRenderer extends SelectOneRenderer {
 
         renderARIACombobox(context, cascadeSelect);
 
-        encodeInput(context, cascadeSelect);
-        encodeLabel(context, cascadeSelect);
+        String valueToRender = ComponentUtils.getValueToRender(context, cascadeSelect);
+        encodeInput(context, cascadeSelect, valueToRender);
+        encodeLabel(context, cascadeSelect, selectItems, valueToRender);
         encodeTrigger(context);
         encodePanel(context, cascadeSelect, selectItems);
 
         writer.endElement("div");
     }
 
-    protected void encodeInput(FacesContext context, CascadeSelect cascadeSelect) throws IOException {
+    protected void encodeInput(FacesContext context, CascadeSelect cascadeSelect, String valueToRender) throws IOException {
         ResponseWriter writer = context.getResponseWriter();
         String inputId = cascadeSelect.getInputClientId();
-        String valueToRender = ComponentUtils.getValueToRender(context, cascadeSelect);
 
         writer.startElement("div", null);
         writer.writeAttribute("class", "ui-helper-hidden-accessible", null);
@@ -115,9 +115,17 @@ public class CascadeSelectRenderer extends SelectOneRenderer {
         writer.endElement("div");
     }
 
-    protected void encodeLabel(FacesContext context, CascadeSelect cascadeSelect) throws IOException {
+    protected void encodeLabel(FacesContext context, CascadeSelect cascadeSelect, List<SelectItem> itemList, String valueToRender) throws IOException {
         ResponseWriter writer = context.getResponseWriter();
-        String placeholder = cascadeSelect.getPlaceholder();
+
+        Converter converter = ComponentUtils.getConverter(context, cascadeSelect);
+        String itemLabel = valueToRender;
+        SelectItem foundItem = findSelectItemByValue(context, cascadeSelect, converter, itemList, valueToRender);
+        if (foundItem != null) {
+            itemLabel = foundItem.getLabel();
+        }
+
+        String placeholder = LangUtils.isNotBlank(itemLabel) ? itemLabel : cascadeSelect.getPlaceholder();
         String styleClass = getStyleClassBuilder(context)
                 .add(placeholder != null, CascadeSelect.LABEL_CLASS)
                 .add(placeholder == null, CascadeSelect.LABEL_EMPTY_CLASS)
@@ -125,7 +133,9 @@ public class CascadeSelectRenderer extends SelectOneRenderer {
 
         writer.startElement("span", null);
         writer.writeAttribute("class", styleClass, null);
-        writer.writeText(placeholder, null);
+        if (LangUtils.isNotBlank(placeholder)) {
+            writer.writeText(placeholder, null);
+        }
         writer.endElement("span");
     }
 
@@ -187,9 +197,7 @@ public class CascadeSelectRenderer extends SelectOneRenderer {
                 boolean isGroup = selectItem instanceof SelectItemGroup;
                 Object itemValue = selectItem.getValue();
                 String itemLabel = selectItem.getLabel();
-                String itemValueAsString = converter != null ?
-                    converter.getAsString(context, cascadeSelect, selectItem.getValue())
-                    : String.valueOf(selectItem.getValue());
+                String itemValueAsString = getOptionAsString(context, cascadeSelect, converter, selectItem.getValue());
                 String itemStyleClass = getStyleClassBuilder(context)
                         .add(CascadeSelect.ITEM_CLASS)
                         .add(isGroup, CascadeSelect.ITEM_GROUP_CLASS)

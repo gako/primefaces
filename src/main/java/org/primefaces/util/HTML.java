@@ -250,6 +250,7 @@ public class HTML {
     public static final List<String> LABEL_EVENTS = OUTPUT_EVENTS;
 
     public static final List<String> BUTTON_ATTRS = LangUtils.concat(BUTTON_ATTRS_WITHOUT_EVENTS, BUTTON_EVENTS);
+    public static final List<String> BUTTON_WITHOUT_CLICK_ATTRS = LangUtils.concat(BUTTON_ATTRS_WITHOUT_EVENTS, BUTTON_EVENTS_WITHOUT_CLICK);
     public static final List<String> BUTTON_WITH_CLICK_ATTRS = LangUtils.concat(HTML.BUTTON_ATTRS, HTML.CLICK_EVENT);
 
     public static final List<String> INPUT_TEXT_EVENTS = LangUtils.concat(COMMON_EVENTS, CHANGE_SELECT_EVENTS, BLUR_FOCUS_EVENTS);
@@ -290,6 +291,7 @@ public class HTML {
     public static final String ARIA_ROLE_MENU = "menu";
     public static final String ARIA_ROLE_MENUITEM = "menuitem";
     public static final String ARIA_ROLE_MENUBAR = "menubar";
+    public static final String ARIA_ROLE_SEPARATOR = "separator";
 
     public static final String BUTTON_TEXT_ONLY_BUTTON_CLASS = "ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
     public static final String BUTTON_ICON_ONLY_BUTTON_CLASS = "ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only";

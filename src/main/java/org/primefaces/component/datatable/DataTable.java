@@ -211,6 +211,10 @@ public class DataTable extends DataTableBase {
         return context.getExternalContext().getRequestParameterMap().containsKey(getClientId(context) + "_encodeFeature");
     }
 
+    public boolean isFullUpdateRequest(FacesContext context) {
+        return context.getExternalContext().getRequestParameterMap().containsKey(getClientId(context) + "_fullUpdate");
+    }
+
     public boolean isRowEditRequest(FacesContext context) {
         return context.getExternalContext().getRequestParameterMap().containsKey(getClientId(context) + "_rowEditAction");
     }
@@ -852,7 +856,7 @@ public class DataTable extends DataTableBase {
             Map<String, String> params = context.getExternalContext().getRequestParameterMap();
             String expandedRows = params.get(getClientId(context) + "_rowExpansionState");
 
-            if (!LangUtils.isValueBlank(expandedRows)) {
+            if (LangUtils.isNotBlank(expandedRows)) {
                 String[] tmp = expandedRows.split(",");
                 for (int i = 0; i < tmp.length; ++i) {
                     expandedRowsSet.add(Integer.parseInt(tmp[i]));
