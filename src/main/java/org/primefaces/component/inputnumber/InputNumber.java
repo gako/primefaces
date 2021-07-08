@@ -35,8 +35,7 @@ import javax.faces.context.FacesContext;
         @ResourceDependency(library = "primefaces", name = "jquery/jquery.js"),
         @ResourceDependency(library = "primefaces", name = "core.js"),
         @ResourceDependency(library = "primefaces", name = "components.js"),
-        @ResourceDependency(library = "primefaces", name = "inputnumber/inputnumber.js"),
-        @ResourceDependency(library = "primefaces", name = "inputnumber/inputnumber.css")
+        @ResourceDependency(library = "primefaces", name = "inputnumber/inputnumber.js")
 })
 public class InputNumber extends InputNumberBase {
 

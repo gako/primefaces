@@ -12,7 +12,7 @@
     <groupId>com.ilogs.primefaces</groupId>
     <artifactId>primefaces</artifactId>
     <packaging>jar</packaging>
-    <version>7.0.1</version>
+    <version>7.0.2</version>
 
     <name>PrimeFaces</name>
     <url>https://www.primefaces.org</url>
@@ -593,6 +593,8 @@
                                 <include>${resources.compressed.source}/primefaces/sidebar/sidebar.css</include>
                                 <include>${resources.compressed.source}/primefaces/dataview/dataview.css</include>
                                 <include>${resources.compressed.source}/primefaces/datepicker/datepicker.css</include>
+                                <include>${resources.compressed.source}/primefaces/inputnumber/inputnumber.css</include>
+                                <include>${resources.compressed.source}/primefaces/ribbon/ribbon.css</include>
                                 <!--  ilogs FEATURE -->
                                 <include>${resources.compressed.source}/primefaces/card/card.css</include>
                             </includes>
@@ -697,6 +699,8 @@
                                 <include>${resources.compressed.source}/primefaces/chips/chips.js</include>
                                 <include>${resources.compressed.source}/primefaces/sidebar/sidebar.js</include>
                                 <include>${resources.compressed.source}/primefaces/dataview/dataview.js</include>
+                                <include>${resources.compressed.source}/primefaces/hotkey/hotkey.js</include>
+                                <include>${resources.compressed.source}/primefaces/ribbon/ribbon.js</include>
                             </includes>
                         </aggregation>
                         <aggregation>
