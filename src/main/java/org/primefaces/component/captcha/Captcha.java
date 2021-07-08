@@ -44,8 +44,7 @@ import org.primefaces.util.MessageFactory;
 @ResourceDependencies({
         @ResourceDependency(library = "primefaces", name = "jquery/jquery.js"),
         @ResourceDependency(library = "primefaces", name = "core.js"),
-        @ResourceDependency(library = "primefaces", name = "components.js"),
-        @ResourceDependency(library = "primefaces", name = "captcha/captcha.js")
+        @ResourceDependency(library = "primefaces", name = "components.js")
 })
 public class Captcha extends CaptchaBase {
 

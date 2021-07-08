@@ -701,6 +701,7 @@
                                 <include>${resources.compressed.source}/primefaces/dataview/dataview.js</include>
                                 <include>${resources.compressed.source}/primefaces/hotkey/hotkey.js</include>
                                 <include>${resources.compressed.source}/primefaces/ribbon/ribbon.js</include>
+                                <include>${resources.compressed.source}/primefaces/captcha/captcha.js</include>
                             </includes>
                         </aggregation>
                         <aggregation>
