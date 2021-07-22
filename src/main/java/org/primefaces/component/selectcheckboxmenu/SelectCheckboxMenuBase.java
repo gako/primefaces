@@ -57,7 +57,9 @@ abstract class SelectCheckboxMenuBase extends HtmlSelectManyCheckbox implements 
         multiple,
         dynamic,
         labelSeparator,
-        emptyLabel
+        emptyLabel,
+        // ILOGS FEATURE
+        updateLabelCount
     }
 
     public SelectCheckboxMenuBase() {
@@ -194,12 +196,22 @@ abstract class SelectCheckboxMenuBase extends HtmlSelectManyCheckbox implements 
     }
 
     public boolean isUpdateLabel() {
-        return (Boolean) getStateHelper().eval(PropertyKeys.updateLabel, false);
+        return (Boolean) getStateHelper().eval(PropertyKeys.updateLabel, true);
     }
 
     public void setUpdateLabel(boolean updateLabel) {
         getStateHelper().put(PropertyKeys.updateLabel, updateLabel);
     }
+
+    // ++ ILOGS FEATURE
+    public boolean isUpdateLabelCount() {
+        return (Boolean) getStateHelper().eval(PropertyKeys.updateLabelCount, true);
+    }
+
+    public void setUpdateLabelCount(boolean updateLabel) {
+        getStateHelper().put(PropertyKeys.updateLabelCount, updateLabel);
+    }
+    // -- ILOGS FEATURE
 
     public boolean isMultiple() {
         return (Boolean) getStateHelper().eval(PropertyKeys.multiple, false);

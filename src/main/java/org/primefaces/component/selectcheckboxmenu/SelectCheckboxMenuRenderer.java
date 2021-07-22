@@ -319,6 +319,7 @@ public class SelectCheckboxMenuRenderer extends SelectManyRenderer {
                 .attr("scrollHeight", menu.getScrollHeight(), Integer.MAX_VALUE)
                 .attr("showHeader", menu.isShowHeader(), true)
                 .attr("updateLabel", menu.isUpdateLabel(), false)
+                .attr("updateLabelCount", menu.isUpdateLabelCount(), false)
                 .attr("labelSeparator", menu.getLabelSeparator(), ",")
                 .attr("emptyLabel", menu.getEmptyLabel())
                 .attr("multiple", menu.isMultiple(), false)
