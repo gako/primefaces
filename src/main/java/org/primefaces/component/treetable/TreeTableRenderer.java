@@ -577,7 +577,7 @@ public class TreeTableRenderer extends DataRenderer {
 		boolean selected = treeNode.isSelected();
 		boolean partialSelected = treeNode.isPartialSelected();
 		boolean nativeElements = tt.isNativeElements();
-		boolean hidden = tt.getFilterMetadata()!=null && !tt.getFilterMetadata().isEmpty() && !isFilteredNodeVisible(treeNode, tt.getFilteredRowKeys());
+		boolean hidden = !tt.isNodeVisible(treeNode);
 		List<UIColumn> columns = tt.getColumns();
 
 		String rowStyleClass = selected ? TreeTable.SELECTED_ROW_CLASS : TreeTable.ROW_CLASS;
@@ -934,14 +934,27 @@ public class TreeTableRenderer extends DataRenderer {
 	protected void encodeNodeChildren(FacesContext context, TreeTable tt, TreeNode treeNode, int first, int size) throws IOException {
 		if (size > 0) {
 			List<TreeNode> children = treeNode.getChildren();
-			int childCount = treeNode.getChildCount();
-			int last = (first + size);
-			if (last > childCount) {
-				last = childCount;
-			}
 
-			for (int i = first; i < last; i++) {
-				encodeNode(context, tt, children.get(i));
+			int visibleCount = 0;
+			int i = 0;
+			for (TreeNode child: children) {
+			    boolean visible = tt.isNodeVisible(child);
+
+			    if (visible) {
+                    i++;
+                }
+
+			    if (i>= first) {
+                    encodeNode(context, tt, child);
+
+                    if (visible) {
+                        visibleCount++;
+                    }
+			    }
+
+                if (visibleCount >= size) {
+                    break;
+                }
 			}
 		}
 	}
@@ -1261,16 +1274,6 @@ public class TreeTableRenderer extends DataRenderer {
 
 		return filterMetadata;
 	}
-
-    private boolean isFilteredNodeVisible(TreeNode treeNode, List<String> filteredRowKeys) {
-        String rowKeyOfChildNode = treeNode.getRowKey();
-        for (String rk : filteredRowKeys) {
-            if (rk.equals(rowKeyOfChildNode) || rk.startsWith(rowKeyOfChildNode + "_") || rowKeyOfChildNode.startsWith(rk + "_")) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 	public void filter(FacesContext context, TreeTable tt, List<FilterMeta> filterMetadata, String globalFilterValue) throws IOException {
 		Locale filterLocale = context.getViewRoot().getLocale();

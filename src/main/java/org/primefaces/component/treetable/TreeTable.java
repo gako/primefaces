@@ -23,7 +23,11 @@
  */
 package org.primefaces.component.treetable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.el.ELContext;
 import javax.el.ValueExpression;
@@ -43,12 +47,29 @@ import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.column.Column;
 import org.primefaces.component.columngroup.ColumnGroup;
 import org.primefaces.component.columns.Columns;
-import org.primefaces.event.*;
+import org.primefaces.event.CellEditEvent;
+import org.primefaces.event.ColumnResizeEvent;
+import org.primefaces.event.NodeCollapseEvent;
+import org.primefaces.event.NodeExpandEvent;
+import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.event.NodeUnselectEvent;
+import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.event.data.SortEvent;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
-import org.primefaces.model.filter.*;
+import org.primefaces.model.filter.ContainsFilterConstraint;
+import org.primefaces.model.filter.EndsWithFilterConstraint;
+import org.primefaces.model.filter.EqualsFilterConstraint;
+import org.primefaces.model.filter.ExactFilterConstraint;
+import org.primefaces.model.filter.FilterConstraint;
+import org.primefaces.model.filter.GlobalFilterConstraint;
+import org.primefaces.model.filter.GreaterThanEqualsFilterConstraint;
+import org.primefaces.model.filter.GreaterThanFilterConstraint;
+import org.primefaces.model.filter.InFilterConstraint;
+import org.primefaces.model.filter.LessThanEqualsFilterConstraint;
+import org.primefaces.model.filter.LessThanFilterConstraint;
+import org.primefaces.model.filter.StartsWithFilterConstraint;
 import org.primefaces.util.ComponentUtils;
 import org.primefaces.util.Constants;
 import org.primefaces.util.LocaleUtils;
@@ -656,5 +677,21 @@ public class TreeTable extends TreeTableBase {
                 }
             }
         }
+    }
+
+    public boolean isNodeVisible(TreeNode node) {
+        boolean visible = getFilterMetadata()==null || getFilterMetadata().isEmpty() || isFilteredNodeVisible(node, getFilteredRowKeys());
+
+        return visible;
+    }
+
+    private boolean isFilteredNodeVisible(TreeNode treeNode, List<String> filteredRowKeys) {
+        String rowKeyOfChildNode = treeNode.getRowKey();
+        for (String rk : filteredRowKeys) {
+            if (rk.equals(rowKeyOfChildNode) || rk.startsWith(rowKeyOfChildNode + "_") || rowKeyOfChildNode.startsWith(rk + "_")) {
+                return true;
+            }
+        }
+        return false;
     }
 }
