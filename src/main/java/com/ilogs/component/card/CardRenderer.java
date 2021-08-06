@@ -53,6 +53,18 @@ public class CardRenderer extends OutputPanelRenderer {
 		if (card.getStyle() != null) {
 			writer.writeAttribute("style", card.getStyle(), "style");
 		}
+
+
+		// <div class="ribbon"><span class="ribbon__content">exclusive</span></div>
+		if (!LangUtils.isValueBlank(card.getRibbonText())) {
+    		writer.startElement("div", card);
+    		writer.writeAttribute("class", "ribbon", "styleClass");
+    		writer.startElement("span", card);
+    		writer.writeAttribute("class", "ribbon__content", "styleClass");
+    		writer.write(card.getRibbonText());
+    		writer.endElement("span");
+    		writer.endElement("div");
+		}
 		// CommandLink Start
 
 		writer.startElement("div", card);

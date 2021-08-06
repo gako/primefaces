@@ -17,7 +17,7 @@ public class Card extends OutputPanel {
 	public static final String DEFAULT_RENDERER = "com.ilogs.component.card.CardRenderer";
 
 	protected enum PropertyKeys {
-		icon, hoverable, selected, disabled
+		icon, hoverable, selected, disabled, ribbonText;
 	}
 
 	public Card() {
@@ -36,6 +36,14 @@ public class Card extends OutputPanel {
 	public void setIcon(String edit) {
 		getStateHelper().put(PropertyKeys.icon, edit);
 	}
+
+	public String getRibbonText() {
+        return (String) getStateHelper().eval(PropertyKeys.ribbonText, null);
+    }
+
+    public void setRibbonText(String edit) {
+        getStateHelper().put(PropertyKeys.ribbonText, edit);
+    }
 
 	public boolean isHoverable() {
 		return (java.lang.Boolean) getStateHelper().eval(PropertyKeys.hoverable, false);
