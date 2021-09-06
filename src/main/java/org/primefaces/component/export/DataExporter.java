@@ -161,9 +161,6 @@ public class DataExporter implements ActionListener, StateHolder {
 				+ "\", exporter must target a PrimeFaces DataTable or TreeTable.");
 		    }
 
-		    DataTable table = (DataTable) component;
-		    exporter.export(context, table, outputFileName, isPageOnly, isSelectionOnly, encodingType,
-			    preProcessor, postProcessor, exporterOptions, onTableRender);
 		}
             }
             else {
