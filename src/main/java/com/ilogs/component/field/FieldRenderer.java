@@ -25,6 +25,12 @@ public class FieldRenderer extends OutputPanelRenderer {
 
 	private static final String FACET_LABEL = "label";
 
+	private static final String FACET_PREFIX = "prefix";
+
+	private static final String FACET_POSTFIX = "postfix";
+
+	private static final String FACET_CONTENT = "content";
+
 	private static final String ICON_POS_RIGHT = "right";
 
 	private static final String ICON_POS_LEFT = "left";
@@ -41,6 +47,8 @@ public class FieldRenderer extends OutputPanelRenderer {
 	private static final String ICON_STYLE_CLASS_LEFT = "ui-inputgroup ui-inputgroup-icon-left";
 
 	private static final String ICON_STYLE_CLASS_RIGHT = "ui-inputgroup ui-inputgroup-icon-right";
+
+	private static final String NO_ICON_STYLE_CLASS = "ui-inputgroup";
 
 	@Override
 	public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
@@ -101,11 +109,7 @@ public class FieldRenderer extends OutputPanelRenderer {
 		boolean showInput = (!field.isEditableDefined() || field.isEditable()) && !field.isReadonly() && !field.isDisabled();
 
 
-		UIComponent labelFacet = field.getFacet(FACET_LABEL);
-		if (labelFacet != null && labelFacet.isRendered()) {
-			labelFacet.encodeAll(context);
-		} else if (!LangUtils.isValueBlank(field.getLabel())) {
-
+		if (!renderFacet(context, field, FACET_LABEL, null) && !LangUtils.isValueBlank(field.getLabel())) {
 			OutputLabel outputLabel = (OutputLabel) context.getApplication().createComponent(OutputLabel.COMPONENT_TYPE);
 			outputLabel.setValue(field.getLabel());
 			outputLabel.setFor(field.getFor());
@@ -124,6 +128,8 @@ public class FieldRenderer extends OutputPanelRenderer {
 		}
 
 		boolean hasIcon = !LangUtils.isValueBlank(field.getIcon()) && showInput;
+
+		boolean hasInputGroup = field.getFacet(FACET_POSTFIX)!=null || field.getFacet(FACET_PREFIX)!=null || hasIcon;
 
 		final StringBuilder styleClass = SharedStringBuilder.get(context, SB_STYLE_CLASS);
 
@@ -152,50 +158,61 @@ public class FieldRenderer extends OutputPanelRenderer {
 				}
 			}
 
-			writer.startElement("div", null);
-			String iconStyleClass;
+		}
 
-			if (ICON_POS_RIGHT.equalsIgnoreCase(field.getIconPos())) {
-				iconStyleClass = ICON_STYLE_CLASS_RIGHT;
-			} else {
-				iconStyleClass = ICON_STYLE_CLASS_LEFT;
-			}
-			writer.writeAttribute("class", iconStyleClass, "styleClass");
+		if (hasInputGroup) {
+		    writer.startElement("div", null);
+            String containerStyleClass;
+
+            if (hasIcon) {
+                if (ICON_POS_RIGHT.equalsIgnoreCase(field.getIconPos())) {
+                    containerStyleClass = ICON_STYLE_CLASS_RIGHT;
+                } else {
+                    containerStyleClass = ICON_STYLE_CLASS_LEFT;
+                }
+            } else {
+                containerStyleClass = NO_ICON_STYLE_CLASS;
+            }
+            writer.writeAttribute("class", containerStyleClass, "styleClass");
 		}
 
 		if (hasIcon && ICON_POS_LEFT.equalsIgnoreCase(field.getIconPos())) {
 			encodeIcon(context, styleClass, forClientId, field);
 		}
 
+		renderFacet(context, field, FACET_PREFIX, null);
 
-
-		UIComponent inputFacet = field.getFacet(FACET_INPUT);
-		if (inputFacet != null) {
-			inputFacet.setRendered(showInput);
-			if (inputFacet.isRendered()) {
-				inputFacet.encodeAll(context);
-			}
-		}
-
-		UIComponent outputFacet = field.getFacet(FACET_OUTPUT);
-		if (outputFacet != null) {
-
-			outputFacet.setRendered(!showInput);
-			if (outputFacet.isRendered()) {
-				outputFacet.encodeAll(context);
-			}
-		}
+		renderFacet(context, field, FACET_INPUT, showInput);
+		renderFacet(context, field, FACET_OUTPUT, !showInput);
 
 		renderChildren(context, field);
+
+		renderFacet(context, field, FACET_POSTFIX, null);
 
 		if (hasIcon && ICON_POS_RIGHT.equalsIgnoreCase(field.getIconPos())) {
 			encodeIcon(context, styleClass, forClientId, field);
 		}
 
-		if (hasIcon) {
+		if (hasInputGroup) {
 			writer.endElement("div");
 		}
 
+		renderFacet(context, field, FACET_CONTENT, null);
+	}
+
+	private boolean renderFacet(FacesContext context, Field field, String facet, Boolean rendered) throws IOException {
+	    UIComponent inputFacet = field.getFacet(facet);
+        if (inputFacet != null) {
+            if (rendered!=null) {
+                inputFacet.setRendered(rendered);
+            }
+
+            if (inputFacet.isRendered()) {
+                inputFacet.encodeAll(context);
+                return true;
+            }
+        }
+        return false;
 	}
 
 	@Override
