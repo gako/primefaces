@@ -19,9 +19,12 @@ import static org.omnifaces.util.Events.subscribeToRequestAfterPhase;
 import static org.omnifaces.util.Events.subscribeToViewEvent;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 
 import javax.el.ValueExpression;
 import javax.faces.component.UICommand;
@@ -166,11 +169,11 @@ public class SkipValidators extends TagHandler {
 		/**
 		 * Group that should still be validated even if skipvalidators was added to button
 		 */
-		private String includeGroup = null;
+		private Set<String> includeGroups;
 		/**
 		 * Group that should not be validated, anything else will be validated
 		 */
-		private String excludeGroup = null;
+		private Set<String> excludeGroups;
 
 		private Map<String, ValueExpression> requiredExpressions = new HashMap<String, ValueExpression>();
 		private Map<String, Boolean> required = new HashMap<String, Boolean>();
@@ -179,14 +182,31 @@ public class SkipValidators extends TagHandler {
 		private Map<String, ValueExpression> validationExpressions = new HashMap<String, ValueExpression>();
 
 		public SkipValidatorsEventListener(String includeGroup, String excludeGroup) {
-			this.includeGroup = includeGroup;
-			this.excludeGroup = excludeGroup;
+			if (includeGroup!=null) {
+			    includeGroups = new HashSet<String>(Arrays.asList(includeGroup.split("\\s*,\\s*")));
+			} else {
+			    includeGroups = Collections.emptySet();
+			}
+
+			if (excludeGroup!=null) {
+			    excludeGroups = new HashSet<String>(Arrays.asList(excludeGroup.split("\\s*,\\s*")));
+            } else {
+                excludeGroups = Collections.emptySet();
+            }
 		}
 
 		@Override
 		public boolean isListenerForSource(Object source) {
 			return source instanceof UIInput;
 		}
+
+		private boolean isIncludeGroup(String group) {
+		    return includeGroups.contains(group);
+		}
+
+		private boolean isExcludeGroup(String group) {
+            return excludeGroups.contains(group);
+        }
 
 		@Override
 		public void processEvent(SystemEvent event) throws AbortProcessingException {
@@ -198,7 +218,7 @@ public class SkipValidators extends TagHandler {
 				inputValidationGroup = input.getAttributes().get(VALIDATION_GROUP_ATTRIBUTE).toString();
 
 				// if we have validationGroup defined, keep the validators for the given group
-				if (!LangUtils.isValueBlank(inputValidationGroup) && Objects.equals(inputValidationGroup, includeGroup)) {
+				if (!LangUtils.isValueBlank(inputValidationGroup) && isIncludeGroup(inputValidationGroup)) {
 
 					// handle requiredbygroup attribute and set required to true if the validation groups match
 					ValueExpression requiredByGroupExpression = input.getValueExpression(VALIDATION_REQUIRED_BY_GROUP_ATTRIBUTE);
@@ -223,7 +243,7 @@ public class SkipValidators extends TagHandler {
 				}
 			}
 
-			if (LangUtils.isValueBlank(excludeGroup) || Objects.equals(inputValidationGroup, excludeGroup)) {
+			if (excludeGroups.isEmpty() || isExcludeGroup(inputValidationGroup)) {
 
 				if (event instanceof PreValidateEvent) {
 					storeRequired(input);
