@@ -183,13 +183,13 @@ public class SkipValidators extends TagHandler {
 
 		public SkipValidatorsEventListener(String includeGroup, String excludeGroup) {
 			if (includeGroup!=null) {
-			    includeGroups = new HashSet<String>(Arrays.asList(includeGroup.split("\\s*,\\s*")));
+			    includeGroups = new HashSet<String>(Arrays.asList(includeGroup.split("\\s*(,| )\\s*")));
 			} else {
 			    includeGroups = Collections.emptySet();
 			}
 
 			if (excludeGroup!=null) {
-			    excludeGroups = new HashSet<String>(Arrays.asList(excludeGroup.split("\\s*,\\s*")));
+			    excludeGroups = new HashSet<String>(Arrays.asList(excludeGroup.split("\\s*(,| )\\s*")));
             } else {
                 excludeGroups = Collections.emptySet();
             }
