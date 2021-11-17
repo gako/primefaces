@@ -30,6 +30,25 @@ public class AgentUtils {
     private AgentUtils() {
     }
 
+    private static String getUserAgent(FacesContext context) {
+        return context.getExternalContext().getRequestHeaderMap().get("User-Agent");
+    }
+
+    private static boolean userAgentContains(FacesContext context, String fragment) {
+        String userAgent = getUserAgent(context);
+
+        if (userAgent == null) {
+            return false;
+        }
+        else {
+            return userAgent.contains(fragment);
+        }
+    }
+
+    public static boolean isFirefox(FacesContext context) {
+        return userAgentContains(context, "Firefox");
+    }
+
     public static boolean isEdge(FacesContext context) {
         String userAgent = context.getExternalContext().getRequestHeaderMap().get("User-Agent");
 

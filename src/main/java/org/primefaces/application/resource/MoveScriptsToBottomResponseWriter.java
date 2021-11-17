@@ -23,16 +23,26 @@
  */
 package org.primefaces.application.resource;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.ResponseWriter;
-import javax.faces.context.ResponseWriterWrapper;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
+import javax.faces.context.ResponseWriterWrapper;
+
+import org.primefaces.util.AgentUtils;
 import org.primefaces.util.LangUtils;
 
 public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
+
+    private static final String SCRIPT_TAG = "script";
+    private static final String BODY_TAG = "body";
+    private static final String HTML_TAG = "html";
 
     private final ResponseWriter wrapped;
     private final MoveScriptsToBottomState state;
@@ -43,6 +53,8 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
     private StringBuilder inline;
     private boolean scriptsRendered;
 
+    private boolean writeFouc;
+
     @SuppressWarnings("deprecation") // the default constructor is deprecated in JSF 2.3
     public MoveScriptsToBottomResponseWriter(ResponseWriter wrapped, MoveScriptsToBottomState state) {
         this.wrapped = wrapped;
@@ -50,6 +62,7 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
 
         inScript = false;
         scriptsRendered = false;
+        writeFouc = false;
 
         include = new StringBuilder(50);
         inline = new StringBuilder(75);
@@ -133,18 +146,7 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
     @Override
     public void writeAttribute(String name, Object value, String property) throws IOException {
         if (inScript) {
-            if ("src".equalsIgnoreCase(name)) {
-                String strValue = (String) value;
-                if (!LangUtils.isValueBlank(strValue)) {
-                    include.append(strValue);
-                }
-            }
-            else if ("type".equalsIgnoreCase(name)) {
-                String strValue = (String) value;
-                if (!LangUtils.isValueBlank(strValue)) {
-                    scriptType = strValue;
-                }
-            }
+            updateScriptSrcOrType(name, (String) value);
         }
         else {
             getWrapped().writeAttribute(name, value, property);
@@ -154,18 +156,7 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
     @Override
     public void writeURIAttribute(String name, Object value, String property) throws IOException {
         if (inScript) {
-            if ("src".equalsIgnoreCase(name)) {
-                String strValue = (String) value;
-                if (!LangUtils.isValueBlank(strValue)) {
-                    include.append(strValue);
-                }
-            }
-            else if ("type".equalsIgnoreCase(name)) {
-                String strValue = (String) value;
-                if (!LangUtils.isValueBlank(strValue)) {
-                    scriptType = strValue;
-                }
-            }
+            updateScriptSrcOrType(name, (String) value);
         }
         else {
             getWrapped().writeURIAttribute(name, value, property);
@@ -174,18 +165,24 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
 
     @Override
     public void startElement(String name, UIComponent component) throws IOException {
-        if ("script".equalsIgnoreCase(name)) {
+        if (isMoveScriptToBottom(name, component)) {
             inScript = true;
             scriptType = "text/javascript";
         }
         else {
+            writeFouc();
+
             getWrapped().startElement(name, component);
+
+            if (BODY_TAG.equalsIgnoreCase(name) && isFirefox()) {
+                writeFouc = true;
+            }
         }
     }
 
     @Override
     public void endElement(String name) throws IOException {
-        if ("script".equalsIgnoreCase(name)) {
+        if (SCRIPT_TAG.equalsIgnoreCase(name) && inScript) {
             inScript = false;
 
             state.addInline(scriptType, inline);
@@ -195,33 +192,38 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
             include.setLength(0);
             inline.setLength(0);
         }
-        else if ("body".equalsIgnoreCase(name) || ("html".equalsIgnoreCase(name) && !scriptsRendered)) {
+        else if (BODY_TAG.equalsIgnoreCase(name) || (HTML_TAG.equalsIgnoreCase(name) && !scriptsRendered)) {
 
-            for (Map.Entry<String, ArrayList<String>> entry : state.getIncludes().entrySet()) {
+            // write script includes
+            for (Map.Entry<String, List<String>> entry : state.getIncludes().entrySet()) {
                 String type = entry.getKey();
-                ArrayList<String> includes = entry.getValue();
+                List<String> includes = entry.getValue();
 
                 for (int i = 0; i < includes.size(); i++) {
                     String src = includes.get(i);
                     if (src != null && !src.isEmpty()) {
-                        getWrapped().startElement("script", null);
+                        getWrapped().startElement(SCRIPT_TAG, null);
                         getWrapped().writeAttribute("type", type, null);
                         getWrapped().writeAttribute("src", src, null);
-                        getWrapped().endElement("script");
+                        getWrapped().endElement(SCRIPT_TAG);
                     }
                 }
             }
 
-            for (Map.Entry<String, ArrayList<String>> entry : state.getInlines().entrySet()) {
+            // write inline scripts
+            for (Map.Entry<String, List<String>> entry : state.getInlines().entrySet()) {
                 String type = entry.getKey();
-                ArrayList<String> inlines = entry.getValue();
-                String merged = mergeAndMinimizeInlineScripts(type, inlines);
+                List<String> inlines = entry.getValue();
 
-                if (!LangUtils.isValueBlank(merged)) {
-                    getWrapped().startElement("script", null);
+                String id = UUID.randomUUID().toString();
+                String merged = mergeAndMinimizeInlineScripts(id, type, inlines);
+
+                if (LangUtils.isNotBlank(merged)) {
+                    getWrapped().startElement(SCRIPT_TAG, null);
+                    getWrapped().writeAttribute("id", id, null);
                     getWrapped().writeAttribute("type", type, null);
                     getWrapped().write(merged);
-                    getWrapped().endElement("script");
+                    getWrapped().endElement(SCRIPT_TAG);
                 }
             }
 
@@ -234,7 +236,16 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
         }
     }
 
-    protected String mergeAndMinimizeInlineScripts(String type, ArrayList<String> inlines) {
+    protected void writeFouc() throws IOException {
+        if (writeFouc) {
+            writeFouc = false;
+            getWrapped().startElement(SCRIPT_TAG, null);
+            getWrapped().writeText("/*FIREFOX_FOUC_FIX*/", null);
+            getWrapped().endElement(SCRIPT_TAG);
+        }
+    }
+
+    protected String mergeAndMinimizeInlineScripts(String id, String type, List<String> inlines) {
         StringBuilder script = new StringBuilder(inlines.size() * 100);
         for (int i = 0; i < inlines.size(); i++) {
             if (i > 0) {
@@ -246,16 +257,23 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
 
         String minimized = script.toString();
 
-        if ("text/javascript".equalsIgnoreCase(type)) {
-            minimized = minimized.replace(";;", ";");
+        if (LangUtils.isNotBlank(minimized)) {
+            if ("text/javascript".equalsIgnoreCase(type)) {
+                minimized = minimized.replace(";;", ";");
 
-            if (minimized.contains("PrimeFaces")) {
-                minimized = minimized.replace("PrimeFaces.settings", "pf.settings")
-                    .replace("PrimeFaces.cw", "pf.cw")
-                    .replace("PrimeFaces.ab", "pf.ab")
-                    .replace("window.PrimeFaces", "pf");
+                if (minimized.contains("PrimeFaces")) {
+                    minimized = minimized.replace("PrimeFaces.settings", "pf.settings")
+                        .replace("PrimeFaces.cw", "pf.cw")
+                        .replace("PrimeFaces.ab", "pf.ab")
+                        .replace("window.PrimeFaces", "pf");
 
-                minimized = "var pf=window.PrimeFaces;" + minimized;
+                    minimized = "var pf=window.PrimeFaces;" + minimized;
+                }
+
+                if (!minimized.endsWith(";")) {
+                    minimized += ";";
+                }
+                minimized += "document.getElementById('" + id + "').remove();";
             }
         }
 
@@ -266,4 +284,32 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
     public ResponseWriter cloneWithWriter(Writer writer) {
         return getWrapped().cloneWithWriter(writer);
     }
+
+    protected void updateScriptSrcOrType(String name, String value) {
+        if ("src".equalsIgnoreCase(name)) {
+            if (LangUtils.isNotBlank(value)) {
+                include.append(value);
+            }
+        }
+        else if ("type".equalsIgnoreCase(name)) {
+            if (LangUtils.isNotBlank(value)) {
+                scriptType = value;
+            }
+        }
+    }
+
+    protected boolean isFirefox() {
+        return AgentUtils.isFirefox(FacesContext.getCurrentInstance());
+    }
+
+    // ILOGS++ do not move scripts with target=head to bottom
+    protected boolean isMoveScriptToBottom(String name, UIComponent component) {
+        boolean result = SCRIPT_TAG.equalsIgnoreCase(name);
+        if (result && component!=null && component.getAttributes() !=null) {
+            result = !Objects.equals(component.getAttributes().get("target"), "head");
+        }
+
+        return result;
+    }
+    // ILOGS--
 }

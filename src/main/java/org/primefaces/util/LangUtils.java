@@ -54,6 +54,10 @@ public class LangUtils {
         return true;
     }
 
+    public static boolean isNotBlank(String str) {
+        return !isValueBlank(str);
+    }
+
     public static boolean contains(Object[] array, Object object) {
         if (array == null || array.length == 0) {
             return false;
