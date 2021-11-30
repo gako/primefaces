@@ -92,19 +92,56 @@ public class PrimeResourceHandler extends ResourceHandlerWrapper {
         Map<String, String> params = context.getExternalContext().getRequestParameterMap();
         String handlerType = params.get(Constants.DYNAMIC_CONTENT_TYPE_PARAM);
 
-        if (LangUtils.isValueBlank(handlerType)) {
-            super.handleResourceRequest(context);
-        }
-        else {
-            DynamicContentHandler handler = handlers.get(handlerType);
-            if (handler == null) {
-                LOGGER.warning("No dynamic resource handler registered for: " + handlerType + ". Do you miss a dependency?");
+        try {
+            if (LangUtils.isValueBlank(handlerType)) {
                 super.handleResourceRequest(context);
             }
             else {
-                handler.handle(context);
+                DynamicContentHandler handler = handlers.get(handlerType);
+                if (handler == null) {
+                    LOGGER.warning("No dynamic resource handler registered for: " + handlerType + ". Do you miss a dependency?");
+                    super.handleResourceRequest(context);
+                }
+                else {
+                    handler.handle(context);
+                }
+            }
+        } catch (IOException e) {
+            // hide stacktrace for connection is closed exception
+            if ("Connection is closed".equals(e.getMessage())) {
+                throw new QuietIOException(e.getMessage());
+            }
+            else {
+                throw e;
             }
         }
+    }
+
+    public static class QuietIOException extends IOException {
+
+        private static final long serialVersionUID = 3219967211844929206L;
+
+        public QuietIOException() {
+            super();
+        }
+
+        public QuietIOException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public QuietIOException(String message) {
+            super(message);
+        }
+
+        public QuietIOException(Throwable cause) {
+            super(cause);
+        }
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return this;
+        }
+
     }
 
 }
