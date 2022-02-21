@@ -7137,10 +7137,9 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Brands';
   font-style: normal;
   font-weight: 400;
-  font-display: auto;
   font-display: block;
-  src: url("../webfonts/fa-brands-400.eot");
-  src: url("../webfonts/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../webfonts/fa-brands-400.woff2") format("woff2"), url("../webfonts/fa-brands-400.woff") format("woff"), url("../webfonts/fa-brands-400.ttf") format("truetype"), url("../webfonts/fa-brands-400.svg#fontawesome") format("svg"); }
+  src: url("#{resource['primefaces:fa/fa-brands-400.eot']}");
+  src: url("#{resource['primefaces:fa/fa-brands-400.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-brands-400.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-brands-400.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-brands-400.ttf']}") format("truetype"); }
 
 .fab {
   font-family: 'Font Awesome 5 Brands';
@@ -7150,8 +7149,8 @@ readers do not read off random characters that represent icons */
   font-style: normal;
   font-weight: 900;
   font-display: block;
-  src: url("../webfonts/fa-duotone-900.eot");
-  src: url("../webfonts/fa-duotone-900.eot?#iefix") format("embedded-opentype"), url("../webfonts/fa-duotone-900.woff2") format("woff2"), url("../webfonts/fa-duotone-900.woff") format("woff"), url("../webfonts/fa-duotone-900.ttf") format("truetype"), url("../webfonts/fa-duotone-900.svg#fontawesome") format("svg"); }
+  src: url("#{resource['primefaces:fa/fa-duotone-900.eot']}");
+  src: url("#{resource['primefaces:fa/fa-duotone-900.eot']}?#iefix") format("embedded-opentype"), url("#{resource['primefaces:fa/fa-duotone-900.woff2']}") format("woff2"), url("#{resource['primefaces:fa/fa-duotone-900.woff']}") format("woff"), url("#{resource['primefaces:fa/fa-duotone-900.ttf']}") format("truetype"); }
 
 .fad {
   position: relative;
