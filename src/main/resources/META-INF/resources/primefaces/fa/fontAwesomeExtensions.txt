@@ -6,6 +6,11 @@
 * -
 **/
 
+Regexp Search and Replace:
+
+"../webfonts/(.*?)"
+replace with
+"#\{resource['primefaces:fa/$1']\}"
 
 Extensions
 
