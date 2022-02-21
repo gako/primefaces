@@ -9,3 +9,4 @@
 /.project
 .vscode/
 .checkstyle
+.zanata-cache/etag-cache.xml
