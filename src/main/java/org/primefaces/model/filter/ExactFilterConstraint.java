@@ -24,6 +24,7 @@
 package org.primefaces.model.filter;
 
 import java.util.Locale;
+
 import org.primefaces.util.LangUtils;
 
 public class ExactFilterConstraint implements FilterConstraint {
@@ -40,6 +41,6 @@ public class ExactFilterConstraint implements FilterConstraint {
             return false;
         }
 
-        return value.toString().toLowerCase(locale).equalsIgnoreCase(filterText);
+        return value.toString().toLowerCase(locale).trim().equalsIgnoreCase(filterText);
     }
 }
