@@ -31,7 +31,7 @@ public class AgentUtils {
     }
 
     private static String getUserAgent(FacesContext context) {
-        return context.getExternalContext().getRequestHeaderMap().get("User-Agent");
+        return context!=null && context.getExternalContext() !=null ? context.getExternalContext().getRequestHeaderMap().get("User-Agent"): null;
     }
 
     private static boolean userAgentContains(FacesContext context, String fragment) {

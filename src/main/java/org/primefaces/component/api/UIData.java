@@ -1,37 +1,23 @@
 /**
- * The MIT License
+ *  Copyright 2009-2022 PrimeTek.
  *
- * Copyright (c) 2009-2019 PrimeTek
+ *  Licensed under PrimeFaces Commercial License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Licensed under PrimeFaces Commercial License, Version 1.0 (the "License");
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.primefaces.component.api;
 
 import java.io.IOException;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.el.ELContext;
 import javax.el.ValueExpression;
@@ -39,14 +25,7 @@ import javax.faces.FacesException;
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.StateManager;
-import javax.faces.component.ContextCallback;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
-import javax.faces.component.UIForm;
-import javax.faces.component.UINamingContainer;
-import javax.faces.component.UIViewRoot;
-import javax.faces.component.UniqueIdVendor;
+import javax.faces.component.*;
 import javax.faces.component.visit.VisitCallback;
 import javax.faces.component.visit.VisitContext;
 import javax.faces.component.visit.VisitHint;
@@ -56,11 +35,7 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.PostValidateEvent;
 import javax.faces.event.PreRenderComponentEvent;
 import javax.faces.event.PreValidateEvent;
-import javax.faces.model.ArrayDataModel;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-import javax.faces.model.ResultSetDataModel;
-import javax.faces.model.ScalarDataModel;
+import javax.faces.model.*;
 import javax.faces.render.Renderer;
 
 import org.primefaces.component.column.Column;
@@ -115,6 +90,7 @@ public class UIData extends javax.faces.component.UIData {
     public enum PropertyKeys {
         paginator,
         paginatorTemplate,
+        rows,
         rowsPerPageTemplate,
         rowsPerPageLabel,
         currentPageReportTemplate,
@@ -138,11 +114,24 @@ public class UIData extends javax.faces.component.UIData {
 
     public java.lang.String getPaginatorTemplate() {
         return (java.lang.String) getStateHelper().eval(PropertyKeys.paginatorTemplate,
-                "{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}");
+                 "{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}");
     }
 
     public void setPaginatorTemplate(java.lang.String _paginatorTemplate) {
         getStateHelper().put(PropertyKeys.paginatorTemplate, _paginatorTemplate);
+    }
+
+    @Override
+    public int getRows() {
+        return (Integer) getStateHelper().eval(PropertyKeys.rows, 0);
+    }
+
+    @Override
+    public void setRows(int rows) {
+        if (rows < 0) {
+            throw new IllegalArgumentException(String.valueOf(rows));
+        }
+        getStateHelper().put(PropertyKeys.rows, rows);
     }
 
     public java.lang.String getRowsPerPageTemplate() {
@@ -217,6 +206,10 @@ public class UIData extends javax.faces.component.UIData {
     @Override
     public void setRowStatePreserved(boolean _paginator) {
         getStateHelper().put(PropertyKeys.rowStatePreserved, _paginator);
+    }
+
+    public void resetRows() {
+        getStateHelper().remove(PropertyKeys.rows);
     }
 
     public void calculateFirst() {
@@ -540,7 +533,7 @@ public class UIData extends javax.faces.component.UIData {
 
             if (getRowIndex() != -1) {
                 _rowTransientStates.put(getContainerClientId(facesContext),
-                        saveTransientDescendantComponentStates(facesContext, null, getChildren().iterator(), false));
+                               saveTransientDescendantComponentStates(facesContext, null, getChildren().iterator(), false));
             }
         }
 
@@ -559,7 +552,7 @@ public class UIData extends javax.faces.component.UIData {
         String var = getVar();
         if (var != null) {
             Map<String, Object> requestMap
-            = getFacesContext().getExternalContext().getRequestMap();
+                    = getFacesContext().getExternalContext().getRequestMap();
             if (rowIndex == -1) {
                 oldVar = requestMap.remove(var);
             }
@@ -1124,8 +1117,8 @@ public class UIData extends javax.faces.component.UIData {
     }
 
     private void restoreFullDescendantComponentStates(FacesContext facesContext,
-            Iterator<UIComponent> childIterator, Object state,
-            boolean restoreChildFacets) {
+                                                      Iterator<UIComponent> childIterator, Object state,
+                                                      boolean restoreChildFacets) {
         Iterator<? extends Object[]> descendantStateIterator = null;
         while (childIterator.hasNext()) {
             if (descendantStateIterator == null && state != null) {
@@ -1164,7 +1157,7 @@ public class UIData extends javax.faces.component.UIData {
     }
 
     private Collection<Object[]> saveDescendantInitialComponentStates(FacesContext facesContext,
-            Iterator<UIComponent> childIterator, boolean saveChildFacets) {
+                                                                      Iterator<UIComponent> childIterator, boolean saveChildFacets) {
         Collection<Object[]> childStates = null;
         while (childIterator.hasNext()) {
             if (childStates == null) {
@@ -1203,7 +1196,7 @@ public class UIData extends javax.faces.component.UIData {
     }
 
     private Map<String, Object> saveFullDescendantComponentStates(FacesContext facesContext, Map<String, Object> stateMap,
-            Iterator<UIComponent> childIterator, boolean saveChildFacets) {
+                                                                  Iterator<UIComponent> childIterator, boolean saveChildFacets) {
         while (childIterator.hasNext()) {
             UIComponent child = childIterator.next();
             if (!child.isTransient()) {
@@ -1229,8 +1222,8 @@ public class UIData extends javax.faces.component.UIData {
     }
 
     private void restoreFullDescendantComponentDeltaStates(FacesContext facesContext,
-            Iterator<UIComponent> childIterator, Object state, Object initialState,
-            boolean restoreChildFacets) {
+                                                           Iterator<UIComponent> childIterator, Object state, Object initialState,
+                                                           boolean restoreChildFacets) {
         Map<String, Object> descendantStateIterator = null;
         Iterator<? extends Object[]> descendantFullStateIterator = null;
         while (childIterator.hasNext()) {
@@ -1286,7 +1279,7 @@ public class UIData extends javax.faces.component.UIData {
     }
 
     private void restoreTransientDescendantComponentStates(FacesContext facesContext, Iterator<UIComponent> childIterator, Map<String, Object> state,
-            boolean restoreChildFacets) {
+                                                           boolean restoreChildFacets) {
         while (childIterator.hasNext()) {
             UIComponent component = childIterator.next();
 
@@ -1309,7 +1302,7 @@ public class UIData extends javax.faces.component.UIData {
     }
 
     private Map<String, Object> saveTransientDescendantComponentStates(FacesContext facesContext, Map<String,
-            Object> childStates, Iterator<UIComponent> childIterator, boolean saveChildFacets) {
+                                    Object> childStates, Iterator<UIComponent> childIterator, boolean saveChildFacets) {
         while (childIterator.hasNext()) {
             UIComponent child = childIterator.next();
             if (!child.isTransient()) {

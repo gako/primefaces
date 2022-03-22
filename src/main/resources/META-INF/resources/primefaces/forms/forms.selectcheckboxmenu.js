@@ -20,7 +20,6 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         this.cfg.dynamic = this.cfg.dynamic === true ? true : false;
         this.isDynamicLoaded = false;
         this.cfg.labelSeparator = (this.cfg.labelSeparator === undefined) ? ',' : this.cfg.labelSeparator;
-		this.defaultLabel = this.label.text();
 
         if(!this.disabled) {
             if(this.cfg.multiple) {
@@ -39,6 +38,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
             if(!this.cfg.multiple) {
                 if(this.cfg.updateLabel) {
+                    this.defaultLabel = this.label.text();
                     this.label.css({
                         'text-overflow': 'ellipsis',
                         overflow: 'hidden'
@@ -54,6 +54,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             // disabled
             if(!this.cfg.multiple) {
                 if (this.cfg.updateLabel) {
+                    this.defaultLabel = this.label.text();
                     this.label.css({
                         'text-overflow': 'ellipsis',
                         overflow: 'hidden'
@@ -91,6 +92,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
     renderPanel: function() {
         this.panel = $('<div id="' + this.panelId + '" class="ui-selectcheckboxmenu-panel ui-widget ui-widget-content ui-corner-all ui-helper-hidden ui-input-overlay" role="dialog"></div>');
+        this.cfg.appendTo = this.getAppendTo();
 
         PrimeFaces.utils.registerDynamicOverlay(this, this.panel, this.id + '_panel');
 
@@ -122,7 +124,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             this.header.removeClass('ui-helper-clearfix').addClass('ui-helper-hidden');
         }
         //toggler
-        this.toggler = $('<div class="ui-chkbox ui-widget"><div class="ui-helper-hidden-accessible"><input type="checkbox" role="checkbox" aria-label="Select All" readonly="readonly"/></div><div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default"><span class="ui-chkbox-icon ui-icon ui-icon-blank"></span></div></div>')
+        this.toggler = $('<div class="ui-chkbox ui-widget"><div class="ui-helper-hidden-accessible"><input type="checkbox" role="checkbox" aria-label="Select All" readonly="readonly"></div><div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default"><span class="ui-chkbox-icon ui-icon ui-icon-blank"></span></div></div>')
                             .appendTo(this.header);
         this.togglerBox = this.toggler.children('.ui-chkbox-box');
         if(this.inputs.filter(':not(:checked)').length === 0) {
@@ -172,9 +174,9 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
             if(grouped.length && currentGroupName !== input.attr('group-label')) {
                 currentGroupName = input.attr('group-label');
-                var itemGroup = $('<li class="ui-selectcheckboxmenu-item-group ui-selectcheckboxmenu-group-list-item ui-corner-all"></li>');
-                itemGroup.text(currentGroupName);
-                $this.itemContainer.append(itemGroup);
+            	var itemGroup = $('<li class="ui-selectcheckboxmenu-item-group ui-selectcheckboxmenu-group-list-item ui-corner-all"></li>');
+            	itemGroup.text(currentGroupName);
+            	$this.itemContainer.append(itemGroup);
             }
 
             if(disabled) {
@@ -360,7 +362,6 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
             switch(key) {
                 case keyCode.ENTER:
-                case keyCode.NUMPAD_ENTER:
                 case keyCode.SPACE:
                     if ($this.panel.is(":hidden"))
                         $this.show();
@@ -369,7 +370,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
                     e.preventDefault();
                 break;
-
+                
                 case keyCode.DOWN:
                     if (e.altKey) {
                         if ($this.panel.is(":hidden"))
@@ -494,7 +495,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
                 $this.uncheck(item.children('.ui-chkbox').children('.ui-chkbox-box'), true);
             }
-
+            
             e.stopPropagation();
         });
     },
@@ -680,7 +681,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             item.removeClass('ui-selectcheckboxmenu-unchecked').addClass('ui-selectcheckboxmenu-checked');
 
             if(updateInput) {
-                var itemGroups = item.prevAll('li.ui-selectcheckboxmenu-item-group'),
+            	var itemGroups = item.prevAll('li.ui-selectcheckboxmenu-item-group'),
                 input = this.inputs.eq(item.index() - itemGroups.length);
                 input.prop('checked', true).attr('aria-checked', true).change();
 
@@ -726,7 +727,12 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
     },
 
     show: function() {
+        this.panel.css({'display':'block', 'opacity':0, 'pointer-events': 'none'});
+        
         this.alignPanel();
+        
+        this.panel.css({'display':'none', 'opacity':'', 'pointer-events': ''});
+        
         this.keyboardTarget.attr('aria-expanded', true);
         this.panel.show();
 
@@ -854,28 +860,21 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         var checkedItems = this.jq.find(':checked'),
             labelText = '';
 
-        // ILOGS FEATURE ++ show number of selected options on selectcheckboxmenu
-        if (this.cfg.updateLabelCount) {
-            labelText = this.defaultLabel + " (" + checkedItems.length + "/" + this.inputs.length +")";
+        if(checkedItems && checkedItems.length) {
+            for(var i = 0; i < checkedItems.length; i++) {
+                if(i != 0) {
+                    labelText = labelText + this.cfg.labelSeparator;
+                }
+                labelText = labelText + $(checkedItems[i]).next().text();
+            }
         }
         else {
-            if(checkedItems && checkedItems.length) {
-                for(var i = 0; i < checkedItems.length; i++) {
-                    if(i != 0) {
-                        labelText = labelText + this.cfg.labelSeparator;
-                    }
-                    labelText = labelText + $(checkedItems[i]).next().text();
-                }
-            }
-            else {
-                if (this.cfg.emptyLabel) {
-                    labelText = this.cfg.emptyLabel;
-                } else {
-                    labelText = this.defaultLabel;
-                }
+            if (this.cfg.emptyLabel) {
+                labelText = this.cfg.emptyLabel;
+            } else {
+                labelText = this.defaultLabel;
             }
         }
-        // ILOGS FEATURE --
 
         this.label.text(labelText);
         this.labelContainer.attr('title', labelText);
@@ -894,7 +893,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         labelLength = labelHtml.length,
         label = labelLength > 0 && labelHtml !== '&nbsp;' ? (escaped ? PrimeFaces.escapeHTML(input.next().text()) : input.next().html()) : PrimeFaces.escapeHTML(input.val()),
         itemDisplayMarkup = '<li class="ui-selectcheckboxmenu-token ui-state-active ui-corner-all" data-item-value="' + PrimeFaces.escapeHTML(input.val()) +'">';
-        itemDisplayMarkup += '<span class="ui-selectcheckboxmenu-token-icon ui-icon ui-icon-close" />';
+        itemDisplayMarkup += '<span class="ui-selectcheckboxmenu-token-icon ui-icon ui-icon-close"></span>';
         itemDisplayMarkup += '<span class="ui-selectcheckboxmenu-token-label">' + label + '</span></li>';
 
         this.multiItemContainer.append(itemDisplayMarkup);
@@ -929,6 +928,23 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         if(this.cfg.multiple) {
             this.createMultipleItem(item);
         }
-    }
+    },
+    
+    getAppendTo: function() {
+        var dialog = this.jq.closest('.ui-dialog');
 
+        if(dialog.length == 1) {
+            //set position as fixed to scroll with dialog
+            if(dialog.css('position') === 'fixed') {
+                this.panel.css('position', 'fixed');
+            }
+
+            //append to body if not already appended by user choice
+            if(!this.panel.parent().is(document.body)) {
+                return "@(body)";
+            }
+        }
+
+        return this.cfg.appendTo;
+    }
 });

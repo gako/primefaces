@@ -39,12 +39,15 @@ import javax.faces.event.PhaseId;
 
 import org.primefaces.behavior.confirm.ConfirmBehavior;
 import org.primefaces.component.api.AjaxSource;
+import org.primefaces.component.api.ClientBehaviorRenderingMode;
 import org.primefaces.component.api.UIOutcomeTarget;
+import org.primefaces.component.menuitem.UIMenuItem;
 import org.primefaces.event.MenuActionEvent;
 import org.primefaces.expression.SearchExpressionFacade;
 import org.primefaces.model.menu.*;
 import org.primefaces.renderkit.OutcomeTargetRenderer;
 import org.primefaces.util.ComponentTraversalUtils;
+import org.primefaces.util.Constants;
 import org.primefaces.util.EscapeUtils;
 import org.primefaces.util.SharedStringBuilder;
 import org.primefaces.util.WidgetBuilder;
@@ -223,10 +226,19 @@ public abstract class BaseMenuRenderer extends OutcomeTargetRenderer {
 					writer.writeAttribute("onclick", menuitem.getConfirmationScript(), "onclick");
                 }
                 else {
-					writer.writeAttribute("onclick", onclick, null);
-				}
-			}
-		}
+                    writer.writeAttribute("onclick", onclick, null);
+                }
+            }
+        }
+
+        if (menuitem instanceof UIMenuItem) {
+            List<ClientBehaviorContext.Parameter> behaviorParams = new ArrayList<ClientBehaviorContext.Parameter>();
+            behaviorParams.add(new ClientBehaviorContext.Parameter(Constants.CLIENT_BEHAVIOR_RENDERING_MODE, ClientBehaviorRenderingMode.UNOBSTRUSIVE));
+            String dialogReturnBehavior = getEventBehaviors(context, (ClientBehaviorHolder) menuitem, "dialogReturn", behaviorParams);
+            if (dialogReturnBehavior != null) {
+                writer.writeAttribute("data-dialogreturn", dialogReturnBehavior, null);
+            }
+        }
 
 		encodeMenuItemContent(context, menu, menuitem);
 

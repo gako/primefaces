@@ -25,7 +25,7 @@ package org.primefaces.application.resource;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -195,9 +195,9 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
         else if (BODY_TAG.equalsIgnoreCase(name) || (HTML_TAG.equalsIgnoreCase(name) && !scriptsRendered)) {
 
             // write script includes
-            for (Map.Entry<String, List<String>> entry : state.getIncludes().entrySet()) {
+            for (Map.Entry<String, ArrayList<String>> entry : state.getIncludes().entrySet()) {
                 String type = entry.getKey();
-                List<String> includes = entry.getValue();
+                ArrayList<String> includes = entry.getValue();
 
                 for (int i = 0; i < includes.size(); i++) {
                     String src = includes.get(i);
@@ -211,9 +211,9 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
             }
 
             // write inline scripts
-            for (Map.Entry<String, List<String>> entry : state.getInlines().entrySet()) {
+            for (Map.Entry<String, ArrayList<String>> entry : state.getInlines().entrySet()) {
                 String type = entry.getKey();
-                List<String> inlines = entry.getValue();
+                ArrayList<String> inlines = entry.getValue();
 
                 String id = UUID.randomUUID().toString();
                 String merged = mergeAndMinimizeInlineScripts(id, type, inlines);
@@ -245,7 +245,7 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
         }
     }
 
-    protected String mergeAndMinimizeInlineScripts(String id, String type, List<String> inlines) {
+    protected String mergeAndMinimizeInlineScripts(String id, String type, ArrayList<String> inlines) {
         StringBuilder script = new StringBuilder(inlines.size() * 100);
         for (int i = 0; i < inlines.size(); i++) {
             if (i > 0) {
@@ -263,9 +263,9 @@ public class MoveScriptsToBottomResponseWriter extends ResponseWriterWrapper {
 
                 if (minimized.contains("PrimeFaces")) {
                     minimized = minimized.replace("PrimeFaces.settings", "pf.settings")
-                        .replace("PrimeFaces.cw", "pf.cw")
-                        .replace("PrimeFaces.ab", "pf.ab")
-                        .replace("window.PrimeFaces", "pf");
+                            .replace("PrimeFaces.cw", "pf.cw")
+                            .replace("PrimeFaces.ab", "pf.ab")
+                            .replace("window.PrimeFaces", "pf");
 
                     minimized = "var pf=window.PrimeFaces;" + minimized;
                 }

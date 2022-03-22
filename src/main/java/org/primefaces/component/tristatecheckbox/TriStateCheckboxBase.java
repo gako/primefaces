@@ -28,7 +28,7 @@ import javax.faces.component.html.HtmlInputText;
 import org.primefaces.component.api.Widget;
 import org.primefaces.util.ComponentUtils;
 
-abstract class TriStateCheckboxBase extends HtmlInputText implements Widget {
+public abstract class TriStateCheckboxBase extends HtmlInputText implements Widget {
 
 	public static final String COMPONENT_FAMILY = "org.primefaces.component";
 

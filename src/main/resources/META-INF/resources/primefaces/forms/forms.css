@@ -5,6 +5,10 @@
     font-weight: normal;
 }
 
+input[type=text]::-ms-clear {
+    display: none;
+}
+
 .ui-widget-header .ui-inputfield,
 .ui-widget-content .ui-inputfield {
     font-weight: normal;
@@ -215,6 +219,10 @@
 
 .ui-radiobutton.ui-radiobutton-native .ui-helper-hidden-accessible input {
     margin: 0;
+    -webkit-transform: none; 
+    -moz-transform: none; 
+    -ms-transform: none;
+    transform: none;
 }
 
 .ui-selectoneradio-native label {
@@ -334,6 +342,7 @@
     margin: 0;
     padding: 0.4em;
     display: inline-block;
+    width: 100%;
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
@@ -593,6 +602,14 @@ button.ui-button::-moz-focus-inner {
 .ui-selectcheckboxmenu-multiple-container.ui-inputfield {
     padding:0 22px 0 0;
     border: 0;
+}
+
+.ui-selectcheckboxmenu-multiple-container:empty:after {
+    content: attr(label);
+    padding: 1px 3px;
+    white-space: nowrap;
+    margin:2px;
+    display: inline-block;
 }
 
 .ui-selectcheckboxmenu-token {
@@ -926,4 +943,18 @@ div.ui-button, .ui-splitbutton {
 .ui-fluid .ui-selectonelistbox,
 .ui-fluid .ui-selectmanymenu {
     width: 100%;
+}
+
+/** Element becomes visually hidden however accessibility is still available. **/
+.ui-sr-only {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
 }

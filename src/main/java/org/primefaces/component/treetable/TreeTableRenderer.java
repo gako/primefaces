@@ -580,9 +580,10 @@ public class TreeTableRenderer extends DataRenderer {
 		boolean hidden = !tt.isNodeVisible(treeNode);
 		List<UIColumn> columns = tt.getColumns();
 
-		String rowStyleClass = selected ? TreeTable.SELECTED_ROW_CLASS : TreeTable.ROW_CLASS;
-		rowStyleClass = selectable ? rowStyleClass + " " + TreeTable.SELECTABLE_NODE_CLASS : rowStyleClass;
-		rowStyleClass = rowStyleClass + " " + treeNode.getType();
+        String rowStyleClass = selected ? TreeTable.SELECTED_ROW_CLASS : TreeTable.ROW_CLASS;
+        rowStyleClass = selectable ? rowStyleClass + " " + TreeTable.SELECTABLE_NODE_CLASS : rowStyleClass;
+        rowStyleClass = rowStyleClass + " " + treeNode.getType();
+        rowStyleClass = rowStyleClass + " ui-node-level-" + (rowKey.split("_").length);
 
 		if (partialSelected) {
 			rowStyleClass = rowStyleClass + " " + TreeTable.PARTIAL_SELECTED_CLASS;

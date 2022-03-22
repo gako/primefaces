@@ -1,25 +1,17 @@
 /**
- * The MIT License
+ *  Copyright 2009-2022 PrimeTek.
  *
- * Copyright (c) 2009-2019 PrimeTek
+ *  Licensed under PrimeFaces Commercial License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Licensed under PrimeFaces Commercial License, Version 1.0 (the "License");
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.primefaces.component.panel;
 
@@ -158,8 +150,9 @@ public class PanelRenderer extends CoreRenderer {
         UIComponent header = panel.getFacet("header");
         String headerText = panel.getHeader();
         String clientId = panel.getClientId(context);
+        boolean shouldRenderFacet = ComponentUtils.shouldRenderFacet(header, panel.isRenderEmptyFacets());
 
-        if (headerText == null && header == null) {
+        if (headerText == null && !shouldRenderFacet) {
             return;
         }
 
@@ -171,10 +164,10 @@ public class PanelRenderer extends CoreRenderer {
         writer.startElement("span", null);
         writer.writeAttribute("class", Panel.PANEL_TITLE_CLASS, null);
 
-        if (header != null) {
+        if (shouldRenderFacet) {
             renderChild(context, header);
         }
-        else if (headerText != null) {
+        else {
             writer.writeText(headerText, null);
         }
 
@@ -225,21 +218,24 @@ public class PanelRenderer extends CoreRenderer {
         ResponseWriter writer = context.getResponseWriter();
         UIComponent footer = panel.getFacet("footer");
         String footerText = panel.getFooter();
+        boolean shouldRenderFacet = ComponentUtils.shouldRenderFacet(footer, panel.isRenderEmptyFacets());
 
-        if (footerText != null || ComponentUtils.shouldRenderFacet(footer)) {
-            writer.startElement("div", null);
-            writer.writeAttribute("id", panel.getClientId(context) + "_footer", null);
-            writer.writeAttribute("class", Panel.PANEL_FOOTER_CLASS, null);
-
-            if (footer != null) {
-                renderChild(context, footer);
-            }
-            else if (footerText != null) {
-                writer.writeText(footerText, null);
-            }
-
-            writer.endElement("div");
+        if (footerText == null && !shouldRenderFacet) {
+            return;
         }
+
+        writer.startElement("div", null);
+        writer.writeAttribute("id", panel.getClientId(context) + "_footer", null);
+        writer.writeAttribute("class", Panel.PANEL_FOOTER_CLASS, null);
+
+        if (shouldRenderFacet) {
+            renderChild(context, footer);
+        }
+        else {
+            writer.writeText(footerText, null);
+        }
+
+        writer.endElement("div");
     }
 
     protected void encodeIcon(FacesContext context, Panel panel, String iconClass, String id, String title, String ariaLabel) throws IOException {

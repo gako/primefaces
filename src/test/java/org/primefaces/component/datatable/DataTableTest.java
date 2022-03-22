@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright (c) 2009-2019 PrimeTek
@@ -23,13 +23,13 @@
  */
 package org.primefaces.component.datatable;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.el.ValueExpression;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class DataTableTest {
 
@@ -48,7 +48,7 @@ public class DataTableTest {
 
         when(exprVE.getExpressionString()).thenReturn("#{car}");
         field = table.resolveStaticField(exprVE);
-        Assert.assertNull(field);
+        Assert.assertEquals("car", field);
 
         when(exprVE.getExpressionString()).thenReturn("car.year");
         field = table.resolveStaticField(exprVE);

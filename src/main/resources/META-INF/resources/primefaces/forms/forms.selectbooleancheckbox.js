@@ -32,11 +32,15 @@ PrimeFaces.widget.SelectBooleanCheckbox = PrimeFaces.widget.BaseWidget.extend({
             .on('blur.selectBooleanCheckbox', function() {
                 $this.box.removeClass('ui-state-focus');
             })
-            .on('change.selectBooleanCheckbox', function(e) {
-                if($this.isChecked())
+            .on('change.selectBooleanCheckbox', function() {
+                if($this.isChecked()) {
+                    $this.input.prop('checked', true).attr('aria-checked', true);
                     $this.box.addClass('ui-state-active').children('.ui-chkbox-icon').removeClass('ui-icon-blank').addClass('ui-icon-check');
-                else
+                }
+                else {
+                    $this.input.prop('checked', false).attr('aria-checked', false);
                     $this.box.removeClass('ui-state-active').children('.ui-chkbox-icon').addClass('ui-icon-blank').removeClass('ui-icon-check');
+                }
             });
 
             //toggle state on label click
@@ -51,12 +55,10 @@ PrimeFaces.widget.SelectBooleanCheckbox = PrimeFaces.widget.BaseWidget.extend({
     },
 
     toggle: function() {
-    	if (!this.disabled) { // add check to do nothing in disabled state
-	        if(this.isChecked())
-	            this.uncheck();
-	        else
-	            this.check();
-    	}
+        if(this.isChecked())
+            this.uncheck();
+        else
+            this.check();
     },
 
     isChecked: function() {
@@ -77,29 +79,6 @@ PrimeFaces.widget.SelectBooleanCheckbox = PrimeFaces.widget.BaseWidget.extend({
             this.input.attr('aria-checked', false);
             this.box.removeClass('ui-state-active').children('.ui-chkbox-icon').addClass('ui-icon-blank').removeClass('ui-icon-check');
         }
-    },
-
-    enable : function() {
-		this.input.removeAttr("disabled");
-		this.jq.removeClass("ui-state-disabled");
-
-		this__turnOffAndInit(this);
-	},
-
-	disable : function() {
-		this.input.attr("disabled","disabled");
-		this.jq.addClass("ui-state-disabled");
-
-		this.uncheck();
-		this.__turnOffAndInit(this);
-	},
-
-	__turnOffAndInit: function(elem){
-		elem.jq.off("remove");
-		elem.box.off();
-		elem.input.off();
-		elem.itemLabel.off();
-		elem.init(elem.cfg);
-	}
+    }
 
 });

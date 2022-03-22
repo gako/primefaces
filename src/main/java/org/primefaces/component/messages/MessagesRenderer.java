@@ -67,17 +67,20 @@ public class MessagesRenderer extends UINotificationRenderer {
 				FacesMessage message = messages.get(i);
 				FacesMessage.Severity severity = message.getSeverity();
 
-				if (severity.equals(FacesMessage.SEVERITY_INFO)) {
-					addMessage(uiMessages, message, messagesBySeverity, "info");
-				} else if (severity.equals(FacesMessage.SEVERITY_WARN)) {
-					addMessage(uiMessages, message, messagesBySeverity, "warn");
-				} else if (severity.equals(FacesMessage.SEVERITY_ERROR)) {
-					addMessage(uiMessages, message, messagesBySeverity, "error");
-				} else if (severity.equals(FacesMessage.SEVERITY_FATAL)) {
-					addMessage(uiMessages, message, messagesBySeverity, "fatal");
-				}
-			}
-		}
+                if (severity.equals(FacesMessage.SEVERITY_INFO)) {
+                    addMessage(uiMessages, message, messagesBySeverity, "info");
+                }
+                else if (severity.equals(FacesMessage.SEVERITY_WARN)) {
+                    addMessage(uiMessages, message, messagesBySeverity, "warn");
+                }
+                else if (severity.equals(FacesMessage.SEVERITY_ERROR)) {
+                    addMessage(uiMessages, message, messagesBySeverity, "error");
+                }
+                else if (severity.equals(FacesMessage.SEVERITY_FATAL)) {
+                    addMessage(uiMessages, message, messagesBySeverity, "fatal");
+                }
+            }
+        }
 
 		writer.startElement("div", uiMessages);
 		writer.writeAttribute("id", clientId, "id");
@@ -150,7 +153,8 @@ public class MessagesRenderer extends UINotificationRenderer {
 		writer.endElement("div");
 	}
 
-	protected void encodeMessage(ResponseWriter writer, Messages uiMessages, FacesMessage message, String styleClassPrefix, boolean escape) throws IOException {
+    protected void encodeMessage(ResponseWriter writer, Messages uiMessages, FacesMessage message, String styleClassPrefix, boolean escape)
+            throws IOException {
 
 		writer.startElement("li", null);
 
@@ -164,11 +168,12 @@ public class MessagesRenderer extends UINotificationRenderer {
 			writer.startElement("span", null);
 			writer.writeAttribute("class", styleClassPrefix + "-summary", null);
 
-			if (escape) {
-				writer.writeText(summary, null);
-			} else {
-				writer.write(summary);
-			}
+            if (escape) {
+                writer.writeText(summary, null);
+            }
+            else {
+                writer.write(summary);
+            }
 
 			writer.endElement("span");
 		}
@@ -177,11 +182,12 @@ public class MessagesRenderer extends UINotificationRenderer {
 			writer.startElement("span", null);
 			writer.writeAttribute("class", styleClassPrefix + "-detail", null);
 
-			if (escape) {
-				writer.writeText(detail, null);
-			} else {
-				writer.write(detail);
-			}
+            if (escape) {
+                writer.writeText(detail, null);
+            }
+            else {
+                writer.write(detail);
+            }
 
 			writer.endElement("span");
 		}
@@ -243,7 +249,8 @@ public class MessagesRenderer extends UINotificationRenderer {
 					}
 				}
 			}
-		} else {
+		} 
+		else {
 			Iterator<FacesMessage> messagesIterator = uiMessages.isGlobalOnly() ? context.getMessages(null) : context.getMessages();
 			while (messagesIterator.hasNext()) {
 				if (messages == null) {

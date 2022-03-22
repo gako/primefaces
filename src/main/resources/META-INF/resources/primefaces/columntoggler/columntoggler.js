@@ -48,7 +48,7 @@ PrimeFaces.widget.ColumnToggler = PrimeFaces.widget.DeferredWidget.extend({
         this.itemContainer = this.panel.children('ul');
 
         var stateHolderId = this.tableId + "_columnTogglerState";
-        this.togglerStateHolder = $('<input type="hidden" id="' + stateHolderId + '" name="' + stateHolderId + '" autocomplete="off" />');
+        this.togglerStateHolder = $('<input type="hidden" id="' + stateHolderId + '" name="' + stateHolderId + '" autocomplete="off"></input>');
         this.table.append(this.togglerStateHolder);
         this.togglerState = [];
 
@@ -67,7 +67,7 @@ PrimeFaces.widget.ColumnToggler = PrimeFaces.widget.DeferredWidget.extend({
                     '<div class="ui-helper-hidden-accessible"><input type="checkbox" role="checkbox"></div>' +
                     '<div class="' + boxClass + '"><span class="' + iconClass + '"></span></div>' +
                     '</div>'
-                    + '<label>' + columnTitle + '</label></li>').data('column', column.attr('id'));
+                    + '<label>' + PrimeFaces.escapeHTML(columnTitle) + '</label></li>').data('column', column.attr('id'));
 
             if(this.hasPriorityColumns) {
                 var columnClasses = column.attr('class').split(' ');
@@ -392,6 +392,20 @@ PrimeFaces.widget.ColumnToggler = PrimeFaces.widget.DeferredWidget.extend({
             this.callBehavior('toggle', ext);
         }
     },
+    
+    calculateColspan: function() {
+        return this.itemContainer.find('> .ui-columntoggler-item > .ui-chkbox > .ui-chkbox-box.ui-state-active').length;
+    },
+    
+    updateRowColspan: function(row, colspanValue) {
+        colspanValue = colspanValue || this.calculateColspan();
+        if(colspanValue) {
+            row.children('td').removeClass('ui-helper-hidden').attr('colspan', colspanValue);
+        }
+        else {
+            row.children('td').addClass('ui-helper-hidden');
+        }
+    },
 
     fireCloseEvent: function() {
 	    if(this.cfg.behaviors) {
@@ -430,13 +444,14 @@ PrimeFaces.widget.ColumnToggler = PrimeFaces.widget.DeferredWidget.extend({
     updateColspan: function() {
         var emptyRow = this.tbody.children('tr:first');
         if(emptyRow && emptyRow.hasClass('ui-datatable-empty-message')) {
-            var activeboxes = this.itemContainer.find('> .ui-columntoggler-item > .ui-chkbox > .ui-chkbox-box.ui-state-active');
-            if(activeboxes.length) {
-                emptyRow.children('td').removeClass('ui-helper-hidden').attr('colspan', activeboxes.length);
-            }
-            else {
-                emptyRow.children('td').addClass('ui-helper-hidden');
-            }
+            this.updateRowColspan(emptyRow);
+        }
+        else {
+            var colspanValue = this.calculateColspan(),
+                $this = this;
+            this.tbody.children('.ui-expanded-row-content').each(function() {
+                $this.updateRowColspan($(this), colspanValue);
+            });
         }
     },
 

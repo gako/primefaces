@@ -588,8 +588,8 @@
         <tag-name>accordionPanel</tag-name>
         <component>
             <component-type>org.primefaces.component.AccordionPanel</component-type>
-            <handler-class>org.primefaces.component.accordionpanel.AccordionPanelComponentHandler</handler-class>
             <renderer-type>org.primefaces.component.AccordionPanelRenderer</renderer-type>
+            <handler-class>org.primefaces.component.accordionpanel.AccordionPanelComponentHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -898,8 +898,8 @@
         <tag-name>autoComplete</tag-name>
         <component>
             <component-type>org.primefaces.component.AutoComplete</component-type>
-            <handler-class>org.primefaces.component.autocomplete.AutoCompleteHandler</handler-class>
             <renderer-type>org.primefaces.component.AutoCompleteRenderer</renderer-type>
+            <handler-class>org.primefaces.component.autocomplete.AutoCompleteHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -1552,6 +1552,14 @@
             <name>autoSelection</name>
             <required>false</required>
             <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Specifies query mode, valid values are "server" (default), "client" and "hybrid".]]>
+            </description>
+            <name>queryMode</name>
+            <required>false</required>
+            <type>java.lang.String</type>
         </attribute>
     </tag>
     <tag>
@@ -4315,8 +4323,8 @@
         <tag-name>column</tag-name>
         <component>
             <component-type>org.primefaces.component.Column</component-type>
-            <handler-class>org.primefaces.component.column.ColumnHandler</handler-class>
             <renderer-type>org.primefaces.component.ColumnRenderer</renderer-type>
+            <handler-class>org.primefaces.component.column.ColumnHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -6916,6 +6924,22 @@
             <required>false</required>
             <type>java.lang.Integer</type>
         </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Loads data on demand as the scrollbar gets close to the bottom. Default is false.]]>
+            </description>
+            <name>virtualScroll</name>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[if the scrollAtBottom is enabled, scroll position is at bottom and data loading starts from the bottom. Default value is false.]]>
+            </description>
+            <name>startAtBottom</name>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
+        </attribute>
     </tag>
     <tag>
         <description>
@@ -6924,8 +6948,8 @@
         <tag-name>dataTable</tag-name>
         <component>
             <component-type>org.primefaces.component.DataTable</component-type>
-            <handler-class>org.primefaces.component.datatable.DataTableHandler</handler-class>
             <renderer-type>org.primefaces.component.DataTableRenderer</renderer-type>
+            <handler-class>org.primefaces.component.datatable.DataTableHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -9230,8 +9254,8 @@
         <tag-name>fileUpload</tag-name>
         <component>
             <component-type>org.primefaces.component.FileUpload</component-type>
-            <handler-class>org.primefaces.component.fileupload.FileUploadHandler</handler-class>
             <renderer-type>org.primefaces.component.FileUploadRenderer</renderer-type>
+            <handler-class>org.primefaces.component.fileupload.FileUploadHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -11584,10 +11608,10 @@
         </attribute>
         <attribute>
             <description>
-                <![CDATA[Mask template. Required.]]>
+                <![CDATA[Mask template.]]>
             </description>
             <name>mask</name>
-            <required>true</required>
+            <required>false</required>
             <type>java.lang.String</type>
         </attribute>
         <attribute>
@@ -11613,6 +11637,14 @@
             <name>type</name>
             <required>false</required>
             <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Defines whether mask pattern would be validated or not on the server side.]]>
+            </description>
+            <name>validateMask</name>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
         </attribute>
     </tag>
     <tag>
@@ -12070,6 +12102,14 @@
                 <![CDATA[Controls leading zero behavior. Valid values are "allow"(default), "deny" and "keep".]]>
             </description>
             <name>leadingZero</name>
+            <required>false</required>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Allow to declare an alternative decimal separator which is automatically replaced by `decimalCharacter` when typed.]]>
+            </description>
+            <name>decimalSeparatorAlternative</name>
             <required>false</required>
             <type>java.lang.String</type>
         </attribute>
@@ -12655,8 +12695,8 @@
         <tag-name>inputTextarea</tag-name>
         <component>
             <component-type>org.primefaces.component.InputTextarea</component-type>
-            <handler-class>org.primefaces.component.inputtextarea.InputTextareaHandler</handler-class>
             <renderer-type>org.primefaces.component.InputTextareaRenderer</renderer-type>
+            <handler-class>org.primefaces.component.inputtextarea.InputTextareaHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -17474,6 +17514,14 @@
         </attribute>
         <attribute>
             <description>
+                <![CDATA[Render facets even if their children are not rendered. Default is false.]]>
+            </description>
+            <name>renderEmptyFacets</name>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <description>
                 <![CDATA[Defines the orientation of the toggle animation, valid values are "vertical" and "horizontal".]]>
             </description>
             <name>toggleOrientation</name>
@@ -18063,8 +18111,8 @@
         <tag-name>photoCam</tag-name>
         <component>
             <component-type>org.primefaces.component.PhotoCam</component-type>
-            <handler-class>org.primefaces.component.photocam.PhotoCamHandler</handler-class>
             <renderer-type>org.primefaces.component.PhotoCamRenderer</renderer-type>
+            <handler-class>org.primefaces.component.photocam.PhotoCamHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -18654,6 +18702,14 @@
             <required>false</required>
             <type>java.lang.Integer</type>
         </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Defines if values of the component is escaped or not.]]>
+            </description>
+            <name>escape</name>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
+        </attribute>
     </tag>
     <tag>
         <description>
@@ -18662,8 +18718,8 @@
         <tag-name>poll</tag-name>
         <component>
             <component-type>org.primefaces.component.Poll</component-type>
-            <handler-class>org.primefaces.component.poll.PollHandler</handler-class>
             <renderer-type>org.primefaces.component.PollRenderer</renderer-type>
+            <handler-class>org.primefaces.component.poll.PollHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -18855,6 +18911,14 @@
                 <![CDATA[Form to serialize for an ajax request. Default is the enclosing form.]]>
             </description>
             <name>form</name>
+            <required>false</required>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Type of interval value. Valid values are "second" (default) and "millisecond".]]>
+            </description>
+            <name>intervalType</name>
             <required>false</required>
             <type>java.lang.String</type>
         </attribute>
@@ -20354,9 +20418,17 @@
         </attribute>
         <attribute>
             <description>
-                <![CDATA[Format for column headers.]]>
+                <![CDATA[Deprecated, use columnHeaderFormat instead. Format for column headers.]]>
             </description>
             <name>columnFormat</name>
+            <required>false</required>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Format for column headers.]]>
+            </description>
+            <name>columnHeaderFormat</name>
             <required>false</required>
             <type>java.lang.String</type>
         </attribute>
@@ -20952,6 +21024,14 @@
             <name>escape</name>
             <required>false</required>
             <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[The aria-label attribute is used to define a string that labels the current element for accessibility.]]>
+            </description>
+            <name>ariaLabel</name>
+            <required>false</required>
+            <type>java.lang.String</type>
         </attribute>
     </tag>
     <tag>
@@ -24947,8 +25027,8 @@
         <tag-name>summaryRow</tag-name>
         <component>
             <component-type>org.primefaces.component.SummaryRow</component-type>
-            <handler-class>org.primefaces.component.summaryrow.SummaryRowHandler</handler-class>
             <renderer-type>org.primefaces.component.SummaryRowRenderer</renderer-type>
+            <handler-class>org.primefaces.component.summaryrow.SummaryRowHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -25399,8 +25479,8 @@
         <tag-name>terminal</tag-name>
         <component>
             <component-type>org.primefaces.component.Terminal</component-type>
-            <handler-class>org.primefaces.component.terminal.TerminalHandler</handler-class>
             <renderer-type>org.primefaces.component.TerminalRenderer</renderer-type>
+            <handler-class>org.primefaces.component.terminal.TerminalHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -25650,6 +25730,14 @@
                 <![CDATA[Whether the toolbar of the editor is visible.]]>
             </description>
             <name>toolbarVisible</name>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Secure the component with the HTML Sanitizer library on the classpath. Default is true.]]>
+            </description>
+            <name>secure</name>
             <required>false</required>
             <type>java.lang.Boolean</type>
         </attribute>
@@ -26955,8 +27043,8 @@
         <tag-name>tree</tag-name>
         <component>
             <component-type>org.primefaces.component.Tree</component-type>
-            <handler-class>org.primefaces.component.tree.TreeComponentHandler</handler-class>
             <renderer-type>org.primefaces.component.TreeRenderer</renderer-type>
+            <handler-class>org.primefaces.component.tree.TreeComponentHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -27351,8 +27439,8 @@
         <tag-name>treeTable</tag-name>
         <component>
             <component-type>org.primefaces.component.TreeTable</component-type>
-            <handler-class>org.primefaces.component.treetable.TreeTableHandler</handler-class>
             <renderer-type>org.primefaces.component.TreeTableRenderer</renderer-type>
+            <handler-class>org.primefaces.component.treetable.TreeTableHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -28048,8 +28136,8 @@
         <tag-name>wizard</tag-name>
         <component>
             <component-type>org.primefaces.component.Wizard</component-type>
-            <handler-class>org.primefaces.component.wizard.WizardHandler</handler-class>
             <renderer-type>org.primefaces.component.WizardRenderer</renderer-type>
+            <handler-class>org.primefaces.component.wizard.WizardHandler</handler-class>
         </component>
         <attribute>
             <description>
@@ -29355,6 +29443,14 @@
                 <![CDATA[Callback to invoke when a year is changed using the navigators.]]>
             </description>
             <name>onYearChange</name>
+            <required>false</required>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>
+                <![CDATA[Separator for joining start and end dates on range selection mode. Default value is "-".]]>
+            </description>
+            <name>rangeSeparator</name>
             <required>false</required>
             <type>java.lang.String</type>
         </attribute>

@@ -1,25 +1,17 @@
 /**
- * The MIT License
+ *  Copyright 2009-2022 PrimeTek.
  *
- * Copyright (c) 2009-2019 PrimeTek
+ *  Licensed under PrimeFaces Commercial License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Licensed under PrimeFaces Commercial License, Version 1.0 (the "License");
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.primefaces.component.menuitem;
 
@@ -32,9 +24,13 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.BehaviorEvent;
+import javax.faces.event.FacesEvent;
+import org.primefaces.event.SelectEvent;
 
 import org.primefaces.util.ComponentUtils;
+import org.primefaces.util.Constants;
 import org.primefaces.util.MapBuilder;
 
 
@@ -46,6 +42,7 @@ public class UIMenuItem extends UIMenuItemBase {
 
     private static final Map<String, Class<? extends BehaviorEvent>> BEHAVIOR_EVENT_MAPPING = MapBuilder.<String, Class<? extends BehaviorEvent>>builder()
             .put("click", null)
+            .put("dialogReturn", SelectEvent.class)
             .build();
 
     private static final Collection<String> EVENT_NAMES = BEHAVIOR_EVENT_MAPPING.keySet();
@@ -67,6 +64,33 @@ public class UIMenuItem extends UIMenuItemBase {
     }
 
     @Override
+    public void queueEvent(FacesEvent event) {
+        FacesContext context = getFacesContext();
+
+        if (event instanceof AjaxBehaviorEvent) {
+            Map<String, String> params = context.getExternalContext().getRequestParameterMap();
+            String eventName = params.get(Constants.RequestParams.PARTIAL_BEHAVIOR_EVENT_PARAM);
+
+            if (eventName.equals("dialogReturn")) {
+                AjaxBehaviorEvent behaviorEvent = (AjaxBehaviorEvent) event;
+                Map<String, Object> session = context.getExternalContext().getSessionMap();
+                String dcid = params.get(this.getClientId(context) + "_pfdlgcid");
+                Object selectedValue = session.get(dcid);
+                session.remove(dcid);
+
+                event = new SelectEvent(this, behaviorEvent.getBehavior(), selectedValue);
+                super.queueEvent(event);
+            }
+            else if (eventName.equals("click")) {
+                super.queueEvent(event);
+            }
+        }
+        else {
+            super.queueEvent(event);
+        }
+    }
+
+    @Override
     public void decode(FacesContext facesContext) {
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
         String clientId = getClientId(facesContext);
@@ -74,6 +98,8 @@ public class UIMenuItem extends UIMenuItemBase {
         if (params.containsKey(clientId)) {
             queueEvent(new ActionEvent(this));
         }
+
+        ComponentUtils.decodeBehaviors(facesContext, this);
     }
 
     @Override

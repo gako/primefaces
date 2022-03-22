@@ -14,6 +14,7 @@ PrimeFaces.widget.Tooltip = PrimeFaces.widget.BaseWidget.extend({
         this.cfg.hideDelay = this.cfg.hideDelay||0;
         this.cfg.hideEffectDuration = this.cfg.target ? 250 : 1;
         this.cfg.position = this.cfg.position||'right';
+        this.cfg.escape = (this.cfg.escape === undefined) ? true : this.cfg.escape;
 
         if(this.cfg.target)
             this.bindTarget();
@@ -42,8 +43,9 @@ PrimeFaces.widget.Tooltip = PrimeFaces.widget.BaseWidget.extend({
             .appendTo('body');
         this.jq.append('<div class="ui-tooltip-arrow"></div><div class="ui-tooltip-text ui-shadow ui-corner-all"></div>');
 
+        this.jq.addClass(this.cfg.styleClass);
+        
         this.cfg.globalSelector = this.cfg.globalSelector||'a,:input,:button';
-        this.cfg.escape = (this.cfg.escape === undefined) ? true : this.cfg.escape;
         var $this = this;
 
         $(document).off(this.cfg.showEvent + ' ' + this.cfg.hideEvent, this.cfg.globalSelector)
@@ -256,7 +258,12 @@ PrimeFaces.widget.Tooltip = PrimeFaces.widget.BaseWidget.extend({
             }
         }
 
+        this.jq.css({'display':'block', 'opacity':0, 'pointer-events': 'none'});
+    
         this.align();
+
+        this.jq.css({'display':'none', 'opacity':'', 'pointer-events': ''});
+    
         if(this.cfg.trackMouse) {
             this.followMouse();
         }

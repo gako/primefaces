@@ -92,7 +92,7 @@ if (!PrimeFaces.widget) {
         },
 
         //used in ajax updates, reloads the widget configuration
-        refresh: function(cfg) {
+        refresh: function(cfg) {            
             this.destroyListeners = [];
 
             if (this.refreshListeners) {
@@ -107,7 +107,7 @@ if (!PrimeFaces.widget) {
         },
 
         //will be called when the widget after a ajax request if the widget is detached
-        destroy: function() {
+        destroy: function() {            
             PrimeFaces.debug("Destroyed detached widget: " + this.widgetVar);
 
             if (this.destroyListeners) {
@@ -179,19 +179,7 @@ if (!PrimeFaces.widget) {
                 this.refreshListeners = [];
             }
             this.refreshListeners.push(listener);
-        },
-
-        enable: function() {
-    		this.jq.removeAttr("disabled");
-    		this.jq.removeClass("ui-state-disabled");
-    		this.disabled = false;
-    	},
-
-    	disable: function() {
-    		this.jq.attr("disabled","disabled");
-    		this.jq.addClass("ui-state-disabled");
-    		this.disabled = true;
-    	}
+        }
     });
 
     PrimeFaces.widget.DynamicOverlayWidget = PrimeFaces.widget.BaseWidget.extend({
@@ -209,7 +197,7 @@ if (!PrimeFaces.widget) {
 
             this.appendTo = null;
             this.modalOverlay = null;
-
+            
             this._super(cfg);
         },
 

@@ -124,7 +124,7 @@ public abstract class Exporter {
         return "";
     }
 
-    protected String exportValue(FacesContext context, UIComponent component) {
+    public String exportValue(FacesContext context, UIComponent component) {
 	String value = exportRawValue(context, component);
 	value = convertValue(context, value);
 	return value;

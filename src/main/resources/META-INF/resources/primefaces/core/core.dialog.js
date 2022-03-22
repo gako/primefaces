@@ -32,7 +32,7 @@ if (!PrimeFaces.dialog) {
             }
 
             dialogDOM.append('<div class="ui-dialog-content ui-widget-content ui-df-content" style="height: auto;">' +
-                    '<iframe style="border:0 none" frameborder="0"/>' +
+                    '<iframe style="border:0 none" frameborder="0"></iframe>' +
                     '</div>');
 
             dialogDOM.appendTo(rootWindow.document.body);
@@ -87,7 +87,7 @@ if (!PrimeFaces.dialog) {
                                 $dialogWidget.jq.remove();
                             }
 
-                            rootWindow.PF[dialogWidgetVar] = undefined;
+                            rootWindow.PrimeFaces.widgets[dialogWidgetVar] = undefined;
                         },
                         modal: cfg.options.modal,
                         blockScroll: cfg.options.blockScroll,
@@ -182,7 +182,7 @@ if (!PrimeFaces.dialog) {
 
         showMessageInDialog: function(msg) {
             if(!this.messageDialog) {
-                var messageDialogDOM = $('<div id="primefacesmessagedlg" class="ui-message-dialog ui-dialog ui-widget ui-widget-content ui-corner-all ui-shadow ui-hidden-container"/>')
+                var messageDialogDOM = $('<div id="primefacesmessagedlg" class="ui-message-dialog ui-dialog ui-widget ui-widget-content ui-corner-all ui-shadow ui-hidden-container"></div>')
                             .append('<div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top"><span class="ui-dialog-title"></span>' +
                             '<a class="ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all" href="#" role="button"><span class="ui-icon ui-icon-closethick"></span></a></div>' +
                             '<div class="ui-dialog-content ui-widget-content" style="height: auto;"></div>')
@@ -205,7 +205,7 @@ if (!PrimeFaces.dialog) {
             this.messageDialog.titleContainer.html(summaryHtml);
 
             var detailHtml = msg.detail ? msg.detail.split(/\r\n|\n|\r/g).map(function(line) { return escape ? PrimeFaces.escapeHTML(line) : line; }).join("<br>") : "";
-            this.messageDialog.content.html('').append('<span class="ui-dialog-message ui-messages-' + msg.severity.split(' ')[0].toLowerCase() + '-icon" />').append(detailHtml);
+            this.messageDialog.content.html('').append('<span class="ui-dialog-message ui-messages-' + msg.severity.split(' ')[0].toLowerCase() + '-icon"></span>').append(detailHtml);
             this.messageDialog.show();
         },
 

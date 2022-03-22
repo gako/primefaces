@@ -35,7 +35,7 @@ PrimeFaces.widget.InputText = PrimeFaces.widget.BaseWidget.extend({
         var value = this.normalizeNewlines(this.jq.val()),
         length = value.length;
 
-        if(this.counter) {
+        if(this.counter && this.cfg.maxlength) {
             var remaining = this.cfg.maxlength - length;
             if(remaining < 0) {
                 remaining = 0;

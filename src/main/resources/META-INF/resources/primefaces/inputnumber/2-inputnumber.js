@@ -25,11 +25,11 @@ PrimeFaces.widget.InputNumber = PrimeFaces.widget.BaseWidget.extend({
 
         this.wrapEvents();
 
-        this.input.autoNumeric('init', this.plugOptArray);
+        this.autonumeric = new AutoNumeric(this.jqId + '_input', this.cfg);
 
         if (this.valueToRender !== "") {
             //set the value to the input the plugin will format it.
-            this.input.autoNumeric('set', this.valueToRender);
+            this.autonumeric.set(this.valueToRender);
         }
 
         this.copyValueToHiddenInput();
@@ -93,7 +93,7 @@ PrimeFaces.widget.InputNumber = PrimeFaces.widget.BaseWidget.extend({
     copyValueToHiddenInput: function() {
         var oldVal = this.hiddenInput.val();
 
-        var newVal = this.input.autoNumeric('get');
+        var newVal = this.getValue();
 
         if (oldVal !== newVal) {
             this.setValueToHiddenInput(newVal);
@@ -121,12 +121,26 @@ PrimeFaces.widget.InputNumber = PrimeFaces.widget.BaseWidget.extend({
     },
 
     setValue: function (value) {
-        this.input.autoNumeric('set', value);
-        var cleanVal = this.input.autoNumeric('get');
+        this.autonumeric.set(value);
+        var cleanVal = this.getValue();
         this.hiddenInput.attr('value', cleanVal);
     },
 
     getValue: function () {
-        return this.input.autoNumeric('get');
+        var val = this.autonumeric.getNumericString();
+        if (this.autonumeric.getSettings().allowDecimalPadding && val && parseInt(this.cfg.decimalPlaces, 10) > 0) {
+            var decimalPlacesToPad;
+            if (val.indexOf('.') === -1) {
+                decimalPlacesToPad = this.cfg.decimalPlaces;
+                val += '.';
+            } else {
+                var decimalPlacesAlreadyRendered = val.length - val.indexOf('.') - 1;
+                decimalPlacesToPad = this.cfg.decimalPlaces - decimalPlacesAlreadyRendered;
+            }
+            while (decimalPlacesToPad-- > 0) {
+                val += '0';
+            }
+        }
+        return val;
     }
 });

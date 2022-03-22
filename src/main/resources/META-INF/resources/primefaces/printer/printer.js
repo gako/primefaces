@@ -19,7 +19,7 @@
         }
         else
         {
-            var $iframe = $("<iframe  />");
+            var $iframe = $("<iframe></iframe>");
 
             if (!opt.debug) { $iframe.css({ position: "absolute", width: "0px", height: "0px", left: "-600px", top: "-600px" }); }
 
@@ -32,13 +32,13 @@
             if ($("link[media=print]").length > 0)
             {
                 $("link[media=print]").each( function() {
-                    doc.write("<link type='text/css' rel='stylesheet' href='" + PrimeFaces.escapeHTML($(this).attr("href")) + "' media='print' />");
+                    doc.write("<link type='text/css' rel='stylesheet' href='" + PrimeFaces.escapeHTML($(this).attr("href")) + "' media='print'></link>");
                 });
             }
             else
             {
                 $("link").each( function() {
-                    doc.write("<link type='text/css' rel='stylesheet' href='" + PrimeFaces.escapeHTML($(this).attr("href")) + "' />");
+                    doc.write("<link type='text/css' rel='stylesheet' href='" + PrimeFaces.escapeHTML($(this).attr("href")) + "'></link>");
                 });
             }
         }

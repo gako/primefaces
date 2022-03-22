@@ -27,6 +27,7 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
         this.cfg.fileLimitMessage = this.cfg.fileLimitMessage || 'Maximum number of files exceeded';
         this.cfg.messageTemplate = this.cfg.messageTemplate || '{name} {size}';
         this.cfg.previewWidth = this.cfg.previewWidth || 80;
+        this.cfg.global = (this.cfg.global === true || this.cfg.global === undefined) ? true : false;
         this.uploadedFileCount = 0;
         this.fileId = 0;
 
@@ -52,6 +53,7 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
             dataType: 'xml',
             dropZone: (this.cfg.dnd === false) ? null : this.jq,
             sequentialUploads: this.cfg.sequentialUploads,
+            source: $this.id,
             formData: function() {
                 return $this.createPostData();
             },
@@ -59,6 +61,9 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
                 xhr.setRequestHeader('Faces-Request', 'partial/ajax');
                 xhr.pfSettings = settings;
                 xhr.pfArgs = {}; // default should be an empty object
+                if($this.cfg.global) {
+                    $(document).trigger('pfAjaxSend', [xhr, this]);
+                }
             },
             start: function(e) {
                 if($this.cfg.onstart) {
@@ -99,7 +104,7 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
                             $this.cfg.onAdd.call($this, file, function(processedFile) {
                                 file = processedFile;
                                 data.files[0] = processedFile;
-                                this.addFileToRow(file, data);
+                                $this.addFileToRow(file, data);
                             });
                         }
                         else {
@@ -158,6 +163,9 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
             always: function(e, data) {
                 if($this.cfg.oncomplete) {
                     $this.cfg.oncomplete.call($this, data.jqXHR.pfArgs);
+                }
+                if($this.cfg.global) {
+                    $(document).trigger('pfAjaxComplete');
                 }
             }
         };
@@ -366,6 +374,10 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
     },
 
     upload: function() {
+        if(this.cfg.global) {
+            $(document).trigger('pfAjaxStart');
+        }
+        
         for(var i = 0; i < this.files.length; i++) {
             this.files[i].ajaxRequest = this.files[i].row.data('filedata');
             this.files[i].ajaxRequest.submit();
@@ -502,6 +514,7 @@ PrimeFaces.widget.SimpleFileUpload = PrimeFaces.widget.BaseWidget.extend({
 
         this.cfg.invalidSizeMessage = this.cfg.invalidSizeMessage || 'Invalid file size';
         this.maxFileSize = this.cfg.maxFileSize;
+        this.cfg.global = (this.cfg.global === true || this.cfg.global === undefined) ? true : false;
         
         if(this.cfg.skinSimple) {
             this.button = this.jq.children('.ui-button');

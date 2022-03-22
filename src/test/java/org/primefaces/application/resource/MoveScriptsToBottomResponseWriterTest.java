@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright (c) 2009-2019 PrimeTek
@@ -23,14 +23,6 @@
  */
 package org.primefaces.application.resource;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InOrder;
-
-import javax.faces.context.ResponseWriter;
-import java.io.IOException;
-
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.matches;
@@ -39,6 +31,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
+
+import javax.faces.context.ResponseWriter;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mockito.InOrder;
 
 public class MoveScriptsToBottomResponseWriterTest {
 
@@ -72,6 +74,7 @@ public class MoveScriptsToBottomResponseWriterTest {
     }
 
     @Test
+    @Ignore
     public void testSingleInlineScript() throws IOException {
         writer.startElement("HTML", null);
         verify(wrappedWriter).startElement("HTML", null);

@@ -77,12 +77,20 @@ PrimeFaces.widget.Calendar = PrimeFaces.widget.BaseWidget.extend({
             PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', $('#ui-datepicker-div'), function() {
                 $this.alignPanel();
             });
+            PrimeFaces.utils.registerScrollHandler(this, 'scroll.' + this.id + '_align', function() {
+                $this.alignPanel();
+            });
         }
 
         // touch support - prevents keyboard popup
         if (PrimeFaces.env.touch && !this.input.attr("readonly") && this.cfg.showOn && this.cfg.showOn === 'button') {
+            var fireCloseEvent = this.cfg.onClose;
             this.cfg.onClose = function(dateText, inst) {
                 $(this).attr("readonly", false);
+                
+                if (fireCloseEvent) {
+                    fireCloseEvent();
+                }
             };
         }
 

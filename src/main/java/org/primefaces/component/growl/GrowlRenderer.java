@@ -65,7 +65,11 @@ public class GrowlRenderer extends UINotificationRenderer {
         writer.endElement("span");
 
         WidgetBuilder wb = getWidgetBuilder(context);
-        wb.init("Growl", growl.resolveWidgetVar(), clientId).attr("sticky", growl.isSticky()).attr("life", growl.getLife()).attr("escape", growl.isEscape()).attr("keepAlive", growl.isKeepAlive());
+        wb.init("Growl", growl.resolveWidgetVar(), clientId)
+                .attr("sticky", growl.isSticky())
+                .attr("life", growl.getLife())
+                .attr("escape", growl.isEscape())
+                .attr("keepAlive", growl.isKeepAlive());
 
         writer.write(",msgs:");
         encodeMessages(context, growl);
@@ -80,7 +84,8 @@ public class GrowlRenderer extends UINotificationRenderer {
         Iterator<FacesMessage> messages;
         if (_for != null) {
             messages = context.getMessages(_for);
-        } else {
+        }
+        else {
             messages = growl.isGlobalOnly() ? context.getMessages(null) : context.getMessages();
         }
 
@@ -97,7 +102,8 @@ public class GrowlRenderer extends UINotificationRenderer {
             if (shouldRender(growl, message, severityName)) {
                 if (!first) {
                     writer.write(",");
-                } else {
+                }
+                else {
                     first = false;
                 }
 
@@ -108,9 +114,11 @@ public class GrowlRenderer extends UINotificationRenderer {
 
                 if (growl.isShowSummary() && growl.isShowDetail()) {
                     writer.writeText("summary:\"" + summary + "\",detail:\"" + detail + "\"", null);
-                } else if (growl.isShowSummary() && !growl.isShowDetail()) {
+                }
+                else if (growl.isShowSummary() && !growl.isShowDetail()) {
                     writer.writeText("summary:\"" + summary + "\",detail:\"\"", null);
-                } else if (!growl.isShowSummary() && growl.isShowDetail()) {
+                }
+                else if (!growl.isShowSummary() && growl.isShowDetail()) {
                     writer.writeText("summary:\"\",detail:\"" + detail + "\"", null);
                 }
 

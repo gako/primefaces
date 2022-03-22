@@ -81,12 +81,8 @@ public class FileUploadUtils {
         }
 
         String name = FilenameUtils.getName(filename);
-        String extension = FilenameUtils.EXTENSION_SEPARATOR_STR + FilenameUtils.getExtension(filename);
-
-        if (extension.equals(FilenameUtils.EXTENSION_SEPARATOR_STR)) {
-            throw new FacesException("File must have an extension");
-        }
-        else if (name.isEmpty() || extension.equals(name)) {
+        String extension = FilenameUtils.getExtension(filename);
+        if (name.isEmpty() && extension.isEmpty()) {
             throw new FacesException("Filename can not be the empty string");
         }
 
@@ -294,4 +290,35 @@ public class FileUploadUtils {
         }
     }
 
+    /**
+     * OWASP prevent directory path traversal of "../../image.png".
+     *
+     * @see https://www.owasp.org/index.php/Path_Traversal
+     * @param relativePath the relative path to check for path traversal
+     * @return the relative path
+     * @throws FacesException if any error is detected
+     */
+    public static String checkPathTraversal(String relativePath) {
+        File file = new File(relativePath);
+
+        if (file.isAbsolute()) {
+            throw new FacesException("Path traversal attempt - absolute path not allowed.");
+        }
+
+        try  {
+            String pathUsingCanonical = file.getCanonicalPath();
+            String pathUsingAbsolute = file.getAbsolutePath();
+
+            // Require the absolute path and canonicalized path match.
+            // This is done to avoid directory traversal
+            // attacks, e.g. "1/../2/"
+            if (!pathUsingCanonical.equals(pathUsingAbsolute))  {
+                throw new FacesException("Path traversal attempt for path " + relativePath);
+            }
+        }
+        catch (IOException ex) {
+            throw new FacesException("Path traversal - unexpected exception.", ex);
+        }
+        return relativePath;
+    }
 }

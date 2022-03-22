@@ -7550,12 +7550,7 @@ $.extend( Datepicker.prototype, {
 		}
 
 		position = $( obj ).offset();
-		// ILOGS FIX TO PREVENT NPE if offset is not defined (yet)
-		if (position)
-			return [ position.left, position.top ];
-		else
-			return [0,0];
-
+		return [ position.left, position.top ];
 	},
 
 	/* Hide the date picker from view.

@@ -23,11 +23,7 @@
  */
 package org.primefaces.component.treetable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.el.ELContext;
 import javax.el.ValueExpression;
@@ -36,6 +32,7 @@ import javax.faces.application.ResourceDependencies;
 import javax.faces.application.ResourceDependency;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UINamingContainer;
+import javax.faces.component.ValueHolder;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.BehaviorEvent;
@@ -47,29 +44,13 @@ import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.column.Column;
 import org.primefaces.component.columngroup.ColumnGroup;
 import org.primefaces.component.columns.Columns;
-import org.primefaces.event.CellEditEvent;
-import org.primefaces.event.ColumnResizeEvent;
-import org.primefaces.event.NodeCollapseEvent;
-import org.primefaces.event.NodeExpandEvent;
-import org.primefaces.event.NodeSelectEvent;
-import org.primefaces.event.NodeUnselectEvent;
-import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.*;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.event.data.SortEvent;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
-import org.primefaces.model.filter.ContainsFilterConstraint;
-import org.primefaces.model.filter.EndsWithFilterConstraint;
-import org.primefaces.model.filter.EqualsFilterConstraint;
-import org.primefaces.model.filter.ExactFilterConstraint;
-import org.primefaces.model.filter.FilterConstraint;
-import org.primefaces.model.filter.GlobalFilterConstraint;
-import org.primefaces.model.filter.GreaterThanEqualsFilterConstraint;
-import org.primefaces.model.filter.GreaterThanFilterConstraint;
-import org.primefaces.model.filter.InFilterConstraint;
-import org.primefaces.model.filter.LessThanEqualsFilterConstraint;
-import org.primefaces.model.filter.LessThanFilterConstraint;
-import org.primefaces.model.filter.StartsWithFilterConstraint;
+import org.primefaces.model.filter.*;
 import org.primefaces.util.ComponentUtils;
 import org.primefaces.util.Constants;
 import org.primefaces.util.LocaleUtils;
@@ -322,6 +303,50 @@ public class TreeTable extends TreeTableBase {
             super.processDecodes(context);
         }
     }
+
+    @Override
+    public void processValidators(FacesContext context) {
+        super.processValidators(context);
+
+        if (isFilterRequest(context)) {
+            List<FilterMeta> filterMetadata = populateFilterMetaData(context, this);
+            setFilterMetadata(filterMetadata);
+        }
+    }
+
+    public List<FilterMeta> populateFilterMetaData(FacesContext context, TreeTable tt) {
+        List<FilterMeta> filterMetadata = new ArrayList<>();
+        String separator = String.valueOf(UINamingContainer.getSeparatorChar(context));
+        Map<String, String> params = context.getExternalContext().getRequestParameterMap();
+
+        for (UIColumn column : tt.getColumns()) {
+            ValueExpression columnFilterByVE = column.getValueExpression("filterBy");
+
+            if (columnFilterByVE != null) {
+                UIComponent filterFacet = column.getFacet("filter");
+                ValueExpression filterByVE = columnFilterByVE;
+                Object filterValue = null;
+                String filterId;
+
+                if (column instanceof Column) {
+                    filterId = column.getClientId(context) + separator + "filter";
+                    filterValue = (filterFacet == null) ? params.get(filterId) : ((ValueHolder) filterFacet).getLocalValue();
+                }
+                else if (column instanceof DynamicColumn) {
+                    DynamicColumn dynamicColumn = (DynamicColumn) column;
+                    dynamicColumn.applyModel();
+                    filterId = dynamicColumn.getContainerClientId(context) + separator + "filter";
+                    filterValue = (filterFacet == null) ? params.get(filterId) : ((ValueHolder) filterFacet).getLocalValue();
+                    dynamicColumn.cleanModel();
+                }
+
+                filterMetadata.add(new FilterMeta(column, filterByVE, filterValue));
+            }
+        }
+
+        return filterMetadata;
+    }
+
 
     public UIColumn findColumn(String clientId) {
         for (UIColumn column : getColumns()) {
