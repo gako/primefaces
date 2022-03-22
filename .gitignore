@@ -10,3 +10,4 @@
 .vscode/
 .checkstyle
 .zanata-cache/etag-cache.xml
+src/main/generated-resources/*
