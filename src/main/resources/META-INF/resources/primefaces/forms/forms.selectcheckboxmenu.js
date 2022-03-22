@@ -370,7 +370,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
                     e.preventDefault();
                 break;
-                
+
                 case keyCode.DOWN:
                     if (e.altKey) {
                         if ($this.panel.is(":hidden"))
@@ -495,7 +495,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
                 $this.uncheck(item.children('.ui-chkbox').children('.ui-chkbox-box'), true);
             }
-            
+
             e.stopPropagation();
         });
     },
@@ -728,11 +728,11 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
     show: function() {
         this.panel.css({'display':'block', 'opacity':0, 'pointer-events': 'none'});
-        
+
         this.alignPanel();
-        
+
         this.panel.css({'display':'none', 'opacity':'', 'pointer-events': ''});
-        
+
         this.keyboardTarget.attr('aria-expanded', true);
         this.panel.show();
 
@@ -860,22 +860,28 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         var checkedItems = this.jq.find(':checked'),
             labelText = '';
 
-        if(checkedItems && checkedItems.length) {
-            for(var i = 0; i < checkedItems.length; i++) {
-                if(i != 0) {
-                    labelText = labelText + this.cfg.labelSeparator;
-                }
-                labelText = labelText + $(checkedItems[i]).next().text();
-            }
+		// ILOGS FEATURE ++ show number of selected options on selectcheckboxmenu
+        if (this.cfg.updateLabelCount) {
+            labelText = this.defaultLabel + " (" + checkedItems.length + "/" + this.inputs.length +")";
         }
         else {
-            if (this.cfg.emptyLabel) {
-                labelText = this.cfg.emptyLabel;
-            } else {
-                labelText = this.defaultLabel;
-            }
+	        if(checkedItems && checkedItems.length) {
+	            for(var i = 0; i < checkedItems.length; i++) {
+	                if(i != 0) {
+	                    labelText = labelText + this.cfg.labelSeparator;
+	                }
+	                labelText = labelText + $(checkedItems[i]).next().text();
+	            }
+	        }
+	        else {
+	            if (this.cfg.emptyLabel) {
+	                labelText = this.cfg.emptyLabel;
+	            } else {
+	                labelText = this.defaultLabel;
+	            }
+	        }
         }
-
+        // IL
         this.label.text(labelText);
         this.labelContainer.attr('title', labelText);
     },
@@ -929,7 +935,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             this.createMultipleItem(item);
         }
     },
-    
+
     getAppendTo: function() {
         var dialog = this.jq.closest('.ui-dialog');
 
