@@ -20,7 +20,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         this.cfg.dynamic = this.cfg.dynamic === true ? true : false;
         this.isDynamicLoaded = false;
         this.cfg.labelSeparator = (this.cfg.labelSeparator === undefined) ? ',' : this.cfg.labelSeparator;
-
+        this.defaultLabel = this.label.text();
         if(!this.disabled) {
             if(this.cfg.multiple) {
                 this.triggers = this.jq.find('.ui-selectcheckboxmenu-trigger, .ui-selectcheckboxmenu-multiple-container');
@@ -38,7 +38,6 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
 
             if(!this.cfg.multiple) {
                 if(this.cfg.updateLabel) {
-                    this.defaultLabel = this.label.text();
                     this.label.css({
                         'text-overflow': 'ellipsis',
                         overflow: 'hidden'
@@ -54,7 +53,6 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             // disabled
             if(!this.cfg.multiple) {
                 if (this.cfg.updateLabel) {
-                    this.defaultLabel = this.label.text();
                     this.label.css({
                         'text-overflow': 'ellipsis',
                         overflow: 'hidden'
