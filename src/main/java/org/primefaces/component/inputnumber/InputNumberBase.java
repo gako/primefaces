@@ -20,6 +20,7 @@ import javax.faces.component.html.HtmlInputText;
 import org.primefaces.component.api.InputHolder;
 import org.primefaces.component.api.Widget;
 import org.primefaces.util.ComponentUtils;
+import org.primefaces.util.LangUtils;
 
 
 public abstract class InputNumberBase extends HtmlInputText implements Widget, InputHolder {
@@ -97,7 +98,8 @@ public abstract class InputNumberBase extends HtmlInputText implements Widget, I
     }
 
     public String getMinValue() {
-        return (String) getStateHelper().eval(PropertyKeys.minValue, null);
+        String value = (String) getStateHelper().eval(PropertyKeys.minValue, null);
+        return LangUtils.isValueBlank(value) ? null : value;
     }
 
     public void setMinValue(String minValue) {
@@ -105,7 +107,8 @@ public abstract class InputNumberBase extends HtmlInputText implements Widget, I
     }
 
     public String getMaxValue() {
-        return (String) getStateHelper().eval(PropertyKeys.maxValue, null);
+        String value = (String) getStateHelper().eval(PropertyKeys.maxValue, null);
+        return LangUtils.isValueBlank(value) ? null : value;
     }
 
     public void setMaxValue(String maxValue) {
