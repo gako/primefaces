@@ -26,10 +26,8 @@ package org.primefaces.component.menu;
 import org.primefaces.component.menubutton.MenuButton;
 import org.primefaces.expression.SearchExpressionUtils;
 import org.primefaces.model.menu.MenuElement;
-import org.primefaces.model.menu.MenuGroup;
 import org.primefaces.model.menu.MenuItem;
 import org.primefaces.model.menu.MenuModel;
-import org.primefaces.model.menu.Separator;
 import org.primefaces.model.menu.Submenu;
 import org.primefaces.renderkit.MenuItemAwareRenderer;
 import org.primefaces.util.ComponentUtils;
@@ -281,21 +279,9 @@ public abstract class BaseMenuRenderer extends MenuItemAwareRenderer {
     }
 
     protected boolean shouldBeRendered(FacesContext context, AbstractMenu abstractMenu) {
-        boolean rendered = abstractMenu.getElements().stream().anyMatch(me -> shouldBeRendered(context, me));
+        boolean rendered = super.shouldBeRendered(context, abstractMenu);
         rendered = rendered || abstractMenu.getFacets().values().stream().anyMatch(FacetUtils::shouldRenderFacet);
         return rendered;
     }
 
-    protected boolean shouldBeRendered(FacesContext context, MenuElement menuElement) {
-        if (menuElement instanceof MenuGroup) {
-            MenuGroup group = (MenuGroup) menuElement;
-            return group.getElements().stream().anyMatch(me -> shouldBeRendered(context, me));
-        }
-        else if (menuElement instanceof Separator) {
-            return false;
-        }
-        else {
-            return menuElement.isRendered();
-        }
-    }
 }

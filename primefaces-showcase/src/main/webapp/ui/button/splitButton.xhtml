@@ -121,6 +121,13 @@
                     <p:menuitem value="Delete" action="#{buttonView.sleepAndDelete}" update="messages" icon="pi pi-times"/>
                 </p:splitButton>
 
+                <h5>Empty submenu due to non rendered items</h5>
+                <p:splitButton value="Save" action="#{buttonView.sleepAndSave}"
+                               update="messages" icon="pi pi-save">
+                    <p:menuitem value="Update" action="#{buttonView.sleepAndUpdate}" update="messages" rendered="false" icon="pi pi-refresh"/>
+                    <p:divider />
+                    <p:menuitem value="Delete" action="#{buttonView.sleepAndDelete}" update="messages" rendered="false" icon="pi pi-times"/>
+                </p:splitButton>
             </h:form>
         </div>
     </ui:define>

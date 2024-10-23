@@ -56,6 +56,14 @@
                         <p:menuitem value="Logout (disabled)" icon="pi pi-power-off" disabled="true"/>
                     </p:submenu>
                 </p:menu>
+
+                <h5>Overlay with empty menu</h5>
+                <p:commandButton id="dynaButtonMenuless" value="Show" type="button" icon="pi pi-bars"/>
+                <p:menu overlay="true" trigger="dynaButtonMenuless" my="left top" at="left bottom">
+                    <p:submenu label="Navigations">
+                        <p:menuitem value="Website" url="http://www.primefaces.org" icon="pi pi-external-link" rendered="false"/>
+                    </p:submenu>
+                </p:menu>
             </div>
 
             <div class="card">

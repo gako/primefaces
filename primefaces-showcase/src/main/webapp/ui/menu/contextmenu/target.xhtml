@@ -18,21 +18,46 @@
 
     <ui:define name="implementation">
         <div class="card">
-            <p:imageSwitch id="images" effect="fade" widgetVar="gallery" slideshowAuto="false" styleClass="shadow-2">
-                <p:graphicImage name="/demo/images/nature/nature1.jpg"/>
-                <p:graphicImage name="/demo/images/nature/nature2.jpg"/>
-                <p:graphicImage name="/demo/images/nature/nature3.jpg"/>
-                <p:graphicImage name="/demo/images/nature/nature4.jpg"/>
-            </p:imageSwitch>
+            <h:form>
+                <p:imageSwitch id="images" effect="fade" widgetVar="gallery" slideshowAuto="false" styleClass="shadow-2">
+                    <p:graphicImage name="/demo/images/nature/nature1.jpg"/>
+                    <p:graphicImage name="/demo/images/nature/nature2.jpg"/>
+                    <p:graphicImage name="/demo/images/nature/nature3.jpg"/>
+                    <p:graphicImage name="/demo/images/nature/nature4.jpg"/>
+                </p:imageSwitch>
 
-            <p:contextMenu for="images">
-                <p:menuitem value="Prev" url="javascript:void(0)" onclick="PF('gallery').previous()"
-                            icon="pi pi-chevron-left"/>
-                <p:menuitem value="Next" url="javascript:void(0)" onclick="PF('gallery').next()"
-                            icon="pi pi-chevron-right"/>
-                <p:menuitem value="Remove" url="javascript:void(0)" onclick="PF('gallery').getJQ().fadeOut()"
-                            icon="pi pi-times"/>
-            </p:contextMenu>
+                <p:contextMenu for="images">
+                    <p:menuitem value="Prev" url="javascript:void(0)" onclick="PF('gallery').previous()"
+                                icon="pi pi-chevron-left"/>
+                    <p:menuitem value="Next" url="javascript:void(0)" onclick="PF('gallery').next()"
+                                icon="pi pi-chevron-right"/>
+                    <p:menuitem value="Remove" url="javascript:void(0)" onclick="PF('gallery').getJQ().fadeOut()"
+                                icon="pi pi-times"/>
+                </p:contextMenu>
+            </h:form>
+        </div>
+
+        <div class="card">
+            <h:form>
+                No context menu due to disabled menu items.
+
+                <p:growl id="messages" showDetail="true"/>
+
+                <p:imageSwitch id="imagesDisabled" effect="fade" widgetVar="gallery" slideshowAuto="false" styleClass="shadow-2">
+                    <p:graphicImage name="/demo/images/nature/nature1.jpg"/>
+                    <p:graphicImage name="/demo/images/nature/nature2.jpg"/>
+                    <p:graphicImage name="/demo/images/nature/nature3.jpg"/>
+                    <p:graphicImage name="/demo/images/nature/nature4.jpg"/>
+                </p:imageSwitch>
+
+                <p:contextMenu for="imagesDisabled">
+                    <p:menuitem value="Save" action="#{menuView.save}" update="messages" icon="pi pi-save" rendered="false"/>
+                    <p:menuitem value="Update" action="#{menuView.update}" update="messages" icon="pi pi-refresh" rendered="false"/>
+                    <p:menuitem value="Delete" action="#{menuView.delete}" ajax="false" icon="pi pi-times" rendered="false"/>
+                    <p:divider/>
+                    <p:menuitem value="Homepage" url="https://www.primefaces.org" icon="pi pi-home" rendered="false"/>
+                </p:contextMenu>
+            </h:form>
         </div>
     </ui:define>
 

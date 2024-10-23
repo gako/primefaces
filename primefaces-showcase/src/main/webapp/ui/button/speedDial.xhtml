@@ -285,6 +285,16 @@
                     <p:speedDial badge="#{speedDialView.badgeModel}" direction="down" model="#{speedDialView.model}" />
                 </div>
             </div>
+
+            <div class="card">
+                <h5>Empty Items due to non rendered menu</h5>
+                <div class="speeddial-empty-submenu-demo" style="position: relative; height: 350px">
+                    <p:speedDial badge="#{speedDialView.badgeModel}" direction="down">
+                        <p:menuitem icon="pi pi-pencil" action="#{speedDialView.add}" update="messages" rendered="false"/>
+                        <p:menuitem icon="pi pi-refresh" action="#{speedDialView.update}" update="messages" rendered="false"/>
+                    </p:speedDial>
+                </div>
+            </div>
         </h:form>
 
     </ui:define>
